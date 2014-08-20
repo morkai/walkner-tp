@@ -8,6 +8,8 @@ include __DIR__ . '/__common__.php';
 
 orders_check_access();
 
+no_access_if(user_has_role('driver'));
+
 $user = user_get_data();
 
 if (!empty($_POST['order']))

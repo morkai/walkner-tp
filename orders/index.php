@@ -190,9 +190,11 @@ td.is-editable:hover {
 <? append_slot() ?>
 
 <div class="page-header">
+  <? if (!user_has_role('driver')): ?>
   <ul class="page-actions">
     <li><a class="btn btn-default" href="<?= url_for('/orders/add.php') ?>"><i class="fa fa-plus"></i> Dodaj zamówienie</a>
   </ul>
+  <? endif ?>
   <h1>Zamówienia</h1>
 </div>
 
