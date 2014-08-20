@@ -206,8 +206,8 @@ td.is-editable:hover {
       <th>Pasażerowie
       <th>Adres odbioru
       <th>Adres docelowy
-      <th>Data i czas wyjazdu
       <th>Symbol MPK
+      <th>Data i czas wyjazdu
       <th>Kierowca
       <th>Ilość km
       <th class="actions">Akcje
@@ -243,13 +243,13 @@ td.is-editable:hover {
         <span class="passengers-all"><?= $item->allPassengers ?></span>
       <td class="pre"><?= e($item->from) ?>
       <td class="pre"><?= e($item->to) ?>
-      <td class="whenFrom pre hard <?= $item->driverEditable ? 'is-editable' : '' ?>" title="<?= $item->driverEditable ? 'Kliknij, aby zmienić' : '' ?>"><?= $item->whenFrom ?></td>
       <td><?= e($item->symbol) ?>
+      <td class="whenFrom pre hard <?= $item->driverEditable ? 'is-editable' : '' ?>" title="<?= $item->driverEditable ? 'Kliknij, aby zmienić' : '' ?>"><?= $item->whenFrom ?></td>
       <td class="driver">
         <? if ($item->showDriverLock): ?>
         <a class="btn btn-success driverLock" href="<?= url_for("/orders/lockDriver.php?id={$item->id}") ?>" title="Kliknij, aby przypisać daną pozycję dla siebie"><i class="fa fa-lock"></i></a>
         <? else: ?>
-        <span class="pre"><?= $item->driver ?></span>
+        <span class="pre hard"><?= $item->driver ?></span>
         <? endif ?>
       </td>
       <td class="km <?= $item->driverEditable ? 'is-editable' : '' ?>" title="<?= $item->driverEditable ? 'Kliknij, aby zmienić' : '' ?>"><?= $item->km ?>
