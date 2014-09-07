@@ -57,8 +57,10 @@ $orderMap = array();
 
 foreach ($orders as $orderIndex => $order)
 {
+  $tel = empty($order->tel) ? $order->ownerTel : $order->tel;
+
   $order->no = $firstNo + $orderIndex;
-  $order->owner = e($order->ownerName . ($order->ownerTel ? " ({$order->ownerTel})" : ''));
+  $order->owner = e($order->ownerName . ($tel ? " ({$tel})" : ''));
   $order->items = array();
 
   $orderMap[$order->id] = $order;
@@ -98,6 +100,7 @@ while ($item = $stmt->fetchObject())
   $item->driver = !$item->driver ? '' : "{$item->driverName}\n{$item->driverTel}";
   $item->showDriverLock = empty($item->driver) && $userIsDriver;
   $item->km = $item->km === '0.000' ? '' : str_replace('.', ',', (float)$item->km);
+  $item->hours = empty($item->hours) ? '' : $item->hours;
 
   $order = $orderMap[$item->order];
   $order->items[] = $item;
@@ -156,6 +159,10 @@ tbody > tr:first-child > td {
 .passengers.all .passengers-all {
   display: inline;
 }
+td.is-editable {
+  background-color: #ECF3FE!important;
+}
+
 td.is-editable:hover {
   cursor: pointer;
   outline: 2px solid #4D90FE;
@@ -179,11 +186,13 @@ td.is-editable:hover {
 .whenFrom.is-editing {
   white-space: normal;
 }
-.km {
+.km,
+.hours {
   width: 100px;
   text-align: right;
 }
-.km > .form-control {
+.km > .form-control,
+.hours > .form-control {
   text-align: right;
 }
 </style>
@@ -212,13 +221,14 @@ td.is-editable:hover {
       <th>Data i czas wyjazdu
       <th>Kierowca
       <th>Ilość km
+      <th>Ilość godz.
       <th class="actions">Akcje
     </tr>
   </thead>
   <? foreach ($pagedOrders AS $orderIndex => $order): ?>
   <tbody>
     <tr id="order-<?= $order->id ?>" data-id="<?= $order->id ?>">
-      <td colspan="11" class="order-header-outer">
+      <td colspan="12" class="order-header-outer">
         <span class="order-header">
           <span class="order-header-inner">
             <?= $order->no ?>. Zamówienie <code><?= $order->id ?></code>
@@ -255,6 +265,7 @@ td.is-editable:hover {
         <? endif ?>
       </td>
       <td class="km <?= $item->driverEditable ? 'is-editable' : '' ?>" title="<?= $item->driverEditable ? 'Kliknij, aby zmienić' : '' ?>"><?= $item->km ?>
+      <td class="hours <?= $item->driverEditable ? 'is-editable' : '' ?>" title="<?= $item->driverEditable ? 'Kliknij, aby zmienić' : '' ?>"><?= $item->hours ?>
       <td class="actions">
 
     </tr>
@@ -310,6 +321,11 @@ $(function()
 
         $input.blur();
       }
+      else if (e.keyCode === 27)
+      {
+        newValue = null;
+        $input.blur();
+      }
     });
 
     $input.on('blur', function()
@@ -345,6 +361,11 @@ $(function()
 
         $input.blur();
       }
+      else if (e.keyCode === 27)
+      {
+        newValue = null;
+        $input.blur();
+      }
     });
 
     $input.on('blur', function()
@@ -358,6 +379,49 @@ $(function()
     if (oldValue !== '')
     {
       $input.val(oldValue.replace(',', '.'));
+    }
+
+    prepareInputTd($td, $input);
+  });
+
+  $table.on('click', '.hours.is-editable', function(e)
+  {
+    var $td = $(this);
+    var $input = $('<input type="number" class="form-control" placeholder="0" min="0" max="65335" step="1">');
+    var oldValue = $td.text().trim();
+    var newValue = null;
+
+    $input.on('keydown', function(e)
+    {
+      if (e.keyCode === 13)
+      {
+        var value = parseInt(this.value.replace(/[^0-9]+/g, ''), 10);
+
+        if (!isNaN(value) && value >= 0)
+        {
+          newValue = value;
+        }
+
+        $input.blur();
+      }
+      else if (e.keyCode === 27)
+      {
+        newValue = null;
+        $input.blur();
+      }
+    });
+
+    $input.on('blur', function()
+    {
+      saveOnBlur('hours', $td, oldValue, newValue, function(val)
+      {
+        return val === 0 ? '' : val.toString();
+      });
+    });
+
+    if (oldValue !== '')
+    {
+      $input.val(oldValue);
     }
 
     prepareInputTd($td, $input);

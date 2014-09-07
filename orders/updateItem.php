@@ -10,7 +10,7 @@ no_access_if_not(user_has_role('driver'));
 
 bad_request_if(empty($_POST['id']));
 
-$field = !empty($_POST['field']) && in_array($_POST['field'], array('whenFrom', 'km')) ? $_POST['field'] : null;
+$field = !empty($_POST['field']) ? $_POST['field'] : null;
 $value = array_key_exists('value', $_POST) && is_string($_POST['value']) ? $_POST['value'] : '';
 
 switch ($field)
@@ -32,6 +32,15 @@ switch ($field)
 
   case 'km':
     $value = (float)$value;
+
+    if ($value < 0)
+    {
+      bad_request();
+    }
+    break;
+
+  case 'hours':
+    $value = (int)$value;
 
     if ($value < 0)
     {

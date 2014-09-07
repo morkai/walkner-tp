@@ -22,6 +22,10 @@
       <?= label('order-owner', 'Inicjator', true) ?>
       <input id=order-owner name=order[owner] class="form-control" type=text value="<?= $order->owner ?>" required>
     </div>
+    <div class="form-group">
+      <?= label('order-tel', 'Telefon kontaktowy') ?>
+      <input id=order-tel name=order[tel] class="form-control" type=text value="<?= $order->tel ?>">
+    </div>
     <label id="focusLastItem">Pozycje</label>
     <table class="table table-bordered table-condensed table-striped">
       <thead>
@@ -266,13 +270,17 @@ $(function()
           {
             return {
               id: user.id,
-              text: user.name
+              text: user.name,
+              user: user
             };
           })
         };
       }
     }
-  }).select2('data', owner);
+  }).select2('data', owner).on('change', function()
+  {
+    $('#order-tel').val($(this).select2('data').user.tel || '');
+  });
 
   $orderItems.find('input[type="datetime-local"]').each(function()
   {

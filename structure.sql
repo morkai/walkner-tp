@@ -12,6 +12,7 @@ CREATE TABLE `orders` (
   `createdAt` datetime NOT NULL,
   `creator` int(10) unsigned NOT NULL,
   `owner` int(10) unsigned NOT NULL,
+  `tel` VARCHAR(20) COLLATE utf8_polish_ci NOT NULL DEFAULT '',
   `summary` varchar(100) COLLATE utf8_polish_ci NOT NULL,
   `whenMin` datetime NOT NULL,
   `whenMax` datetime NOT NULL,
@@ -34,6 +35,7 @@ CREATE TABLE `order_items` (
   `symbol` varchar(30) COLLATE utf8_polish_ci NOT NULL DEFAULT '',
   `driver` int(10) unsigned DEFAULT NULL,
   `km` decimal(7,3) unsigned NOT NULL DEFAULT '0.000',
+  `hours` smallint(2) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `order_A` (`order`),
   KEY `driver_A` (`driver`)

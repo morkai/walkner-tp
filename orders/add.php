@@ -61,6 +61,7 @@ $order = (object)(!empty($order) ? $order : array(
   'summary' => '',
   'owner' => $user->id,
   'ownerName' => $user->name,
+  'tel' => $user->tel,
   'items' => array(
     array(
       'what' => '',
