@@ -14,7 +14,7 @@ function orders_prepare_data($data)
 
   foreach ($data['items']['what'] as $i => $_)
   {
-    preg_match('/([0-9]{4}).*?([0-9]{2}).*?([0-9]{2}).*?([0-9]{2}).*?([0-9]{2})/', $data['items']['whenTo'][$i], $whenToMatches);
+    preg_match('/([0-9]{4}).*?([0-9]{2}).*?([0-9]{2}).*?([0-9]{2}).*?([0-9]{2})/', $data['items']['whenToDate'][$i] . ' ' . $data['items']['whenToTime'][$i], $whenToMatches);
 
     $who = array_filter(array_map('trim', preg_split('/\r\n|\n|\r/', $data['items']['who'][$i])), function($passenger) { return !empty($passenger); });
 

@@ -108,11 +108,16 @@ while ($item = $stmt->fetchObject())
   $item->whenFromEditable = $driverEditable;
   $item->driverEditable = $adminOrDispatcher;
 
-  $item->whenFrom = $item->whenFrom ? str_replace(' ', "\n", preg_replace('/:[0-9]{2}$/', '', $item->whenFrom)) : '';
-  $item->whenTo = str_replace(' ', "\n", preg_replace('/:[0-9]{2}$/', '', $item->whenTo));
+  $item->whenFrom = $item->whenFrom ? explode(' ', preg_replace('/:[0-9]{2}$/', '', $item->whenFrom)) : ['', ''];
+  $item->whenTo = explode(' ', preg_replace('/:[0-9]{2}$/', '', $item->whenTo));
   $item->driverText = !$item->driver ? '' : "{$item->driverName}\n{$item->driverTel}";
   $item->km = $item->km === '0.000' ? '' : str_replace('.', ',', (float)$item->km);
   $item->hours = empty($item->hours) ? '' : $item->hours;
+
+  if ($item->whenFrom[0] === '2000-01-01')
+  {
+    $item->whenFrom[0] = '';
+  }
 
   $order = $orderMap[$item->order];
   $order->items[] = $item;
@@ -138,11 +143,11 @@ $drivers = fetch_all("SELECT id, name AS text, tel FROM users WHERE role='driver
 .table-bordered > thead > tr > th {
   border-bottom-width: 4px;
 }
+td {
+  height: 47px;
+}
 .table > tbody + tbody {
   border-top-width: 4px;
-}
-th:first-child {
-  width: 1%;
 }
 tbody > tr:first-child > td {
   background-color: #F5F5F5;
@@ -180,12 +185,6 @@ td.is-editable:hover {
   cursor: pointer;
   outline: 2px solid #4D90FE;
 }
-.whenTo {
-  width: 140px;
-}
-.whenFrom {
-  width: 150px;
-}
 .whenFrom.is-editable {
   width: 220px;
 }
@@ -200,6 +199,9 @@ td.is-editable:hover {
 .km > .form-control,
 .hours > .form-control {
   text-align: right;
+}
+.km.is-editing > .form-control {
+  width: 90px;
 }
 .min {
   width: 1%;
@@ -219,28 +221,29 @@ td.is-editable:hover {
 <table class="table table-bordered table-condensed table-hover">
   <thead>
     <tr>
-      <th>Lp.
       <th>Rodzaj usługi
-      <th>Data i czas usługi
-      <th>Ilość osób
+      <th class="min nowrap">Data usługi
+      <th class="min nowrap">Czas usługi
+      <th class="min nowrap">Ilość osób
       <th>Pasażerowie
       <th>Adres odbioru
       <th>Adres docelowy
-      <th>Symbol MPK
-      <th>Data i czas wyjazdu
+      <th class="min nowrap">Symbol MPK
+      <th class="min nowrap">Data wyjazdu
+      <th class="min nowrap">Czas wyjazdu
       <th class="min">Kierowca
-      <th>Ilość km
-      <th>Ilość godz.
+      <th class="min nowrap">Ilość km
+      <th class="min nowrap">Ilość godz.
       <th class="actions">Akcje
     </tr>
   </thead>
   <? foreach ($pagedOrders AS $orderIndex => $order): ?>
   <tbody>
     <tr id="order-<?= $order->id ?>" data-id="<?= $order->id ?>">
-      <td colspan="12" class="order-header-outer">
+      <td colspan="13" class="order-header-outer">
         <span class="order-header">
           <span class="order-header-inner">
-            <?= $order->no ?>. Zamówienie <code><?= $order->id ?></code>
+            Zamówienie <code><?= $order->id ?></code>
             <em><?= e($order->summary) ?></em>
             zainicjowane przez
             <em><?= $order->owner ?></em>
@@ -255,9 +258,9 @@ td.is-editable:hover {
     </tr>
     <? foreach ($order->items as $itemIndex => $item): ?>
     <tr data-id="<?= $item->id ?>">
-      <td><?= $order->no ?>.<?= $itemIndex + 1 ?>.
       <td><?= e($item->what) ?>
-      <td class="whenTo pre hard"><?= $item->whenTo ?></td>
+      <td class="whenToDate pre hard"><?= $item->whenTo[0] ?></td>
+      <td class="whenToTime pre hard"><?= $item->whenTo[1] ?></td>
       <td class="number"><?= $item->passengers ?></td>
       <td class="passengers">
         <span class="passengers-first"><?= $item->firstPassengers ?></span>
@@ -265,7 +268,8 @@ td.is-editable:hover {
       <td class="pre"><?= e($item->from) ?>
       <td class="pre"><?= e($item->to) ?>
       <td><?= e($item->symbol) ?>
-      <td class="whenFrom pre hard <?= $item->whenFromEditable ? 'is-editable' : '' ?>"><?= $item->whenFrom ?></td>
+      <td class="whenFromDate pre hard <?= $item->whenFromEditable ? 'is-editable' : '' ?>"><?= $item->whenFrom[0] ?></td>
+      <td class="whenFromTime pre hard <?= $item->whenFromEditable ? 'is-editable' : '' ?>"><?= $item->whenFrom[1] ?></td>
       <td class="driver pre hard <?= $item->driverEditable ? 'is-editable' : '' ?>" data-driver="<?= $item->driver ?>"><?= $item->driverText ?></td>
       <td class="km <?= $item->kmEditable ? 'is-editable' : '' ?>"><?= $item->km ?>
       <td class="hours <?= $item->hoursEditable ? 'is-editable' : '' ?>"><?= $item->hours ?>
@@ -308,22 +312,27 @@ $(function()
     }
   });
 
-  $table.on('click', '.whenFrom.is-editable', function(e)
+  $table.on('click', '.whenFromDate.is-editable', function(e)
   {
     var $td = $(this);
-    var $input = $('<input type="datetime-local" class="form-control" placeholder="rrrr-mm-dd --:--">');
     var oldValue = $td.text().trim();
     var newValue = null;
+    var $input = $('<input type="date" class="form-control" placeholder="rrrr-mm-dd">').val(oldValue);
 
     $input.on('keydown', function(e)
     {
       if (e.keyCode === 13)
       {
-        var matches = this.value.match(/([0-9]{4}).*?([0-9]{2}).*?([0-9]{2})(?:.*?([0-9]{2}).*?([0-9]{2}))?/);
+        var time = ($td.next().text().trim() || '00:00');
+        var matches = this.value.match(/([0-9]{4}).*?([0-9]{2}).*?([0-9]{2})/);
 
         if (matches)
         {
-          newValue = matches[1] + '-' + matches[2] + '-' + matches[3] + ' ' + (matches[4] || '00') + ':' + (matches[5] || '00');
+          newValue = matches[1] + '-' + matches[2] + '-' + matches[3] + ' ' + time;
+        }
+        else
+        {
+          newValue = '2000-01-01 ' + time;
         }
 
         $input.blur();
@@ -337,13 +346,66 @@ $(function()
 
     $input.on('blur', function()
     {
-      saveOnBlur('whenFrom', $td, oldValue, newValue, function(val) { return val.replace(' ', '\n'); });
+      saveOnBlur('whenFrom', $td, oldValue, newValue, function(value)
+      {
+        if (!value)
+        {
+          return '';
+        }
+
+        var date = value.split(' ')[0];
+
+        if (date === '2000-01-01')
+        {
+          return '';
+        }
+
+        return date;
+      });
     });
 
-    if (oldValue !== '')
+    prepareInputTd($td, $input);
+  });
+
+  $table.on('click', '.whenFromTime.is-editable', function(e)
+  {
+    var $td = $(this);
+    var oldValue = $td.text().trim();
+    var newValue = null;
+    var $input = $('<input type="time" class="form-control" placeholder="--:--">').val(oldValue);
+
+    $input.on('keydown', function(e)
     {
-      $input.val($input.prop('type') === 'datetime-local' ? (oldValue.replace(/\s/, 'T') + ':00') : oldValue.replace(/\s/, ' '));
-    }
+      if (e.keyCode === 13)
+      {
+        var date = ($td.prev().text().trim() || '2000-01-01');
+        var matches = this.value.match(/([0-9]{2}).*?([0-9]{2})/);
+
+        if (matches)
+        {
+          newValue = date + ' ' + matches[1] + ':' + matches[2];
+        }
+        else
+        {
+          newValue = date + ' 00:00';
+        }
+
+        $input.blur();
+      }
+      else if (e.keyCode === 27)
+      {
+        newValue = null;
+        $input.blur();
+      }
+    });
+
+    $input.on('blur', function()
+    {
+      saveOnBlur('whenFrom', $td, oldValue, newValue, function(value)
+      {
+        return value ? value.split(' ')[1] : '';
+      });
+    });
 
     prepareInputTd($td, $input);
   });

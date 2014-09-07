@@ -148,3 +148,11 @@ td.number {
 .pagination > li > a {
   min-width: 65px;
 }
+input[type="date"]::-webkit-inner-spin-button,
+input[type="time"]::-webkit-inner-spin-button,
+input[type="datetime-local"]::-webkit-inner-spin-button {
+  align-self: center;
+}
+.nowrap {
+  white-space: nowrap;
+}

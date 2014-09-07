@@ -32,7 +32,8 @@
         <tr>
           <th>Lp.</th>
           <th>Rodzaj usługi <span class="required">*</span></th>
-          <th>Data i czas usługi <span class="required">*</span></th>
+          <th class="nowrap">Data usługi <span class="required">*</span></th>
+          <th class="nowrap">Czas usługi <span class="required">*</span></th>
           <th>Pasażerowie</th>
           <th class="passengers">Ilość osób <span class="required">*</span></th>
           <th>Skąd przyjazd-wyjazd <span class="required">*</span></th>
@@ -46,7 +47,8 @@
         <tr class="order-item" data-time="<?= $item->time ?>">
           <td class="no"><?= $itemIndex + 1 ?>.</td>
           <td class="what"><textarea name="order[items][what][]" class="form-control" maxlength="100" placeholder="Czego dotyczy dana pozycja..." required><?= e($item->what) ?></textarea></td>
-          <td class="whenTo"><input name="order[items][whenTo][]" class="form-control" type="datetime-local" value="<?= e($item->whenTo) ?>" required min="<?= date('Y-m-d H:i:s') ?>" title="0000-00-00 00:00" placeholder="rrrr-mm-dd --:--" pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}$"></td>
+          <td class="whenToDate"><input name="order[items][whenToDate][]" class="form-control" type="date" value="<?= e($item->whenToDate) ?>" required title="0000-00-00" placeholder="rrrr-mm-dd" pattern="^[0-9]{4}-[0-9]{2}-[0-9]{2}$"></td>
+          <td class="whenToTime"><input name="order[items][whenToTime][]" class="form-control" type="time" value="<?= e($item->whenToTime) ?>" required title="00:00" placeholder="--:--" pattern="^[0-9]{2}:[0-9]{2}$"></td>
           <td class="who"><textarea name="order[items][who][]" class="form-control" rows="3" maxlength="4000" placeholder="Dane każdego pasażera w oddzielnej linii..."><?= e($item->who) ?></textarea></td>
           <td class="passengers"><input name="order[items][passengers][]" class="form-control" type="number" value="<?= $item->passengers ?>" required min="1" max="100"></td>
           <td class="from"><textarea name="order[items][from][]" class="form-control" rows="3" maxlength="500" required placeholder="Adres pasażerów..."><?= e($item->from) ?></textarea></td>
@@ -83,13 +85,14 @@ td.actions {
 }
 th.passengers {
   white-space: nowrap;
-  width: 1%;
+  width: 1px;
 }
 .order-item > .passengers > .form-control {
   text-align: right;
 }
-.order-item > .whenTo {
-  width: 1%;
+.order-item > .whenToDate,
+.order-item > .whenToTime {
+  width: 1px;
 }
 .order-item > .whenTo > .form-control {
   width: 210px;
@@ -226,25 +229,8 @@ $(function()
     this.parentNode.nextElementSibling.children[0].value = Math.max(who.length, 1);
   });
 
-  $orderItems.on('blur', '.whenTo > .form-control', function()
-  {
-    var matches = this.value.match(/([0-9]{4}).*?([0-9]{2}).*?([0-9]{2})(?:.*?([0-9]{2}).*?([0-9]{2}))?/);
-
-    var time = matches === null
-      ? NaN
-      : Date.parse(matches[1] + '-' + matches[2] + '-' + matches[3] + 'T' + (matches[4] || '00') + ':' + (matches[5] || '00') + ':00');
-
-    this.parentNode.parentNode.dataset.time = isNaN(time) ? 0 : time;
-
-    if (this.type !== 'datetime-local')
-    {
-      this.value = isNaN(time)
-        ? ''
-        : (matches[1] + '-' + matches[2] + '-' + matches[3] + ' ' + (matches[4] || '00') + ':' + (matches[5] || '00'));
-    }
-
-    setTimeout(sortOrderItems, 1);
-  });
+  $orderItems.on('blur', '.whenToDate > .form-control', onDateTimeChange);
+  $orderItems.on('blur', '.whenToTime > .form-control', onDateTimeChange);
 
   $('thead').on('click', 'th', function(e)
   {
@@ -289,6 +275,64 @@ $(function()
       this.value = this.getAttribute('value').replace(' ', 'T');
     }
   });
+
+  function onDateTimeChange()
+  {
+    var $row = $(this).closest('tr');
+    var $whenToDate = $row.find('.whenToDate > input');
+    var $whenToTime = $row.find('.whenToTime > input');
+    var whenTo = $whenToDate.val() + ' ' + $whenToTime.val();
+    var matches = whenTo.match(/(?:([0-9]{4}).*?([0-9]{2}).*?([0-9]{2}))?(?:.*?([0-9]{2}).*?([0-9]{2}))?/);
+
+    if (matches === null)
+    {
+      matches = [];
+    }
+
+    var y, m, d, h, i;
+
+    y = parseInt(matches[1], 10) || 2000;
+    m = parseInt(matches[2], 10) || 1;
+    d = parseInt(matches[3], 10) || 1;
+    h = parseInt(matches[4], 10) || 0;
+    i = parseInt(matches[5], 10) || 0;
+
+    var date = new Date(y, m - 1, d, h, i, 0);
+    var time = date.getTime();
+
+    if (isNaN(time))
+    {
+      time = 0;
+    }
+
+    $row.attr('data-time', time);
+
+    if (time === 0)
+    {
+      $whenToDate.val('');
+      $whenToTime.val('00:00');
+    }
+    else
+    {
+      if (date.getFullYear() <= 2000)
+      {
+        $whenToDate.val('');
+      }
+      else
+      {
+        $whenToDate.val(date.getFullYear() + '-' + pad0(date.getMonth() + 1) + '-' + pad0(date.getDate()));
+      }
+
+      $whenToTime.val(pad0(date.getHours()) + ':' + pad0(date.getMinutes()));
+    }
+
+    setTimeout(sortOrderItems, 1);
+  }
+
+  function pad0(val)
+  {
+    return (val < 10 ? '0' : '') + val;
+  }
 
   function createOrderItem($action)
   {

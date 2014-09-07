@@ -65,7 +65,8 @@ $order = (object)(!empty($order) ? $order : array(
   'items' => array(
     array(
       'what' => '',
-      'whenTo' => '',
+      'whenToDate' => '',
+      'whenToTime' => '00:00',
       'who' => '',
       'passengers' => 1,
       'from' => '',
