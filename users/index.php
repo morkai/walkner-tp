@@ -32,7 +32,12 @@ $users = fetch_all(sprintf(
 
 if (is_ajax())
 {
-  output_json($users);
+  output_json(array_map(function($user)
+  {
+    unset($user->password);
+
+    return $user;
+  }, $users));
 }
 
 $pagedUsers->fill($totalItems, $users);
