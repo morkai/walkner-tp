@@ -60,6 +60,9 @@ function users_get_role_text($role)
     case 'driver':
       return 'Kierowca';
 
+    case 'dispatcher':
+      return 'Dyspozytor';
+
     case 'admin':
       return 'Administrator';
 

@@ -49,7 +49,7 @@
     <? if ($isAdmin): ?>
     <div class="form-group">
       <label for=user-role-user>Rola:</label>
-      <? foreach (array('user', 'driver', 'admin') as $role): ?>
+      <? foreach (array('user', 'driver', 'dispatcher', 'admin') as $role): ?>
       <div class="radio"><label><input id=user-role-<?= $role ?> name=user[role] type=radio value="<?= $role ?>" <?= $user->role === $role ? 'checked' : '' ?>> <?= users_get_role_text($role) ?></label></div>
       <? endforeach ?>
     </div>
