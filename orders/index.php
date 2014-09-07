@@ -25,7 +25,7 @@ if (user_has_role('user'))
 }
 else if ($userIsDriver)
 {
-  $where .= " AND (orders.id IN(SELECT order_items.`order` FROM order_items WHERE order_items.driver IS NULL OR order_items.driver={$user->id}))";
+  $where .= " AND (orders.id IN(SELECT order_items.`order` FROM order_items WHERE order_items.driver={$user->id}))";
 }
 
 $q = <<<SQL
@@ -72,14 +72,21 @@ $q = <<<SQL
 SELECT `item`.*, `driver`.`name` AS `driverName`, `driver`.`tel` AS `driverTel`
 FROM order_items AS `item`
 LEFT JOIN `users` AS `driver` ON `item`.`driver` = `driver`.`id`
-WHERE `item`.order IN({$orderIds})
+WHERE `item`.`order` IN({$orderIds})
 ORDER BY `item`.order, `item`.`whenTo`
 SQL;
 
 $stmt = exec_stmt($q);
 
+$adminOrDispatcher = user_has_role('admin') || user_has_role('dispatcher');
+
 while ($item = $stmt->fetchObject())
 {
+  if ($userIsDriver && $item->driver !== $user->id)
+  {
+    continue;
+  }
+
   $passengers = explode("\n", str_replace("\r", "", $item->who));
   $item->allPassengers = e(join('; ', $passengers));
 
@@ -94,11 +101,16 @@ while ($item = $stmt->fetchObject())
     $item->firstPassengers = $item->allPassengers;
   }
 
-  $item->driverEditable = $item->driver == $user->id;
+  $driverEditable = $item->driver == $user->id || $adminOrDispatcher;
+
+  $item->kmEditable = $driverEditable;
+  $item->hoursEditable = $driverEditable;
+  $item->whenFromEditable = $driverEditable;
+  $item->driverEditable = $adminOrDispatcher;
+
   $item->whenFrom = $item->whenFrom ? str_replace(' ', "\n", preg_replace('/:[0-9]{2}$/', '', $item->whenFrom)) : '';
   $item->whenTo = str_replace(' ', "\n", preg_replace('/:[0-9]{2}$/', '', $item->whenTo));
-  $item->driver = !$item->driver ? '' : "{$item->driverName}\n{$item->driverTel}";
-  $item->showDriverLock = empty($item->driver) && $userIsDriver;
+  $item->driverText = !$item->driver ? '' : "{$item->driverName}\n{$item->driverTel}";
   $item->km = $item->km === '0.000' ? '' : str_replace('.', ',', (float)$item->km);
   $item->hours = empty($item->hours) ? '' : $item->hours;
 
@@ -114,6 +126,8 @@ if (is_ajax())
 }
 
 $pagedOrders->fill($totalItems, $orders);
+
+$drivers = fetch_all("SELECT id, name AS text, tel FROM users WHERE role='driver' ORDER BY name ASC");
 
 ?>
 
@@ -162,17 +176,9 @@ tbody > tr:first-child > td {
 td.is-editable {
   background-color: #ECF3FE!important;
 }
-
 td.is-editable:hover {
   cursor: pointer;
   outline: 2px solid #4D90FE;
-}
-.driver {
-  text-align: center;
-}
-.driver > .pre {
-  display: block;
-  text-align: left;
 }
 .whenTo {
   width: 140px;
@@ -194,6 +200,9 @@ td.is-editable:hover {
 .km > .form-control,
 .hours > .form-control {
   text-align: right;
+}
+.min {
+  width: 1%;
 }
 </style>
 <? append_slot() ?>
@@ -219,7 +228,7 @@ td.is-editable:hover {
       <th>Adres docelowy
       <th>Symbol MPK
       <th>Data i czas wyjazdu
-      <th>Kierowca
+      <th class="min">Kierowca
       <th>Ilość km
       <th>Ilość godz.
       <th class="actions">Akcje
@@ -256,16 +265,10 @@ td.is-editable:hover {
       <td class="pre"><?= e($item->from) ?>
       <td class="pre"><?= e($item->to) ?>
       <td><?= e($item->symbol) ?>
-      <td class="whenFrom pre hard <?= $item->driverEditable ? 'is-editable' : '' ?>" title="<?= $item->driverEditable ? 'Kliknij, aby zmienić' : '' ?>"><?= $item->whenFrom ?></td>
-      <td class="driver">
-        <? if ($item->showDriverLock): ?>
-        <a class="btn btn-success driverLock" href="<?= url_for("/orders/lockDriver.php?id={$item->id}") ?>" title="Kliknij, aby przypisać daną pozycję dla siebie"><i class="fa fa-lock"></i></a>
-        <? else: ?>
-        <span class="pre hard"><?= $item->driver ?></span>
-        <? endif ?>
-      </td>
-      <td class="km <?= $item->driverEditable ? 'is-editable' : '' ?>" title="<?= $item->driverEditable ? 'Kliknij, aby zmienić' : '' ?>"><?= $item->km ?>
-      <td class="hours <?= $item->driverEditable ? 'is-editable' : '' ?>" title="<?= $item->driverEditable ? 'Kliknij, aby zmienić' : '' ?>"><?= $item->hours ?>
+      <td class="whenFrom pre hard <?= $item->whenFromEditable ? 'is-editable' : '' ?>"><?= $item->whenFrom ?></td>
+      <td class="driver pre hard <?= $item->driverEditable ? 'is-editable' : '' ?>" data-driver="<?= $item->driver ?>"><?= $item->driverText ?></td>
+      <td class="km <?= $item->kmEditable ? 'is-editable' : '' ?>"><?= $item->km ?>
+      <td class="hours <?= $item->hoursEditable ? 'is-editable' : '' ?>"><?= $item->hours ?>
       <td class="actions">
 
     </tr>
@@ -277,9 +280,13 @@ td.is-editable:hover {
 <?= $pagedOrders->render(url_for("orders/?perPage={$perPage}")) ?>
 
 <? begin_slot('js') ?>
+<script src="<?= url_for('/__vendor__/select2/select2.min.js') ?>"></script>
+<script src="<?= url_for('/__vendor__/select2/select2_locale_pl.js') ?>"></script>
 <script>
 $(function()
 {
+  var drivers = <?= json_encode($drivers) ?>;
+
   var $table = $('.table');
   var mouseDownAt = 0;
 
@@ -425,6 +432,70 @@ $(function()
     }
 
     prepareInputTd($td, $input);
+  });
+
+  $table.on('click', '.driver.is-editable', function(e)
+  {
+    var $td = $(this);
+    var oldDriverText = $td.text().trim();
+    var oldDriverId = parseInt($td.attr('data-driver'), 10) || 0;
+    var changed = false;
+
+    $td
+      .attr('title', 'Wciśnij ENTER, aby zapisać')
+      .removeClass('is-editable')
+      .addClass('is-editing')
+      .html('');
+
+    var $input = $('<input type="text" name="driver">').val(oldDriverId).appendTo($td).select2({
+      width: '200px',
+      allowClear: true,
+      openOnEnter: false,
+      placeholder: 'Wybierz kierowcę...',
+      data: drivers
+    });
+
+    $input.on('change', function()
+    {
+      changed = true;
+
+      var newDriver = $input.select2('data') || {id: 0};
+      var newDriverId = parseInt(newDriver.id, 10) || 0;
+
+      saveOnBlur('driver', $td, oldDriverText, newDriverId, function(value)
+      {
+        if (typeof value === 'string')
+        {
+          return value;
+        }
+
+        $td.attr('data-driver', newDriverId);
+
+        if (!newDriverId)
+        {
+          return '';
+        }
+
+        var text = newDriver.text;
+
+        if (newDriver.tel)
+        {
+          text += '\n' + newDriver.tel;
+        }
+
+        return text;
+      });
+    });
+
+    $input.on('select2-blur', function()
+    {
+      if (!changed)
+      {
+        restoreValue($td, oldDriverText);
+      }
+    });
+
+    $input.select2('open');
   });
 
   function saveOnBlur(field, $td, oldValue, newValue, formatValue)

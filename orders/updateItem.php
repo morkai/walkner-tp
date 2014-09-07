@@ -6,7 +6,7 @@
 
 include __DIR__ . '/__common__.php';
 
-no_access_if_not(user_has_role('driver'));
+no_access_if_not(user_has_role('driver') || user_has_role('dispatcher') || user_has_role('admin'));
 
 bad_request_if(empty($_POST['id']));
 
@@ -48,6 +48,20 @@ switch ($field)
     }
     break;
 
+  case 'driver':
+    if ($value == 0)
+    {
+      $value = null;
+    }
+    else
+    {
+      $value = (int)$value;
+      $driver = fetch_one('SELECT id, role FROM users WHERE id=?', array(1 => $value));
+
+      bad_request_if(empty($driver) || $driver->role !== 'driver');
+    }
+    break;
+
   default:
     bad_request();
 }
@@ -56,6 +70,6 @@ $orderItem = fetch_one('SELECT id, driver FROM order_items WHERE id=?', array(1 
 
 not_found_if(empty($orderItem));
 
-no_access_if($orderItem->driver !== user_get_data()->id);
+no_access_if(user_has_role('driver') && $orderItem->driver !== user_get_data()->id);
 
 exec_update('order_items', array($field => $value), "id={$orderItem->id}");
