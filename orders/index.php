@@ -301,11 +301,11 @@ $(function()
     {
       if (e.keyCode === 13)
       {
-        var matches = this.value.match(/([0-9]{4}).*?([0-9]{2}).*?([0-9]{2}).+?([0-9]{2}).*?([0-9]{2})/);
+        var matches = this.value.match(/([0-9]{4}).*?([0-9]{2}).*?([0-9]{2})(?:.*?([0-9]{2}).*?([0-9]{2}))?/);
 
         if (matches)
         {
-          newValue = matches[1] + '-' + matches[2] + '-' + matches[3] + ' ' + matches[4] + ':' + matches[5];
+          newValue = matches[1] + '-' + matches[2] + '-' + matches[3] + ' ' + (matches[4] || '00') + ':' + (matches[5] || '00');
         }
 
         $input.blur();

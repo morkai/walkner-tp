@@ -216,7 +216,7 @@ $(function()
     var who = this.value
       .split(/\r\n|\r|\n/)
       .map(function(line) { return line.trim(); })
-      .filter(function(line) { return line.length > 2; });
+      .filter(function(line) { return line.length > 0; });
 
     this.value = who.join('\r\n');
     this.parentNode.nextElementSibling.children[0].value = Math.max(who.length, 1);
@@ -224,13 +224,20 @@ $(function()
 
   $orderItems.on('blur', '.whenTo > .form-control', function()
   {
-    var matches = this.value.match(/([0-9]{4}).*?([0-9]{2}).*?([0-9]{2}).+?([0-9]{2}).*?([0-9]{2})/);
+    var matches = this.value.match(/([0-9]{4}).*?([0-9]{2}).*?([0-9]{2})(?:.*?([0-9]{2}).*?([0-9]{2}))?/);
 
     var time = matches === null
       ? NaN
-      : Date.parse(matches[1] + '-' + matches[2] + '-' + matches[3] + 'T' + matches[4] + ':' + matches[5] + ':00');
+      : Date.parse(matches[1] + '-' + matches[2] + '-' + matches[3] + 'T' + (matches[4] || '00') + ':' + (matches[5] || '00') + ':00');
 
     this.parentNode.parentNode.dataset.time = isNaN(time) ? 0 : time;
+
+    if (this.type !== 'datetime-local')
+    {
+      this.value = isNaN(time)
+        ? ''
+        : (matches[1] + '-' + matches[2] + '-' + matches[3] + ' ' + (matches[4] || '00') + ':' + (matches[5] || '00'));
+    }
 
     setTimeout(sortOrderItems, 1);
   });
