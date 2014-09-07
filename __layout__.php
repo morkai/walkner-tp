@@ -134,6 +134,6 @@ var $buoop = {
   }
 };
 </script>
-<script src="http://browser-update.org/update.js"></script>
+<!-- <script src="http://browser-update.org/update.js"></script> //-->
 </body>
 </html>
