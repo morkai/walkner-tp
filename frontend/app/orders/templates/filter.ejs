@@ -1,0 +1,21 @@
+<form class="well filter-form">
+  <div class="form-group">
+    <label><%- t('orders', 'PROPERTY:status') %></label>
+    <div id="<%- idPrefix %>-status" class="btn-group filter-btn-group" data-toggle="buttons">
+      <label class="btn btn-default"><input type="checkbox" name="status[]" value="open"><%- t('orders', 'status:open') %></label>
+      <label class="btn btn-default"><input type="checkbox" name="status[]" value="completed"><%- t('orders', 'status:completed') %></label>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="<%- idPrefix %>-subject"><%- t('orders', 'PROPERTY:subject') %></label>
+    <input id="<%- idPrefix %>-subject" class="form-control" name="subject" type="text">
+  </div>
+  <div class="form-group">
+    <label for="<%- idPrefix %>-owner"><%- t('orders', 'PROPERTY:owner') %></label>
+    <input id="<%- idPrefix %>-owner" name="owner" type="text">
+  </div>
+  <%- renderLimit() %>
+  <div class="form-group filter-actions">
+    <button type="submit" class="btn btn-default"><i class="fa fa-filter"></i><span><%= t('orders', 'filter:submit') %></span></button>
+  </div>
+</form>

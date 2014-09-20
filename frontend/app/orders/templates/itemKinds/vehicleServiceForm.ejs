@@ -1,0 +1,42 @@
+<div class="panel panel-default">
+  <input id="<%- idPrefix %>-quantity" type="hidden" name="items[<%- itemIndex %>].quantity" value="1">
+  <input id="<%- idPrefix %>-unit" type="hidden" name="items[<%- itemIndex %>].unit" value="vehicle">
+  <%- include _formPanelHeading.ejs %>
+  <div class="panel-body">
+    <div class="form-group">
+      <label for="<%- idPrefix %>-userDate" class="control-label is-required"><%- t('orders', 'userDate:vehicleService') %></label>
+      <div class="form-group-datetime">
+        <input id="<%- idPrefix %>-userDate" class="form-control" type="date" name="items[<%- itemIndex %>].userDate" required>
+        <input id="<%- idPrefix %>-userTime" class="form-control" type="time" name="items[<%- itemIndex %>].userTime" required>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-8 form-group">
+        <label for="<%- idPrefix %>-vehicle" class="control-label is-required"><%- t('orders', 'data:vehicle') %></label>
+        <textarea id="<%- idPrefix %>-vehicle" class="form-control" name="items[<%- itemIndex %>].data.vehicle" rows="2" required></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4 form-group">
+        <label for="<%- idPrefix %>-fromAddress" class="control-label is-required"><%- t('orders', 'fromAddress:vehicleService') %></label>
+        <textarea id="<%- idPrefix %>-fromAddress" class="form-control" name="items[<%- itemIndex %>].fromAddress" rows="3" required></textarea>
+      </div>
+      <div class="col-lg-4 form-group">
+        <label for="<%- idPrefix %>-toAddress" class="control-label"><%- t('orders', 'toAddress:vehicleService') %></label>
+        <textarea id="<%- idPrefix %>-toAddress" class="form-control" name="items[<%- itemIndex %>].toAddress" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4 form-group">
+        <label for="<%- idPrefix %>-symbol" class="control-label"><%- t('orders', 'PROPERTY:symbol') %></label>
+        <input id="<%- idPrefix %>-symbol" class="form-control" type="text" name="items[<%- itemIndex %>].symbol">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-8 form-group">
+        <label for="<%- idPrefix %>-notes" class="control-label"><%- t('orders', 'PROPERTY:notes') %></label>
+        <textarea id="<%- idPrefix %>-notes" class="form-control" name="items[<%- itemIndex %>].notes" rows="4"></textarea>
+      </div>
+    </div>
+  </div>
+</div>

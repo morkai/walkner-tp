@@ -1,0 +1,52 @@
+<form class="orders-form" method="post" action="<%- formAction %>" autocomplete="off">
+  <input type="hidden" name="_method" value="<%- formMethod %>">
+  <div class="panel panel-primary">
+    <div class="panel-heading"><%- panelTitleText %></div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-lg-4 form-group">
+          <label for="<%- idPrefix %>-subject" class="control-label is-required"><%- t('orders', 'PROPERTY:subject') %></label>
+          <input id="<%- idPrefix %>-subject" class="form-control" type="text" name="subject" required maxlength="50" autofocus>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 form-group">
+          <label for="<%- idPrefix %>-description" class="control-label"><%- t('orders', 'PROPERTY:description') %></label>
+          <textarea id="<%- idPrefix %>-description" class="form-control" name="description" rows="4"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 form-group has-required-select2">
+          <label for="<%- idPrefix %>-owner" class="control-label is-required"><%- t('orders', 'PROPERTY:owner') %></label>
+          <input id="<%- idPrefix %>-owner" type="text" name="owner" required>
+        </div>
+        <div class="col-lg-2 form-group">
+          <label for="<%- idPrefix %>-tel" class="control-label"><%- t('orders', 'PROPERTY:tel') %></label>
+          <input id="<%- idPrefix %>-tel" class="form-control" type="text" name="tel" maxlength="20">
+        </div>
+      </div>
+      <% if (editMode) { %>
+      <div class="row">
+        <div class="col-lg-4 form-group">
+          <label for="<%- idPrefix %>-comment" class="control-label"><%- t('orders', 'PROPERTY:comment') %></label>
+          <textarea id="<%- idPrefix %>-comment" class="form-control" name="comment" rows="3"></textarea>
+        </div>
+      </div>
+      <% } else { %>
+      <label class="control-label"><%- t('orders', 'PROPERTY:items') %></label>
+      <div class="orders-form-items"></div>
+      <div class="form-group">
+        <select id="<%- idPrefix %>-itemKind" class="form-control orders-form-newItemKind">
+          <% itemKinds.forEach(function(itemKind) { %>
+          <option value="<%- itemKind %>"><%- t('orders', 'itemKind:' + itemKind) %></option>
+          <% }) %>
+        </select>
+        <button id="<%- idPrefix %>-addItem" class="btn btn-default" type="button"><i class="fa fa-plus"></i><span><%- t('orders', 'form:addItem') %></span></button>
+      </div>
+      <% } %>
+    </div>
+    <div class="panel-footer">
+      <button type="submit" class="btn btn-primary"><%- formActionText %></button>
+    </div>
+  </div>
+</form>

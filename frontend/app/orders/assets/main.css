@@ -1,0 +1,84 @@
+.orders-form textarea {
+  font-family: Consolas, "Lucida Console", Monaco, monospace;
+}
+.orders-form-newItemKind {
+  width: auto;
+  display: inline-block;
+}
+.orders-form-items > .panel {
+  margin-bottom: 15px;
+  display: none;
+}
+.control-label.orders-form-quantity {
+  display: block;
+}
+.form-control.orders-form-quantity {
+  display: inline-block;
+  width: 256px;
+}
+.orders-form-quantity.is-with-unit {
+  width: 145px;
+  margin-right: 1px;
+}
+.orders-form-unit {
+  display: inline-block;
+  width: 110px;
+}
+.orders-details-container {
+  margin-bottom: 1em;
+}
+.orders-details pre,
+.orderItems-details pre {
+  margin: 0;
+  padding: 10px;
+  background: none;
+  border: none;
+  border-top: 1px dotted #d4d4d4;
+}
+.orderItems-details {
+  margin-bottom: 1em;
+}
+.orders-details .prop-value pre,
+.orderItems-details .prop-value pre {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+}
+.orderItems-confirmed {
+  display: inline-block;
+  padding: 3px 8px;
+  width: 30px;
+  line-height: 1;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  background-color: #333;
+  text-shadow: 1px 1px 3px #333;
+}
+.orderItems-confirmed.is-true {
+  background-color: #5cb85c;
+}
+.orderItems-confirmed.is-false {
+  background-color: #d9534f;
+}
+.orderItems-form-itemContainer {
+  margin-bottom: 1em;
+}
+.orderItems-form-number {
+  width: 256px;
+}
+.orderItems-details-summary {
+  display: none;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.orderItems-details-summary + .btn {
+  margin-left: 5px;
+}
+.is-collapsed .orderItems-details-summary {
+  display: inline-block;
+}
+.is-collapsed .orderItems-details-action {
+  display: none;
+}

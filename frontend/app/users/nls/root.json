@@ -1,0 +1,59 @@
+{
+  "root": {
+    "BREADCRUMBS:browse": "Users",
+    "BREADCRUMBS:account": "My account",
+    "BREADCRUMBS:addForm": "Adding",
+    "BREADCRUMBS:editForm": "Editing",
+    "BREADCRUMBS:ACTION_FORM:delete": "Deleting",
+
+    "MSG:LOADING_FAILURE": "Failed to load the users :(",
+    "MSG:LOADING_SINGLE_FAILURE": "Failed to load the user :(",
+    "MSG:DELETED": "User <em>{label}</em> was deleted.",
+
+    "PAGE_ACTION:add": "Add user",
+    "PAGE_ACTION:edit": "Edit user",
+    "PAGE_ACTION:delete": "Delete user",
+
+    "PANEL:TITLE:details": "User details",
+    "PANEL:TITLE:addForm": "Add user form",
+    "PANEL:TITLE:editForm": "Edit user form",
+
+    "filter:submit": "Filter users",
+    "filter:placeholder:lastName": "Any last name",
+
+    "PROPERTY:login": "Login",
+    "PROPERTY:password": "Password",
+    "PROPERTY:password2": "Confirm password",
+    "PROPERTY:email": "E-mail address",
+    "PROPERTY:tel": "Mobile no",
+    "PROPERTY:symbol": "MPK symbol",
+    "PROPERTY:privileges": "Privileges",
+    "PROPERTY:name": "Name",
+    "PROPERTY:firstName": "First name",
+    "PROPERTY:lastName": "Last name",
+
+    "FORM:ACTION:add": "Add user",
+    "FORM:ACTION:edit": "Edit user",
+    "FORM:ERROR:passwordMismatch": "The specified passwords do not match.",
+    "FORM:ERROR:addFailure": "Failed to add the user :-(",
+    "FORM:ERROR:editFailure": "Failed to edit the user :-(",
+
+    "ACTION_FORM:DIALOG_TITLE:delete": "User deletion confirmation",
+    "ACTION_FORM:BUTTON:delete": "Delete user",
+    "ACTION_FORM:MESSAGE:delete": "Are you sure you want to delete the chosen user?",
+    "ACTION_FORM:MESSAGE_SPECIFIC:delete": "Are you sure you want to delete the <em>{label}</em> user?",
+    "ACTION_FORM:MESSAGE_FAILURE:delete": "Failed to delete the user :-(",
+
+    "PRIVILEGE:EVENTS:VIEW": "Events: view",
+    "PRIVILEGE:EVENTS:MANAGE": "Events: manage",
+    "PRIVILEGE:USERS:VIEW": "Users: view",
+    "PRIVILEGE:USERS:MANAGE": "Users: manage",
+    "PRIVILEGE:ORDERS:DISPATCHER": "Orders: dispatcher",
+    "PRIVILEGE:ORDERS:DRIVER": "Orders: driver",
+    "PRIVILEGE:ORDERS:USER": "Orders: user",
+
+    "select2:placeholder": "Search by last name...",
+    "select2:users:system": "System"
+  },
+  "pl": true
+}

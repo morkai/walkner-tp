@@ -1,0 +1,89 @@
+<form class="orders-form" method="post" action="<%- formAction %>" autocomplete="off">
+  <input type="hidden" name="_method" value="<%- formMethod %>">
+  <div class="panel panel-primary">
+    <div class="panel-heading"><%- panelTitleText %></div>
+    <div class="panel-body">
+      <div class="form-group">
+        <label class="control-label"><%- t('orders', 'PROPERTY:order') %></label>
+        <p><a href="#orders/<%- model.order._id %>"><%- model.order.rid %>: <%= model.order.subject %></a></p>
+      </div>
+      <div class="orderItems-form-itemContainer"></div>
+      <% if (isDispatcher) { %>
+      <div id="<%- idPrefix %>-dispatcherPanel" class="panel panel-default">
+        <div class="panel-heading is-with-actions" role="togglePanel">
+          <%- t('orders', 'PANEL:TITLE:dispatcherData') %>
+          <div class="panel-actions">
+            <button class="btn btn-default" type="button" role="togglePanel"><i class="fa fa-chevron-up"></i></button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-4 form-group">
+              <label for="<%- idPrefix %>-driver" class="control-label"><%- t('orders', 'PROPERTY:driver') %></label>
+              <input id="<%- idPrefix %>-driver" name="driver" type="text">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="<%- idPrefix %>-price" class="control-label"><%- t('orders', 'PROPERTY:price') %></label>
+            <input id="<%- idPrefix %>-price" class="form-control orderItems-form-number" name="price" type="text">
+          </div>
+        </div>
+      </div>
+      <% } %>
+      <% if (isDispatcher || isDriver) { %>
+      <div id="<%- idPrefix %>-driverPanel" class="panel panel-default">
+        <div class="panel-heading is-with-actions" role="togglePanel">
+          <%- t('orders', 'PANEL:TITLE:driverData') %>
+          <div class="panel-actions">
+            <button class="btn btn-default" type="button" role="togglePanel"><i class="fa fa-chevron-up"></i></button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label for="<%- idPrefix %>-driverDate" class="control-label"><%- t('orders', 'PROPERTY:driverDateTime') %></label>
+            <div class="form-group-datetime">
+              <input id="<%- idPrefix %>-driverDate" class="form-control" type="date" name="driverDate">
+              <input id="<%- idPrefix %>-driverTime" class="form-control" type="time" name="driverTime">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="<%- idPrefix %>-km" class="control-label"><%- t('orders', 'PROPERTY:km') %></label>
+            <input id="<%- idPrefix %>-km" class="form-control orderItems-form-number" name="km" type="number" min="0" step="1">
+          </div>
+          <div class="form-group">
+            <label for="<%- idPrefix %>-hours" class="control-label"><%- t('orders', 'PROPERTY:hours') %></label>
+            <input id="<%- idPrefix %>-hours" class="form-control orderItems-form-number" name="hours" type="number" min="0" step="1">
+          </div>
+        </div>
+      </div>
+      <% } %>
+      <div class="form-group">
+        <label class="control-label"><%- t('orders', 'PROPERTY:confirmed') %></label>
+        <% if (isDispatcher) { %>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-owner" name="ownerConfirmed" type="checkbox" role="confirm" value="1"> <%- t('orders', 'PROPERTY:ownerConfirmed') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-dispatcher" name="dispatcherConfirmed" type="checkbox" role="confirm" value="1"> <%- t('orders', 'PROPERTY:dispatcherConfirmed') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-driver" name="driverConfirmed" type="checkbox" role="confirm" value="1"> <%- t('orders', 'PROPERTY:driverConfirmed') %></label></div>
+        <% } else if (isDriver) { %>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-owner" name="ownerConfirm" type="checkbox" role="confirm" value="1"> <%- t('orders', 'confirm:owner') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-dispatcher" name="dispatcherConfirm" type="checkbox" role="confirm" value="1"> <%- t('orders', 'confirm:dispatcher') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-driver" name="driverConfirmed" type="checkbox" role="confirm" value="1"> <%- t('orders', 'confirmAs:driver') %></label></div>
+        <% } else { %>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-owner" name="ownerConfirmed" type="checkbox" role="confirm" value="1"> <%- t('orders', 'confirmAs:owner') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-dispatcher" name="dispatcherConfirm" type="checkbox" role="confirm" value="1"> <%- t('orders', 'confirm:dispatcher') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-driver" name="driverConfirm" type="checkbox" role="confirm" value="1"> <%- t('orders', 'confirm:driver') %></label></div>
+        <% } %>
+      </div>
+      <% if (editMode) { %>
+      <div class="row">
+        <div class="col-lg-4 form-group">
+          <label for="<%- idPrefix %>-comment" class="control-label"><%- t('orders', 'PROPERTY:comment') %></label>
+          <textarea id="<%- idPrefix %>-comment" class="form-control" name="comment" rows="3"></textarea>
+        </div>
+      </div>
+      <% } %>
+    </div>
+    <div class="panel-footer">
+      <button type="submit" class="btn btn-primary"><%- formActionText %></button>
+    </div>
+  </div>
+</form>

@@ -5,4 +5,4 @@ Copyright (c) 2014, Łukasz Walukiewicz (lukasz@walukiewicz.eu). Some Rights Res
 
 Third-party acknowledgements:
 
-  - Everything from `__vendor__` is licensed under its own terms (compatible, open-source licenses).
+  - Everything from `node_modules/` and `frontend/vendor/` is licensed under its own terms (compatible, open-source licenses).
