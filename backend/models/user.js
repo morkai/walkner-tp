@@ -38,6 +38,7 @@ module.exports = function setUpUserModel(app, mongoose)
 
   userSchema.index({lastName: 1});
   userSchema.index({symbol: 1});
+  userSchema.index({privileges: 1});
 
   userSchema.statics.TOPIC_PREFIX = 'users';
 
