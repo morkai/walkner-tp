@@ -87,7 +87,7 @@ define([
         label: t.bound(collection.getNlsDomain(), 'PAGE_ACTION:add'),
         icon: 'plus',
         href: collection.genClientUrl('add'),
-        privileges: privilege || (collection.getPrivilegePrefix() + ':MANAGE')
+        privileges: privilege === undefined ? (collection.getPrivilegePrefix() + ':MANAGE') : privilege
       };
     },
     edit: function(model, privilege)
@@ -96,7 +96,7 @@ define([
         label: t.bound(model.getNlsDomain(), 'PAGE_ACTION:edit'),
         icon: 'edit',
         href: model.genClientUrl('edit'),
-        privileges: privilege || (model.getPrivilegePrefix() + ':MANAGE')
+        privileges: privilege === undefined ? (collection.getPrivilegePrefix() + ':MANAGE') : privilege
       };
     },
     delete: function(model, privilege)
@@ -105,7 +105,7 @@ define([
         label: t.bound(model.getNlsDomain(), 'PAGE_ACTION:delete'),
         icon: 'times',
         href: model.genClientUrl('delete'),
-        privileges: privilege || (model.getPrivilegePrefix() + ':MANAGE'),
+        privileges: privilege === undefined ? (collection.getPrivilegePrefix() + ':MANAGE') : privilege,
         callback: function(e)
         {
           if (e.button === 0)
@@ -142,7 +142,7 @@ define([
         icon: 'download',
         type: getTotalCount(collection) >= 10000 ? 'warning' : 'default',
         href: _.result(collection, 'url') + ';export?' + collection.rqlQuery,
-        privileges: privilege || (collection.getPrivilegePrefix() + ':VIEW'),
+        privileges: privilege === undefined ? (collection.getPrivilegePrefix() + ':VIEW') : privilege,
         className: 'export' + (collection.length ? '' : ' disabled')
       };
     },

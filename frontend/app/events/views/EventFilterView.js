@@ -54,13 +54,13 @@ define([
       this.toggleSeverity(this.formData.severity);
 
       this.$id('type').select2({
-        width: 300,
+        width: '100%',
         allowClear: true,
         data: this.model.eventTypes.map(function(eventType) { return eventType.toSelect2Option(); })
       });
 
       setUpUsersSelect2(this.$id('user'), {
-        width: 300,
+        width: '100%',
         view: this
       });
     },

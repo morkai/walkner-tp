@@ -82,5 +82,7 @@
   "filter:date:from": "Od",
   "filter:date:to": "Do",
   "filter:submit": "Filtruj",
-  "filter:limit": "Limit"
+  "filter:limit": "Limit",
+  "filter:show": "Pokaż filtr",
+  "filter:hide": "Ukryj filtr"
 }

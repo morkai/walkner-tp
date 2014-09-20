@@ -83,7 +83,9 @@
     "filter:date:from": "From",
     "filter:date:to": "To",
     "filter:submit": "Filter",
-    "filter:limit": "Limit"
+    "filter:limit": "Limit",
+    "filter:show": "Show filter",
+    "filter:hide": "Hide filter"
   },
   "pl": true
 }
