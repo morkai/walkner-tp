@@ -65,7 +65,7 @@ define([
         {
           return '/users?sort(lastName)&limit(20)&regex(lastName,' + encodeURIComponent('^' + term.trim()) + ',i)';
         },
-        results: function(data, query)
+        results: function(data, page, query)
         {
           var results = [getSystemData(), getRootData()].filter(function(user)
           {
