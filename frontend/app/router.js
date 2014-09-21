@@ -42,9 +42,14 @@ define([
     }
 
     backboneRouter.navigate(url, {
-      trigger: message.trigger === true,
-      replace: message.replace === true
+      trigger: !!message.trigger,
+      replace: !!message.replace
     });
+
+    if (!message.trigger && message.replace)
+    {
+      router.setCurrentRequest('/' + url);
+    }
   });
 
   var notFoundUrl = '/404';
