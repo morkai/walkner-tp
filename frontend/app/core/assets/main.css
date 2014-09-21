@@ -55,6 +55,7 @@ kbd {
 }
 .well {
   padding: 1em;
+  background-image: none;
 }
 .messages {
   position: fixed;
@@ -187,9 +188,16 @@ kbd {
   -moz-box-sizing: border-box;
 }
 
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+  background-image: none;
+  background-color: #ffffd6;
+}
+
 .panel-heading {
   text-shadow: 1px 1px 3px #333;
   font-weight: bold;
+  letter-spacing: 0.025em;
 }
 .panel-default > .panel-heading {
   text-shadow: none;
@@ -237,12 +245,6 @@ kbd {
 }
 .btn-link:active, .btn-link.active {
   box-shadow: none;
-}
-
-.dropdown-menu > li > a:hover,
-.dropdown-menu > li > a:focus {
-  color: #fff;
-  background-color: #428BCA;
 }
 
 @-webkit-keyframes yellow-fade {

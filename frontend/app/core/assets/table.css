@@ -1,6 +1,9 @@
 .table {
   margin-bottom: 1em;
 }
+.table-responsive {
+  margin-bottom: 1em;
+}
 .table-bordered > thead > tr > th.sortable:hover {
   border-bottom-color: #428BCA;
 }
