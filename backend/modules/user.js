@@ -191,17 +191,17 @@ exports.start = function startUserModule(app, module)
   {
     /**
      * @name UserInfo
-     * @type {{id: string, ip: string, label: string}}
+     * @type {{_id: mongoose.Types.ObjectId, ip: string, label: string}}
      */
     var userInfo = {
-      id: null,
+      _id: null,
       ip: '',
       label: ''
     };
 
     try
     {
-      userInfo.id = ObjectId.createFromHexString(String(userData._id || userData.id));
+      userInfo._id = ObjectId.createFromHexString(String(userData._id || userData.id));
     }
     catch (err) {}
 
