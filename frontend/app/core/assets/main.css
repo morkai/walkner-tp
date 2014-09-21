@@ -166,6 +166,9 @@ kbd {
 .page-actions-jump {
   width: 150px;
 }
+.page-actions-jump .form-control {
+  text-align: left;
+}
 [class^="fa-"] + span,
 [class*=" fa-"] + span {
   margin-left: 7px;

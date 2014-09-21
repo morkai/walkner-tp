@@ -157,6 +157,7 @@ define([
         template: function()
         {
           return jumpActionTemplate({
+            type: options.type || 'number',
             title: options.title || t(collection.getNlsDomain(), 'PAGE_ACTION:jump:title'),
             placeholder: options.placeholder || t(collection.getNlsDomain(), 'PAGE_ACTION:jump:placeholder')
           });
