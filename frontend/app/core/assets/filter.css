@@ -33,7 +33,7 @@
   margin-left: 1em;
   border-left: 0;
 }
-.filter-actions .dropdown-menu a {
+.filter-form .dropdown-menu a {
   cursor: pointer;
 }
 .filter-actions > hr {
@@ -116,6 +116,9 @@ input[type=checkbox].filter-inLabel {
   margin-bottom: 0;
   font-weight: normal;
 }
+.filter-inlineInputLabels > .btn-group {
+  vertical-align: top;
+}
 .filter-inlineInputLabels > .control-label + .control-label {
   margin-left: 10px;
 }
@@ -162,7 +165,8 @@ input[type=checkbox].filter-inLabel {
   .filter-inlineInputLabels > .control-label {
     display: block;
   }
-  .filter-inlineInputLabels > .control-label + .control-label {
+  .filter-inlineInputLabels > .control-label + .control-label,
+  .filter-inlineInputLabels > .control-label + .btn-group {
     margin-top: 5px;
     margin-left: 0;
   }

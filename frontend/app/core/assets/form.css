@@ -118,3 +118,19 @@ input.no-controls[type="number"] {
   height: 34px;
   padding-top: 8px;
 }
+
+.btn-group > .btn:focus,
+.btn-group-vertical > .btn:focus {
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.btn-default,
+.btn-primary,
+.btn-success,
+.btn-info,
+.btn-warning,
+.btn-danger {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
