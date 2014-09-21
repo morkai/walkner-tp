@@ -103,6 +103,9 @@ input.no-controls::-webkit-clear-button,
 input.no-controls::-webkit-inner-spin-button {
   display: none;
 }
+input.no-controls[type="number"] {
+  -moz-appearance: textfield;
+}
 .form-group-horizontal > .form-group {
   vertical-align: top;
   display: inline-block;
