@@ -124,7 +124,7 @@ define([
       var isOwner = this.model.isOwner();
       var isCreator = this.model.isCreator();
 
-      if (isOwner && !isCreator && !user.isAllowedTo('TRANSPORT_ORDERS:DISPATCHER'))
+      if (this.options.editMode && isOwner && !isCreator && !user.isAllowedTo('TRANSPORT_ORDERS:DISPATCHER'))
       {
         this.$id('owner').select2('enable', false);
       }
