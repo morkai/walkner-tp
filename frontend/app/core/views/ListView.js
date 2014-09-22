@@ -179,7 +179,7 @@ define([
       this.refreshCollection(model);
     },
 
-    refreshCollection: function(message)
+    refreshCollection: function(message, options)
     {
       if (message && this.timers.refreshCollection)
       {
@@ -188,11 +188,11 @@ define([
 
       if (Date.now() - this.lastRefreshAt > 3000)
       {
-        this.refreshCollectionNow();
+        this.refreshCollectionNow(options);
       }
       else
       {
-        this.timers.refreshCollection = setTimeout(this.refreshCollectionNow.bind(this), 3000);
+        this.timers.refreshCollection = setTimeout(this.refreshCollectionNow.bind(this, options), 3000);
       }
     },
 
