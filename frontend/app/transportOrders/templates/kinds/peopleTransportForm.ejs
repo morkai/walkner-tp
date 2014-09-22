@@ -1,0 +1,30 @@
+<div class="form-group">
+  <label for="<%- idPrefix %>-userDate" class="control-label is-required"><%- t('transportOrders', 'userDate:peopleTransport') %></label>
+  <div class="form-group-datetime">
+    <input id="<%- idPrefix %>-userDate" class="form-control" type="date" name="userDate" required>
+    <input id="<%- idPrefix %>-userTime" class="form-control" type="time" name="userTime" required>
+  </div>
+</div>
+<div class="form-group">
+  <label for="<%- idPrefix %>-quantity" class="control-label is-required tp-form-quantity"><%- t('transportOrders', 'quantity:peopleTransport') %></label>
+  <input id="<%- idPrefix %>-quantity" class="form-control tp-form-quantity" type="number" name="quantity" required step="1" min="1" value="1">
+  <input id="<%- idPrefix %>-unit" type="hidden" name="unit" value="person">
+</div>
+<div class="form-group">
+  <label for="<%- idPrefix %>-cargo" class="control-label"><%- t('transportOrders', 'cargo:peopleTransport') %></label>
+  <textarea id="<%- idPrefix %>-cargo" class="form-control" name="cargo" rows="2"></textarea>
+</div>
+<div class="row">
+  <div class="col-md-6 form-group">
+    <label for="<%- idPrefix %>-fromAddress" class="control-label is-required"><%- t('transportOrders', 'fromAddress:peopleTransport') %></label>
+    <textarea id="<%- idPrefix %>-fromAddress" class="form-control" name="fromAddress" rows="3" required></textarea>
+  </div>
+  <div class="col-md-6 form-group">
+    <label for="<%- idPrefix %>-toAddress" class="control-label is-required"><%- t('transportOrders', 'toAddress:peopleTransport') %></label>
+    <textarea id="<%- idPrefix %>-toAddress" class="form-control" name="toAddress" rows="3" required></textarea>
+  </div>
+</div>
+<div class="form-group">
+  <label for="<%- idPrefix %>-notes" class="control-label"><%- t('transportOrders', 'PROPERTY:notes') %></label>
+  <textarea id="<%- idPrefix %>-notes" class="form-control" name="notes" rows="4"></textarea>
+</div>

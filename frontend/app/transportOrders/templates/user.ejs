@@ -1,0 +1,20 @@
+<span class="tp-user">
+  <span class="tp-user-name">
+    <% if (user) { %>
+      <% if (user.label) { %>
+        <%= user.label %>
+      <% } else if (user.firstName && user.lastName) { %>
+        <%= user.firstName %> <%= user.lastName %>
+      <% } else if (user.login) { %>
+        <%= user.login %>
+      <% } else { %>
+        <%= user._id %>
+      <% } %>
+    <% } else { %>
+    -
+    <% } %>
+  </span>
+  <% if (user && user.tel) { %>
+  <span class="tp-user-tel">(<%= user.tel %>)</span>
+  <% } %>
+</span>

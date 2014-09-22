@@ -3,13 +3,17 @@
 // Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
 
 define([
-  './dashboard/routes',
-  './events/routes',
-  './users/routes',
-  './transportOrders/routes'
-], function()
-{
+  'app/core/pages/AddFormPage',
+  '../views/TransportOrderFormView'
+], function(
+  AddFormPage,
+  TransportOrderFormView
+) {
   'use strict';
 
+  return AddFormPage.extend({
 
+    FormView: TransportOrderFormView
+
+  });
 });

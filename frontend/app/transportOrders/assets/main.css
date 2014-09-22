@@ -1,0 +1,76 @@
+.tp-filter-owner,
+.tp-filter-driver {
+  width: 225px;
+}
+.filter-form .tp-filter-date {
+  width: 165px;
+}
+.tp-filter-to {
+  margin-left: 0!important;
+}
+.tp-form .panel .panel {
+  margin-top: -20px;
+  margin-left: -15px;
+  margin-right: -15px;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+}
+.tp-form .panel .panel:first-child {
+  margin-top: -15px;
+}
+.tp-form .panel:last-child {
+  margin-bottom: 0;
+}
+.tp-form textarea {
+  font-family: Consolas, "Lucida Console", Monaco, monospace;
+}
+.tp-form-kindGroup {
+  margin-bottom: 13px;
+}
+.control-label.tp-form-quantity {
+  display: block;
+}
+.form-control.tp-form-quantity {
+  display: inline-block;
+  width: 256px;
+}
+.tp-form-quantity.is-with-unit {
+  width: 145px;
+  margin-right: 1px;
+}
+.tp-form-unit {
+  display: inline-block;
+  width: 110px;
+}
+.tp-form-number {
+  width: 256px;
+}
+.tp-list-table .table,
+.tp-list-table .table tr th,
+.tp-list-table .table tr td,
+.tp-list-table > .table-responsive,
+.tp-list-table .actions .btn {
+  border-color: #bbb;
+}
+.tp-list-table td.actions {
+  text-align: right;
+}
+.list-item .tp-user {
+  vertical-align: middle;
+}
+.list-item .tp-user-tel {
+  white-space: nowrap;
+}
+.tp-confirm-indicator {
+  line-height: inherit;
+}
+.tp-confirm-indicator + span {
+  margin-left: 0;
+}
+@media (max-width: 767px) {
+  .tp-form-number,
+  .filter-form .tp-filter-date {
+    width: 100%;
+  }
+}

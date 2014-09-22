@@ -18,8 +18,8 @@ module.exports = function startCoreRoutes(app, express)
   var ROOT_USER = JSON.stringify(lodash.omit(userModule.root, 'password'));
   var GUEST_USER = JSON.stringify(userModule.guest);
   var PRIVILEGES = JSON.stringify(userModule.config.privileges);
-  var ORDER_ITEM_KINDS = JSON.stringify(
-    mongoose.modelNames().indexOf('OrderItem') === -1 ? [] : mongoose.model('OrderItem').KINDS
+  var TRANSPORT_KINDS = JSON.stringify(
+    lodash.contains(mongoose.modelNames(), 'TransportOrder') ? mongoose.model('TransportOrder').KINDS : []
   );
   var MODULES = JSON.stringify(app.options.modules.map(function(module)
   {
@@ -69,7 +69,7 @@ module.exports = function startCoreRoutes(app, express)
       ROOT_USER: ROOT_USER,
       GUEST_USER: GUEST_USER,
       PRIVILEGES: PRIVILEGES,
-      ORDER_ITEM_KINDS: ORDER_ITEM_KINDS,
+      TRANSPORT_KINDS: TRANSPORT_KINDS,
       MODULES: MODULES,
       DASHBOARD_URL_AFTER_LOG_IN: DASHBOARD_URL_AFTER_LOG_IN
     };

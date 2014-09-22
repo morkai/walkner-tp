@@ -3,13 +3,19 @@
 // Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
 
 define([
-  './dashboard/routes',
-  './events/routes',
-  './users/routes',
-  './transportOrders/routes'
-], function()
-{
+  '../core/Collection',
+  './TransportOrder'
+], function(
+  Collection,
+  TransportOrder
+) {
   'use strict';
 
+  return Collection.extend({
 
+    model: TransportOrder,
+
+    rqlQuery: 'sort(userDate)&limit(15)&status=in=(pending,confirmed)'
+
+  });
 });

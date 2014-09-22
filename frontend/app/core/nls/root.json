@@ -53,9 +53,7 @@
     "NAVBAR:LOCALE_US": "In English",
     "NAVBAR:LOG_IN": "Log in",
     "NAVBAR:LOG_OUT": "Log out",
-    "NAVBAR:ORDERS": "Orders",
-    "NAVBAR:ORDERS:LIST": "List of orders",
-    "NAVBAR:ORDER_ITEMS:LIST": "List of order items",
+    "NAVBAR:TRANSPORT_ORDERS": "Orders",
 
     "ACTION_FORM:BUTTON": "Perform action",
     "ACTION_FORM:BUTTON:delete": "Delete",

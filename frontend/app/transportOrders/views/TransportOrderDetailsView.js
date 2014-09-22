@@ -3,13 +3,17 @@
 // Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
 
 define([
-  './dashboard/routes',
-  './events/routes',
-  './users/routes',
-  './transportOrders/routes'
-], function()
-{
+  'app/core/views/DetailsView',
+  'app/transportOrders/templates/details'
+], function(
+  DetailsView,
+  detailsTemplate
+) {
   'use strict';
 
+  return DetailsView.extend({
 
+    template: detailsTemplate
+
+  });
 });

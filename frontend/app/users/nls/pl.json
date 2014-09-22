@@ -49,9 +49,9 @@
   "PRIVILEGE:USERS:MANAGE": "Użytkownicy: zarządzanie",
   "PRIVILEGE:DICTIONARIES:VIEW": "Słowniki: przeglądanie",
   "PRIVILEGE:DICTIONARIES:MANAGE": "Słowniki: zarządzanie",
-  "PRIVILEGE:ORDERS:DISPATCHER": "Zamówienia: dyspozytor",
-  "PRIVILEGE:ORDERS:DRIVER": "Zamówienia: kierowca",
-  "PRIVILEGE:ORDERS:USER": "Zamówienia: użytkownik",
+  "PRIVILEGE:TRANSPORT_ORDERS:DISPATCHER": "Zamówienia: dyspozytor",
+  "PRIVILEGE:TRANSPORT_ORDERS:DRIVER": "Zamówienia: kierowca",
+  "PRIVILEGE:TRANSPORT_ORDERS:USER": "Zamówienia: użytkownik",
 
   "select2:placeholder": "Szukaj po nazwisku...",
   "select2:users:system": "System"

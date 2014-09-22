@@ -1,0 +1,126 @@
+<form class="tp-form" method="post" action="<%- formAction %>" autocomplete="off">
+  <input type="hidden" name="_method" value="<%- formMethod %>">
+  <div class="panel panel-primary">
+    <div class="panel-heading"><%- panelTitleText %></div>
+    <div class="panel-body">
+      <% if (editMode) { %>
+      <div id="<%- idPrefix %>-ownerPanel" class="panel panel-default">
+        <div class="panel-heading is-with-actions" role="togglePanel">
+          <span><%- t('transportOrders', 'kind:' + model.kind) %></span>
+          <div class="panel-actions">
+            <button class="btn btn-default" type="button" role="togglePanel"><i class="fa fa-chevron-up"></i></button>
+          </div>
+        </div>
+        <div class="panel-body">
+      <% } %>
+      <div class="row">
+        <div class="col-md-6 form-group has-required-select2">
+          <label for="<%- idPrefix %>-owner" class="control-label is-required"><%- t('transportOrders', 'PROPERTY:owner') %></label>
+          <input id="<%- idPrefix %>-owner" type="text" name="owner" required>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="<%- idPrefix %>-tel" class="control-label"><%- t('transportOrders', 'PROPERTY:tel') %></label>
+          <input id="<%- idPrefix %>-tel" class="form-control" type="text" name="tel" maxlength="20">
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="<%- idPrefix %>-symbol" class="control-label"><%- t('transportOrders', 'PROPERTY:symbol') %></label>
+          <input id="<%- idPrefix %>-symbol" class="form-control" type="text" name="symbol" maxlength="20">
+        </div>
+      </div>
+      <% if (!editMode) { %>
+      <div class="form-group tp-form-kindGroup">
+        <label for="<%- idPrefix %>-kind" class="control-label"><%- t('transportOrders', 'PROPERTY:kind') %></label>
+        <select id="<%- idPrefix %>-kind" name="kind" required>
+          <% transportKinds.forEach(function(transportKind) { %>
+          <option value="<%- transportKind %>"><%- t('transportOrders', 'kind:' + transportKind) %></option>
+          <% }) %>
+        </select>
+        <span class="help-block"><%- t('transportOrders', 'form:help:kind') %></span>
+      </div>
+      <% } %>
+      <div id="<%- idPrefix %>-kindFields"></div>
+      <% if (editMode) { %>
+        </div>
+      </div>
+      <% } %>
+      <% if (editMode) { %>
+      <% if (isDispatcher) { %>
+      <div id="<%- idPrefix %>-dispatcherPanel" class="panel panel-default">
+        <div class="panel-heading is-with-actions" role="togglePanel">
+          <%- t('transportOrders', 'PANEL:TITLE:dispatcherData') %>
+          <div class="panel-actions">
+            <button class="btn btn-default" type="button" role="togglePanel"><i class="fa fa-chevron-up"></i></button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label for="<%- idPrefix %>-driver" class="control-label"><%- t('transportOrders', 'PROPERTY:driver') %></label>
+            <input id="<%- idPrefix %>-driver" name="driver" type="text">
+          </div>
+          <div class="form-group">
+            <label for="<%- idPrefix %>-price" class="control-label"><%- t('transportOrders', 'PROPERTY:price') %></label>
+            <input id="<%- idPrefix %>-price" class="form-control tp-form-number" name="price" type="text">
+          </div>
+          <div class="form-group">
+            <label class="control-label"><%- t('transportOrders', 'PROPERTY:status') %></label>
+            <div class="radio"><label><input id="<%- idPrefix %>-status-open" name="status" type="radio" value="open"> <%- t('transportOrders', 'status:open') %></label></div>
+            <div class="radio"><label><input id="<%- idPrefix %>-status-completed" name="status" type="radio" value="completed"> <%- t('transportOrders', 'status:completed') %></label></div>
+            <div class="radio"><label><input id="<%- idPrefix %>-status-cancelled" name="status" type="radio" value="cancelled"> <%- t('transportOrders', 'status:cancelled') %></label></div>
+          </div>
+        </div>
+      </div>
+      <% } %>
+      <% if (isDispatcher || isDriver) { %>
+      <div id="<%- idPrefix %>-driverPanel" class="panel panel-default">
+        <div class="panel-heading is-with-actions" role="togglePanel">
+          <%- t('transportOrders', 'PANEL:TITLE:driverData') %>
+          <div class="panel-actions">
+            <button class="btn btn-default" type="button" role="togglePanel"><i class="fa fa-chevron-up"></i></button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label for="<%- idPrefix %>-driverDate" class="control-label"><%- t('transportOrders', 'PROPERTY:driverDateTime') %></label>
+            <div class="form-group-datetime">
+              <input id="<%- idPrefix %>-driverDate" class="form-control" type="date" name="driverDate">
+              <input id="<%- idPrefix %>-driverTime" class="form-control" type="time" name="driverTime">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="<%- idPrefix %>-km" class="control-label"><%- t('transportOrders', 'PROPERTY:km') %></label>
+            <input id="<%- idPrefix %>-km" class="form-control tp-form-number" name="km" type="number" min="0" step="1">
+          </div>
+          <div class="form-group">
+            <label for="<%- idPrefix %>-hours" class="control-label"><%- t('transportOrders', 'PROPERTY:hours') %></label>
+            <input id="<%- idPrefix %>-hours" class="form-control tp-form-number" name="hours" type="number" min="0" step="1">
+          </div>
+        </div>
+      </div>
+      <% } %>
+      <div class="form-group">
+        <label class="control-label"><%- t('transportOrders', 'PROPERTY:confirmed') %></label>
+        <% if (isDispatcher) { %>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-owner" name="ownerConfirmed" type="checkbox" role="confirm" value="true"> <%- t('transportOrders', 'PROPERTY:ownerConfirmed') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-dispatcher" name="dispatcherConfirmed" type="checkbox" role="confirm" value="true"> <%- t('transportOrders', 'PROPERTY:dispatcherConfirmed') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-driver" name="driverConfirmed" type="checkbox" role="confirm" value="true"> <%- t('transportOrders', 'PROPERTY:driverConfirmed') %></label></div>
+        <% } else if (isDriver) { %>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-owner" name="ownerConfirm" type="checkbox" role="confirm" value="true"> <%- t('transportOrders', 'confirm:owner') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-dispatcher" name="dispatcherConfirm" type="checkbox" role="confirm" value="true"> <%- t('transportOrders', 'confirm:dispatcher') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-driver" name="driverConfirmed" type="checkbox" role="confirm" value="true"> <%- t('transportOrders', 'confirmAs:driver') %></label></div>
+        <% } else { %>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-owner" name="ownerConfirmed" type="checkbox" role="confirm" value="true"> <%- t('transportOrders', 'confirmAs:owner') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-dispatcher" name="dispatcherConfirm" type="checkbox" role="confirm" value="true"> <%- t('transportOrders', 'confirm:dispatcher') %></label></div>
+        <div class="checkbox"><label><input id="<%- idPrefix %>-confirmed-driver" name="driverConfirm" type="checkbox" role="confirm" value="true"> <%- t('transportOrders', 'confirm:driver') %></label></div>
+        <% } %>
+      </div>
+      <div class="form-group">
+        <label for="<%- idPrefix %>-comment" class="control-label"><%- t('transportOrders', 'PROPERTY:comment') %></label>
+        <textarea id="<%- idPrefix %>-comment" class="form-control" name="comment" rows="3"></textarea>
+      </div>
+      <% } %>
+    </div>
+    <div class="panel-footer">
+      <button type="submit" class="btn btn-primary"><%- formActionText %></button>
+    </div>
+  </div>
+</form>

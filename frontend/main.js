@@ -270,6 +270,7 @@
       'app/core/views/LogInFormView',
       'app/time',
       'app/routes',
+      'app/transportOrders/pubsub',
       'bootstrap',
       'moment-lang/pl',
       'select2-lang/' + locale,

@@ -3,13 +3,16 @@
 // Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
 
 define([
-  './dashboard/routes',
-  './events/routes',
-  './users/routes',
-  './transportOrders/routes'
-], function()
-{
+
+], function(
+
+) {
   'use strict';
 
+  var STORAGE_KEY = 'TRANSPORT_KINDS';
+  var privileges = window[STORAGE_KEY] || [];
 
+  delete window[STORAGE_KEY];
+
+  return privileges;
 });

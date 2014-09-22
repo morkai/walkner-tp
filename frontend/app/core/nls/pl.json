@@ -52,9 +52,7 @@
   "NAVBAR:LOCALE_US": "Po angielsku",
   "NAVBAR:LOG_IN": "Zaloguj się",
   "NAVBAR:LOG_OUT": "Wyloguj się",
-  "NAVBAR:ORDERS": "Zamówienia",
-  "NAVBAR:ORDERS:LIST": "Lista zamówień",
-  "NAVBAR:ORDER_ITEMS:LIST": "Lista pozycji zamówień",
+  "NAVBAR:TRANSPORT_ORDERS": "Zamówienia",
 
   "ACTION_FORM:BUTTON": "Wykonaj akcję",
   "ACTION_FORM:BUTTON:delete": "Usuń",

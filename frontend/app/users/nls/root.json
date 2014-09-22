@@ -48,9 +48,9 @@
     "PRIVILEGE:EVENTS:MANAGE": "Events: manage",
     "PRIVILEGE:USERS:VIEW": "Users: view",
     "PRIVILEGE:USERS:MANAGE": "Users: manage",
-    "PRIVILEGE:ORDERS:DISPATCHER": "Orders: dispatcher",
-    "PRIVILEGE:ORDERS:DRIVER": "Orders: driver",
-    "PRIVILEGE:ORDERS:USER": "Orders: user",
+    "PRIVILEGE:TRANSPORT_ORDERS:DISPATCHER": "Orders: dispatcher",
+    "PRIVILEGE:TRANSPORT_ORDERS:DRIVER": "Orders: driver",
+    "PRIVILEGE:TRANSPORT_ORDERS:USER": "Orders: user",
 
     "select2:placeholder": "Search by last name...",
     "select2:users:system": "System"

@@ -10,13 +10,13 @@ exports.modules = [
   'user',
   'express',
   'users',
-  'orders',
+  'transportOrders',
   'httpServer',
   'httpsServer',
   'sio'
 ];
 
-exports.dashboardUrlAfterLogIn = '/orders';
+exports.dashboardUrlAfterLogIn = '/transportOrders';
 
 exports.dictionaryModules = {
 
@@ -61,8 +61,8 @@ exports.pubsub = {
   republishTopics: [
     'events.saved',
     'users.added', 'users.edited', 'users.deleted',
-    'orders.added', 'orders.edited', 'orders.deleted',
-    'updater.newVersion'
+    'updater.newVersion',
+    'transportOrders.added.*.*', 'transportOrders.edited.*.*', 'transportOrders.deleted.*.*'
   ]
 };
 
@@ -72,7 +72,7 @@ exports.mongoose = {
   uri: require('./mongodb').uri,
   options: {},
   models: [
-    'event', 'user', 'order', 'orderItem'
+    'event', 'user', 'transportOrder'
   ]
 };
 
@@ -95,7 +95,7 @@ exports.user = {
   privileges: [
     'EVENTS:VIEW',
     'USERS:VIEW', 'USERS:MANAGE',
-    'ORDERS:DISPATCHER', 'ORDERS:DRIVER', 'ORDERS:USER'
+    'TRANSPORT_ORDERS:DISPATCHER', 'TRANSPORT_ORDERS:DRIVER', 'TRANSPORT_ORDERS:USER'
   ]
 };
 
