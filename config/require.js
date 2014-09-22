@@ -22,7 +22,8 @@ exports.paths = {
   'select2-lang': 'vendor/select2-lang',
   'highcharts': 'vendor/highcharts-custom',
   'zeroclipboard': 'vendor/zeroclipboard/ZeroClipboard',
-  'jquery.stickytableheaders': 'vendor/jquery.stickytableheaders'
+  'jquery.stickytableheaders': 'vendor/jquery.stickytableheaders',
+  'sift': 'vendor/sift'
 };
 
 exports.shim = {
@@ -41,6 +42,9 @@ exports.shim = {
   'highcharts': {
     deps: ['jquery'],
     exports: 'Highcharts'
+  },
+  'sift': {
+    exports: 'sift'
   }
 };
 
