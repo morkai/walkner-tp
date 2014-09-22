@@ -187,6 +187,11 @@ exports.start = function startUserModule(app, module)
     };
   }
 
+  /**
+   * @param {object|null} userData
+   * @param {object} [addressData]
+   * @returns {UserInfo|null}
+   */
   function createUserInfo(userData, addressData)
   {
     /**
@@ -203,7 +208,10 @@ exports.start = function startUserModule(app, module)
     {
       userInfo._id = ObjectId.createFromHexString(String(userData._id || userData.id));
     }
-    catch (err) {}
+    catch (err)
+    {
+      return null;
+    }
 
     if (typeof userData.label === 'string')
     {
@@ -219,6 +227,11 @@ exports.start = function startUserModule(app, module)
     }
 
     userInfo.ip = getRealIp(userData, addressData);
+
+    if (userInfo.ip === '0.0.0.0')
+    {
+      userInfo.ip = '';
+    }
 
     return userInfo;
   }
