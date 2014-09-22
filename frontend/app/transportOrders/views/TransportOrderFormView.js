@@ -297,12 +297,12 @@ define([
     {
       if (formData.userDate && formData.userTime)
       {
-        formData.userDate = time.getMoment(formData.userDate + ' ' + formData.userTime + ':00').valueOf();
+        formData.userDate = time.getMoment(formData.userDate + ' ' + formData.userTime + ':00').toISOString();
       }
 
       if (formData.driverDate && formData.driverTime)
       {
-        formData.driverDate = time.getMoment(formData.driverDate + ' ' + formData.driverTime + ':00').valueOf();
+        formData.driverDate = time.getMoment(formData.driverDate + ' ' + formData.driverTime + ':00').toISOString();
       }
 
       formData.tel = formData.tel || '';
