@@ -36,7 +36,7 @@ module.exports = function setUpTransportOrdersCommands(app, transportOrdersModul
           return reply(new Error('NO_ACCESS'));
         }
 
-        transportOrder.markAsSeen(user._id);
+        transportOrder.markAsSeen(user._id.toString());
 
         if (!transportOrder.modifiedPaths().length)
         {
