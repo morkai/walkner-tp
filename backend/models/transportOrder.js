@@ -282,7 +282,7 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
       return null;
     }
 
-    if (changes.driver !== undefined)
+    if (changes.driver !== undefined || changes.dispatcherConfirmed !== undefined)
     {
       var oldDispatcher = createUserInfo(this.dispatcher, null);
 
