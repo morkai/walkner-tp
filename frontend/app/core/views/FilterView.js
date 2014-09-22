@@ -156,6 +156,7 @@ define([
       rqlQuery.selector = {name: 'and', args: selector};
       rqlQuery.skip = 0;
       rqlQuery.limit = Math.min(Math.max(parseInt(this.$id('limit').val(), 10) || 15, this.minLimit), this.maxLimit);
+      rqlQuery.sift = null;
 
       this.trigger('filterChanged', rqlQuery);
     },
