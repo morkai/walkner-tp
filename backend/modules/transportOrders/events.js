@@ -10,18 +10,33 @@ module.exports = function setUpTransportOrdersEvents(app, transportOrdersModule)
 {
   app.broker.subscribe('transportOrders.added', function(transportOrder)
   {
-    publishEvent('added', transportOrder);
+    populateAndPublishEvent('added', transportOrder);
   });
 
   app.broker.subscribe('transportOrders.edited', function(transportOrder)
   {
-    publishEvent('edited', transportOrder);
+    populateAndPublishEvent('edited', transportOrder);
   });
 
   app.broker.subscribe('transportOrders.deleted', function(message)
   {
-    publishEvent('deleted', message.model);
+    populateAndPublishEvent('deleted', message.model);
   });
+
+  function populateAndPublishEvent(eventName, transportOrder)
+  {
+    transportOrder.populateUserData(function(err)
+    {
+      if (err)
+      {
+        return transportOrdersModule.error(
+          "Failed to populate user data for %s event publish: %s", eventName, err.message
+        );
+      }
+
+      publishEvent(eventName, transportOrder);
+    });
+  }
 
   function publishEvent(eventName, transportOrder)
   {

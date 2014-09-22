@@ -7,15 +7,17 @@ define([
   'app/time',
   'app/user',
   'app/i18n',
+  'app/core/View',
   'app/core/views/ListView',
   '../util/preparePrice',
-  'app/transportOrders/templates/listTable',
+  'app/transportOrders/templates/tableRow',
   'app/transportOrders/templates/user'
 ], function(
   _,
   time,
   user,
   t,
+  View,
   ListView,
   preparePrice,
   template,
@@ -23,87 +25,66 @@ define([
 ) {
   'use strict';
 
-  return ListView.extend({
+  return View.extend({
+
+    keep: false,
 
     template: template,
 
-    remoteTopics: {},
+    events: {
 
-    localTopics: {
-      'transportOrders.added.*': 'refreshCollection',
-      'transportOrders.edited.*': 'refreshCollection',
-      'transportOrders.deleted.*': 'onModelDeleted'
     },
-
-    events: _.extend({}, ListView.prototype.events, {
-
-      'click .action-markAsSeen': function(e)
-      {
-        var $action = this.$(e.currentTarget).addClass('disabled');
-        var $row = $action.closest('tr');
-        var transportOrder = this.collection.get($row.attr('data-id'));
-
-        $row.removeClass('is-changed').find('.is-changed').removeClass('is-changed');
-
-        this.socket.emit('transportOrders.markAsSeen', transportOrder.id);
-
-        return false;
-      }
-
-    }),
 
     initialize: function()
     {
-      ListView.prototype.initialize.call(this);
+      this.listenTo(this.model, 'change', this.render);
     },
 
     serializeActions: function()
     {
-      var collection = this.collection;
+      var model = this.model;
+      var actions = [];
 
-      return function(row)
+      if (model.isNotSeen())
       {
-        var model = collection.get(row._id);
-        var actions = [];
+        actions.push({
+          id: 'markAsSeen',
+          icon: 'eye',
+          label: t('transportOrders', 'LIST:ACTION:markAsSeen'),
+          href: '#'
+        });
+      }
 
-        if (model.isNotSeen())
-        {
-          actions.push({
-            id: 'markAsSeen',
-            icon: 'eye',
-            label: t.bound('transportOrders', 'LIST:ACTION:markAsSeen'),
-            href: '#'
-          });
-        }
+      actions.push(ListView.actions.viewDetails(model));
 
-        actions.push(ListView.actions.viewDetails(model));
+      if (model.isEditable())
+      {
+        actions.push({
+          id: 'confirm',
+          icon: 'check',
+          label: t('transportOrders', 'LIST:ACTION:confirm'),
+          href: model.genClientUrl('edit') + '?confirm=1'
+        });
+        actions.push(ListView.actions.edit(model));
+      }
 
-        if (model.isEditable())
-        {
-          actions.push({
-            id: 'confirm',
-            icon: 'check',
-            label: t.bound('transportOrders', 'LIST:ACTION:confirm'),
-            href: model.genClientUrl('edit') + '?confirm=1'
-          });
-          actions.push(ListView.actions.edit(model));
-        }
+      if (model.isDeletable())
+      {
+        actions.push(ListView.actions.delete(model));
+      }
 
-        if (model.isDeletable())
-        {
-          actions.push(ListView.actions.delete(model));
-        }
-
-        return actions;
-      };
+      return actions;
     },
 
-    serializeRow: function(model)
+    serialize: function()
     {
+      var model = this.model;
       var row = model.toJSON();
 
-      row.className = model.getStatusClassName();
+      row.idPrefix = this.idPrefix;
       row.changed = model.getChangedProperties();
+      row.className = model.getStatusClassName();
+      row.actions = this.serializeActions();
 
       if (row.tel)
       {
@@ -156,7 +137,9 @@ define([
       row.hours = row.hours.toLocaleString();
       row.price = preparePrice(row.price).str;
 
-      return row;
+      return {
+        row: row
+      };
     }
 
   });

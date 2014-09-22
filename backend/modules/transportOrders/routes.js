@@ -15,8 +15,6 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
   var TransportOrder = mongoose.model('TransportOrder');
   var User = mongoose.model('User');
 
-  var USER_FIELDS = {firstName: 1, lastName: 1, login: 1, tel: 1};
-
   express.get(
     '/transportOrders',
     limitToUser.bind(null, userModule),
@@ -86,7 +84,7 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
         return next(err);
       }
 
-      return res.json(transportOrder);
+      return res.json(201, transportOrder);
     });
   }
 
@@ -94,9 +92,9 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
   {
     TransportOrder
       .findById(req.params.id)
-      .populate('owner', USER_FIELDS)
-      .populate('dispatcher', USER_FIELDS)
-      .populate('driver', USER_FIELDS)
+      .populate('owner', TransportOrder.USER_FIELDS)
+      .populate('dispatcher', TransportOrder.USER_FIELDS)
+      .populate('driver', TransportOrder.USER_FIELDS)
       .lean()
       .exec(function(err, transportOrder)
     {
@@ -130,7 +128,7 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
 
     if (users.length)
     {
-      return User.find({_id: {$in: users}}, USER_FIELDS).lean().exec(function(err, users)
+      return User.find({_id: {$in: users}}, TransportOrder.USER_FIELDS).lean().exec(function(err, users)
       {
         if (err)
         {
@@ -163,9 +161,9 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
   {
     TransportOrder
       .findById(req.params.id)
-      .populate('owner', USER_FIELDS)
-      .populate('dispatcher', USER_FIELDS)
-      .populate('driver', USER_FIELDS)
+      .populate('owner', TransportOrder.USER_FIELDS)
+      .populate('dispatcher', TransportOrder.USER_FIELDS)
+      .populate('driver', TransportOrder.USER_FIELDS)
       .exec(function(err, transportOrder)
     {
       if (err)
@@ -212,18 +210,15 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
           return res.json(transportOrder);
         }
 
-        transportOrder
-          .populate({path: 'owner', select: USER_FIELDS})
-          .populate({path: 'dispatcher', select: USER_FIELDS})
-          .populate({path: 'driver', select: USER_FIELDS}, function(err)
+        transportOrder.populateUserData(function(err)
+        {
+          if (err)
           {
-            if (err)
-            {
-              return next(err);
-            }
+            return next(err);
+          }
 
-            return res.json(transportOrder);
-          });
+          return res.json(transportOrder);
+        });
       });
     });
   }

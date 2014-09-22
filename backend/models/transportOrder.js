@@ -11,6 +11,13 @@ var userInfoSchema = require('./userInfoSchema');
 
 module.exports = function setUpTransportOrderModel(app, mongoose)
 {
+  var USER_FIELDS = {
+    firstName: 1,
+    lastName: 1,
+    login: 1,
+    tel: 1
+  };
+
   var KINDS = [
     'peopleTransport',
     'airportArrival',
@@ -217,6 +224,7 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
   });
 
   transportOrderSchema.statics.TOPIC_PREFIX = 'transportOrders';
+  transportOrderSchema.statics.USER_FIELDS = USER_FIELDS;
   transportOrderSchema.statics.KINDS = KINDS;
 
   /**
@@ -339,6 +347,37 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
       this.driverNotify = false;
       this.driverChanges = null;
     }
+  };
+
+  /**
+   * @param {function(Error, object)} done
+   */
+  transportOrderSchema.methods.populateUserData = function(done)
+  {
+    var populate = false;
+
+    if (!this.owner._id)
+    {
+      populate = true;
+
+      this.populate({path: 'owner', select: USER_FIELDS});
+    }
+
+    if (this.dispatcher && !this.dispatcher._id)
+    {
+      populate = true;
+
+      this.populate({path: 'dispatcher', select: USER_FIELDS});
+    }
+
+    if (this.driver && !this.driver._id)
+    {
+      populate = true;
+
+      this.populate({path: 'driver', select: USER_FIELDS});
+    }
+
+    return populate ? this.populate(done) : done(null, this);
   };
 
   /**

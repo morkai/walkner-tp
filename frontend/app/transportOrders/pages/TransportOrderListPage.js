@@ -8,14 +8,14 @@ define([
   'app/core/pages/FilteredListPage',
   'app/core/util/pageActions',
   '../views/TransportOrderFilterView',
-  '../views/TransportOrderListTableView'
+  '../views/TransportOrderTableView'
 ], function(
   $,
   user,
   FilteredListPage,
   pageActions,
   TransportOrderFilterView,
-  TransportOrderListTableView
+  TransportOrderTableView
 ) {
   'use strict';
 
@@ -23,7 +23,7 @@ define([
 
     FilterView: TransportOrderFilterView,
 
-    ListView: TransportOrderListTableView,
+    ListView: TransportOrderTableView,
 
     actions: function()
     {
@@ -35,6 +35,24 @@ define([
       }
 
       return actions;
+    },
+
+    initialize: function()
+    {
+      FilteredListPage.prototype.initialize.call(this);
+
+      this.collection.setComparator();
+      this.collection.subscribe(this.broker);
+
+      this.listenTo(this.collection, 'dirty', function()
+      {
+        this.listView.refreshCollection(null, {reset: false});
+      });
+
+      this.listenTo(this.filterView, 'filterChanged', function()
+      {
+        this.collection.setComparator();
+      });
     },
 
     afterRender: function()
