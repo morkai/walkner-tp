@@ -162,14 +162,21 @@ define([
 
     onModelDeleted: function(message)
     {
-      if (!message || !message.model || !message.model._id)
+      if (!message)
       {
         return;
       }
 
-      this.$('.list-item[data-id="' + message.model._id + '"]').addClass('is-deleted');
+      var model = message.model || message;
 
-      this.refreshCollection(message);
+      if (!model._id)
+      {
+        return;
+      }
+
+      this.$('.list-item[data-id="' + model._id + '"]').addClass('is-deleted');
+
+      this.refreshCollection(model);
     },
 
     refreshCollection: function(message)
