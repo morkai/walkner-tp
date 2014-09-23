@@ -1,0 +1,52 @@
+<tr class="tp-list-table-details">
+  <td colspan="18">
+    <div class="tp-list-table-details-wrapper">
+      <div class="props">
+        <% if (/airport/.test(details.kind)) { %>
+        <div class="prop">
+          <div class="prop-name <%- details.changed.airport ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:airport') %></div>
+          <div class="prop-value"><%- details.airport || '-' %></div>
+        </div>
+        <div class="prop">
+          <div class="prop-name <%- details.changed.flightNo ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:flightNo') %></div>
+          <div class="prop-value"><%- details.flightNo || '-' %></div>
+        </div>
+        <% } %>
+        <div class="prop">
+          <div class="prop-name <%- details.changed.cargo ? 'is-changed' : '' %>"><%- t('transportOrders', 'cargo:' + details.kind) %></div>
+          <div class="prop-value">
+            <% if (details.cargo) { %>
+            <span class="text-mono"><%= details.cargo %></span>
+            <% } else { %>
+            -
+            <% } %>
+          </div>
+        </div>
+        <div class="prop">
+          <div class="prop-name <%- details.changed.notes ? 'is-changed' : '' %>">
+            <%- details.creator %>
+            <time datetime="<%- details.createdAt.datetime %>" title="<%- details.createdAt.title %>"><%- details.createdAt.label %></time>
+          </div>
+          <div class="prop-value">
+            <% if (details.notes) { %>
+            <span class="text-mono"><%= details.notes %></span>
+            <% } else { %>
+            <%- t('transportOrders', 'noNotes') %>
+            <% } %>
+          </div>
+        </div>
+        <% comments.forEach(function(comment) { %>
+        <div class="prop">
+          <div class="prop-name <%- comment.isNew ? 'is-changed' : '' %>">
+            <%- comment.creator %>
+            <time datetime="<%- comment.createdAt.datetime %>" title="<%- comment.createdAt.title %>"><%- comment.createdAt.label %></time>
+          </div>
+          <div class="prop-value">
+            <span class="text-mono"><%= comment.text %></span>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+  </td>
+</tr>

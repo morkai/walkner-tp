@@ -9,7 +9,7 @@ define([
 ) {
   'use strict';
 
-  var airports = [
+  var list = [
     {
       toponym: 'Białystok- Krywlany',
       name: 'Lotnisko Białystok- Krywlany',
@@ -229,15 +229,22 @@ define([
     }
   ];
 
+  var map = {};
+  var select2 = [];
+
+  list.forEach(function(airport)
+  {
+    map[airport.iata] = airport;
+    select2.push({
+      id: airport.iata,
+      text: airport.toponym + '; ' + airport.name + '; ' + airport.city + '; ' + airport.iata,
+      airport: airport
+    });
+  });
+
   return {
-    airports: airports,
-    select2: airports.map(function(airport)
-    {
-      return {
-        id: airport.iata,
-        text: airport.toponym + '; ' + airport.name + '; ' + airport.city + '; ' + airport.iata,
-        airport: airport
-      };
-    })
+    list: list,
+    map: map,
+    select2: select2
   };
 });

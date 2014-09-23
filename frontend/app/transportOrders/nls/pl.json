@@ -143,6 +143,7 @@
   "confirm:driver": "Wymuś potwierdzenie przez kierowcę",
 
   "noUser": "brak",
+  "noNotes": "utworzył zamówienie.",
 
   "ACTION_FORM:DIALOG_TITLE:delete": "Potwierdzenie usunięcia zamówienia",
   "ACTION_FORM:BUTTON:delete": "Usuń zamówienie",

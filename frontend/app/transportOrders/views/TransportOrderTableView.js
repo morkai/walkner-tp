@@ -33,17 +33,32 @@ define([
       {
         var $action = this.$(e.currentTarget).addClass('disabled');
         var $row = $action.closest('tr');
-        var transportOrder = this.collection.get($row.attr('data-id'));
+        var $next = $row.next();
 
         $row.removeClass('is-changed').find('.is-changed').removeClass('is-changed');
 
-        this.socket.emit('transportOrders.markAsSeen', transportOrder.id, function(err)
+        if ($next.hasClass('tp-list-table-details'))
+        {
+          $next.find('.is-changed').removeClass('is-changed');
+        }
+
+        this.socket.emit('transportOrders.markAsSeen', $row.attr('data-id'), function(err)
         {
           if (err)
           {
             console.error(err);
           }
         });
+
+        return false;
+      },
+      'click .actions .btn': function(e)
+      {
+        e.stopPropagation();
+      },
+      'click .list-item': function(e)
+      {
+        this.getView({el: e.currentTarget}).toggleDetails();
 
         return false;
       }

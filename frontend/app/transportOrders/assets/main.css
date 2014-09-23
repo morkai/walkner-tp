@@ -68,6 +68,31 @@
 .tp-confirm-indicator + span {
   margin-left: 0;
 }
+.tp-list-table-details > td {
+  padding: 0!important;
+}
+.tp-list-table-details-wrapper {
+  background: #fff;
+  padding: 5px 10px 5px 10px;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
+}
+.tp-list-table-details .prop:hover {
+  background-color: transparent;
+}
+.tp-list-table-details .prop-name {
+  width: 1px;
+}
+.tp-list-table-details .prop:nth-child(even) {
+  background-color: #fbfbfb;
+}
+.tp-list-table-details .prop:last-child:nth-child(even) {
+  border-bottom: 5px solid #fff;
+}
+.tp-list-table-details time {
+  display: block;
+  font-size: 0.8em;
+  font-weight: normal;
+}
 @media (max-width: 767px) {
   .tp-form-number,
   .filter-form .tp-filter-date {

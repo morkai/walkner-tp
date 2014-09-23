@@ -321,6 +321,10 @@ kbd {
   border-color: #0af;
 }
 
+.text-mono {
+  font-family: Consolas, Menlo, Monaco, monospace;
+  white-space: pre-wrap;
+}
 @media (max-width: 767px) {
   .page-actions {
     float: none;

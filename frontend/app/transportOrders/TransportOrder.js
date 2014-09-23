@@ -207,6 +207,72 @@ define([
       return STATUS_TO_CLASS[this.get('status')] || '';
     },
 
+    /**
+     * @returns {number}
+     */
+    getLastSeenAt: function()
+    {
+      var lastSeenAt;
+
+      if (this.isCreator())
+      {
+        lastSeenAt = this.get('creatorLastSeenAt');
+      }
+      else if (this.isOwner())
+      {
+        lastSeenAt = this.get('ownerLastSeenAt');
+      }
+      else if (this.isDispatcher())
+      {
+        lastSeenAt = this.get('dispatcherLastSeenAt');
+      }
+      else if (this.isDriver())
+      {
+        lastSeenAt = this.get('driverLastSeenAt');
+      }
+
+      if (lastSeenAt === undefined)
+      {
+        return -1;
+      }
+
+      if (lastSeenAt === null)
+      {
+        return 0;
+      }
+
+      return time.getMoment(lastSeenAt).valueOf();
+    },
+
+    /**
+     * @returns {object.<string, boolean>}
+     */
+    getChangedProperties: function()
+    {
+      var changes = {};
+
+      if (this.isDispatcher())
+      {
+        changes = this.getChangedPropertiesForUser('dispatcher');
+      }
+      else if (this.isDriver())
+      {
+        changes = this.getChangedPropertiesForUser('driver');
+      }
+      else if (this.isCreator())
+      {
+        changes = this.getChangedPropertiesForUser('creator');
+      }
+      else if (this.isOwner())
+      {
+        changes = this.getChangedPropertiesForUser('owner');
+      }
+
+      this.set('isNotSeen', Object.keys(changes).length > 0, {silent: true});
+
+      return changes;
+    },
+
     markAsSeen: function()
     {
       var changes = {
@@ -244,36 +310,6 @@ define([
       });
 
       this.set(changes);
-    },
-
-    /**
-     * @private
-     * @returns {object.<string, boolean>}
-     */
-    getChangedProperties: function()
-    {
-      var changes = {};
-
-      if (this.isDispatcher())
-      {
-        changes = this.getChangedPropertiesForUser('dispatcher');
-      }
-      else if (this.isDriver())
-      {
-        changes = this.getChangedPropertiesForUser('driver');
-      }
-      else if (this.isCreator())
-      {
-        changes = this.getChangedPropertiesForUser('creator');
-      }
-      else if (this.isOwner())
-      {
-        changes = this.getChangedPropertiesForUser('owner');
-      }
-
-      this.set('isNotSeen', Object.keys(changes).length > 0, {silent: true});
-
-      return changes;
     },
 
     /**

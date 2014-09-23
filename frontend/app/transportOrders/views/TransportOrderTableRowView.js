@@ -4,23 +4,31 @@
 
 define([
   'underscore',
+  'jquery',
+  'moment',
   'app/time',
   'app/user',
   'app/i18n',
   'app/core/View',
   'app/core/views/ListView',
+  'app/data/airports',
   '../util/preparePrice',
   'app/transportOrders/templates/tableRow',
+  'app/transportOrders/templates/tableRowDetails',
   'app/transportOrders/templates/user'
 ], function(
   _,
+  $,
+  moment,
   time,
   user,
   t,
   View,
   ListView,
+  airports,
   preparePrice,
   template,
+  renderDetails,
   renderUser
 ) {
   'use strict';
@@ -31,13 +39,25 @@ define([
 
     template: template,
 
-    events: {
-
-    },
-
     initialize: function()
     {
+      this.$details = null;
+      this.changed = {};
+
       this.listenTo(this.model, 'change', this.render);
+    },
+
+    destroy: function()
+    {
+      this.collapseDetails(false);
+    },
+
+    afterRender: function()
+    {
+      if (this.$details !== null)
+      {
+        this.expandDetails(false);
+      }
     },
 
     serializeActions: function()
@@ -82,7 +102,7 @@ define([
       var row = model.toJSON();
 
       row.idPrefix = this.idPrefix;
-      row.changed = model.getChangedProperties();
+      row.changed = this.changed = model.getChangedProperties();
       row.className = model.getStatusClassName();
       row.actions = this.serializeActions();
 
@@ -133,6 +153,11 @@ define([
       row.quantity = row.quantity.toLocaleString();
       row.unit = t.has('transportOrders', 'unit:' + row.unit) ? t('transportOrders', 'unit:' + row.unit) : row.unit;
 
+      if (!row.symbol)
+      {
+        row.symbol = '-';
+      }
+
       row.km = row.km.toLocaleString();
       row.hours = row.hours.toLocaleString();
       row.price = preparePrice(row.price).str;
@@ -140,6 +165,134 @@ define([
       return {
         row: row
       };
+    },
+
+    serializeDetails: function()
+    {
+      var model = this.model;
+      var airport = airports.map[model.get('airport')];
+      var createdAtMoment = moment(model.get('createdAt'));
+      var details = {
+        kind: model.get('kind'),
+        changed: this.changed,
+        createdAt: {
+          datetime: createdAtMoment.toISOString(),
+          title: createdAtMoment.format('LLLL'),
+          label: moment.duration(createdAtMoment.valueOf() - Date.now()).humanize(true)
+        },
+        creator: renderUser({user: model.get('creator')}),
+        airport: airport ? (airport.name + ' (' + airport.iata + ')') : null,
+        flightNo: model.get('flightNo'),
+        cargo: model.get('cargo'),
+        notes: model.get('notes')
+      };
+
+      return details;
+    },
+
+    serializeComments: function()
+    {
+      var comments = [];
+      var lastSeenAt = this.model.getLastSeenAt();
+      var changes = this.model.get('changes');
+
+      for (var i = 0, l = changes.length; i < l; ++i)
+      {
+        var change = changes[i];
+
+        if (!change.comment.length)
+        {
+          continue;
+        }
+
+        var createdAtMoment = time.getMoment(change.date);
+        var createdAtTime = createdAtMoment.valueOf();
+
+        comments.push({
+          text: change.comment,
+          isNew: lastSeenAt === -1 || change.user._id === user.data._id
+            ? false
+            : (lastSeenAt === 0 || createdAtTime >= lastSeenAt),
+          creator: renderUser(change),
+          createdAt: {
+            datetime: createdAtMoment.toISOString(),
+            title: createdAtMoment.format('LLLL'),
+            label: moment.duration(createdAtMoment.valueOf() - Date.now()).humanize(true)
+          }
+        });
+      }
+
+      return comments;
+    },
+
+    toggleDetails: function()
+    {
+      if (this.$details)
+      {
+        this.collapseDetails();
+      }
+      else
+      {
+        this.expandDetails();
+      }
+    },
+
+    collapseDetails: function(animate)
+    {
+      if (this.$details === null)
+      {
+        return;
+      }
+
+      if (animate !== false)
+      {
+        var view = this;
+
+        this.$details.find('.tp-list-table-details-wrapper').slideUp('fast', function()
+        {
+          view.collapseDetails(false);
+        });
+      }
+      else
+      {
+        this.$details.remove();
+        this.$details = null;
+      }
+    },
+
+    expandDetails: function(animate)
+    {
+      var $details = $(renderDetails({
+        details: this.serializeDetails(),
+        comments: this.serializeComments()
+      }));
+
+      if (this.$details === null)
+      {
+        this.$details = $details;
+      }
+      else
+      {
+        this.$details
+          .find('.tp-list-table-details-wrapper')
+          .replaceWith($details.find('.tp-list-table-details-wrapper'));
+      }
+
+      this.$details.find('.props').first().addClass('first');
+
+      var $wrapper = this.$details.find('.tp-list-table-details-wrapper');
+
+      if (animate !== false)
+      {
+        $wrapper.hide();
+      }
+
+      this.$details.insertAfter(this.$el);
+
+      if (animate !== false)
+      {
+        $wrapper.slideDown('fast');
+      }
     }
 
   });
