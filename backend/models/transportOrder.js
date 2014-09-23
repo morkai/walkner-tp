@@ -289,7 +289,12 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
     var changes = this.compareProperties(lodash.pick(input, inputProperties), createUserInfo);
     var changedProperties = Object.keys(changes);
 
-    if (!changedProperties.length && comment === '')
+    if (comment !== '')
+    {
+      changedProperties.push('comment');
+    }
+
+    if (!changedProperties.length)
     {
       return null;
     }
