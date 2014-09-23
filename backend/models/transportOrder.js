@@ -62,7 +62,11 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
     date: Date,
     user: userInfoSchema,
     data: {},
-    comment: String
+    comment: {
+      type: String,
+      trim: true,
+      default: ''
+    }
   }, {
     _id: false
   });
