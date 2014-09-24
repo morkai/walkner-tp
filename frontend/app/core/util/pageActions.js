@@ -96,7 +96,7 @@ define([
         label: t.bound(model.getNlsDomain(), 'PAGE_ACTION:edit'),
         icon: 'edit',
         href: model.genClientUrl('edit'),
-        privileges: privilege === undefined ? (collection.getPrivilegePrefix() + ':MANAGE') : privilege
+        privileges: privilege === undefined ? (model.getPrivilegePrefix() + ':MANAGE') : privilege
       };
     },
     delete: function(model, privilege)
@@ -105,7 +105,7 @@ define([
         label: t.bound(model.getNlsDomain(), 'PAGE_ACTION:delete'),
         icon: 'times',
         href: model.genClientUrl('delete'),
-        privileges: privilege === undefined ? (collection.getPrivilegePrefix() + ':MANAGE') : privilege,
+        privileges: privilege === undefined ? (model.getPrivilegePrefix() + ':MANAGE') : privilege,
         callback: function(e)
         {
           if (e.button === 0)
