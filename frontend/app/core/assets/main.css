@@ -325,6 +325,10 @@ kbd {
   font-family: Consolas, Menlo, Monaco, monospace;
   white-space: pre-wrap;
 }
+.is-changed {
+  color: #e00;
+}
+
 @media (max-width: 767px) {
   .page-actions {
     float: none;

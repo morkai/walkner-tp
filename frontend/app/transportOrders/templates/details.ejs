@@ -1,36 +1,131 @@
-<div class="panel panel-<%- model.status === 'open' ? 'warning' : 'success' %> orders-details">
-  <div class="panel-heading">
-    <%= model.subject %>
-  </div>
-  <div class="panel-details">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="props first">
-          <div class="prop">
-            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:owner') %></div>
-            <div class="prop-value"><%- model.owner %></div>
-          </div>
-          <div class="prop">
-            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:tel') %></div>
-            <div class="prop-value"><%= model.tel || '-' %></div>
-          </div>
+<div class="tp-details">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-<%- user.panelType %>">
+        <div class="panel-heading">
+          <%- rid %>: <%- t('transportOrders', 'kind:' + kind) %>
         </div>
-      </div>
-      <div class="col-md-6">
-        <div class="props">
-          <div class="prop">
-            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:createdAt') %></div>
-            <div class="prop-value"><%= model.createdAt %></div>
-          </div>
-          <div class="prop">
-            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:creator') %></div>
-            <div class="prop-value"><%- model.creator %></div>
+        <div class="panel-details">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="props first">
+                <div class="prop">
+                  <div class="prop-name <%- changed.owner ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:owner') %></div>
+                  <div class="prop-value"><%= user.name %></div>
+                </div>
+                <div class="prop">
+                  <div class="prop-name <%- changed.tel ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:tel') %></div>
+                  <div class="prop-value"><%= user.tel %></div>
+                </div>
+                <div class="prop">
+                  <div class="prop-name <%- changed.userDate ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:userDateTime') %></div>
+                  <div class="prop-value"><%= user.date %></div>
+                </div>
+                <div class="prop">
+                  <div class="prop-name <%- changed.quantity ? 'is-changed' : '' %>"><%- t('transportOrders', 'quantity:' + kind) %> [<%- t('transportOrders', 'PROPERTY:unit') %>]</div>
+                  <div class="prop-value"><%= user.quantity %> [<%- user.unit %>]</div>
+                </div>
+                <div class="prop">
+                  <div class="prop-name <%- changed.cargo ? 'is-changed' : '' %>"><%- t('transportOrders', 'cargo:' + kind) %></div>
+                  <div class="prop-value text-mono"><%= user.cargo %></div>
+                </div>
+                <% if (/airport/.test(kind)) { %>
+                <div class="prop">
+                  <div class="prop-name <%- changed.airport ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:airport') %></div>
+                  <div class="prop-value"><%- user.airport || '-' %></div>
+                </div>
+                <div class="prop">
+                  <div class="prop-name <%- changed.flightNo ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:flightNo') %></div>
+                  <div class="prop-value"><%- user.flightNo || '-' %></div>
+                </div>
+                <% } %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="props">
+                <div class="prop">
+                  <div class="prop-name"><%- t('transportOrders', 'PROPERTY:creator') %></div>
+                  <div class="prop-value"><%= user.creator.name %></div>
+                </div>
+                <div class="prop">
+                  <div class="prop-name"><%- t('transportOrders', 'PROPERTY:tel') %></div>
+                  <div class="prop-value"><%= user.creator.tel %></div>
+                </div>
+                <div class="prop">
+                  <div class="prop-name"><%- t('transportOrders', 'PROPERTY:createdAt') %></div>
+                  <div class="prop-value"><%= user.createdAt %></div>
+                </div>
+                <div class="prop">
+                  <div class="prop-name <%- changed.fromAddress ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:fromAddress') %></div>
+                  <div class="prop-value text-mono"><%= user.fromAddress %></div>
+                </div>
+                <div class="prop">
+                  <div class="prop-name <%- changed.toAddress ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:toAddress') %></div>
+                  <div class="prop-value text-mono"><%= user.toAddress %></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <% if (model.description) { %>
-    <pre><%= model.description %></pre>
-    <% } %>
+    <div class="col-md-3">
+      <div class="panel panel-<%- driver.panelType %>">
+        <div class="panel-heading">
+          <%- t('transportOrders', 'PANEL:TITLE:driverData') %>
+        </div>
+        <div class="panel-details">
+          <div class="props first">
+            <div class="prop">
+              <div class="prop-name <%- changed.driver ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:name') %></div>
+              <div class="prop-value"><%= driver.name %></div>
+            </div>
+            <div class="prop">
+              <div class="prop-name <%- changed.driver ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:tel') %></div>
+              <div class="prop-value"><%= driver.tel %></div>
+            </div>
+            <div class="prop">
+              <div class="prop-name <%- changed.driverDate ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:driverDateTime') %></div>
+              <div class="prop-value"><%= driver.date %></div>
+            </div>
+            <div class="prop">
+              <div class="prop-name <%- changed.km ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:km') %></div>
+              <div class="prop-value"><%= driver.km %></div>
+            </div>
+            <div class="prop">
+              <div class="prop-name <%- changed.hours ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:hours') %></div>
+              <div class="prop-value"><%= driver.hours %></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel panel-<%- dispatcher.panelType %> %>">
+        <div class="panel-heading">
+          <%- t('transportOrders', 'PANEL:TITLE:dispatcherData') %>
+        </div>
+        <div class="panel-details">
+          <div class="props first">
+            <div class="prop">
+              <div class="prop-name <%- changed.dispatcher ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:name') %></div>
+              <div class="prop-value"><%= dispatcher.name %></div>
+            </div>
+            <div class="prop">
+              <div class="prop-name <%- changed.dispatcher ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:tel') %></div>
+              <div class="prop-value"><%= dispatcher.tel %></div>
+            </div>
+            <div class="prop">
+              <div class="prop-name <%- changed.status ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:status') %></div>
+              <div class="prop-value"><%= dispatcher.status %></div>
+            </div>
+            <div class="prop">
+              <div class="prop-name <%- changed.price ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:price') %></div>
+              <div class="prop-value"><%= dispatcher.price %></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

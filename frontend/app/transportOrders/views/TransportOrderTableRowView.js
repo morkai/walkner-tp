@@ -42,7 +42,6 @@ define([
     initialize: function()
     {
       this.$details = null;
-      this.changed = {};
 
       this.listenTo(this.model, 'change', this.render);
     },
@@ -102,7 +101,7 @@ define([
       var row = model.toJSON();
 
       row.idPrefix = this.idPrefix;
-      row.changed = this.changed = model.getChangedProperties();
+      row.changed = model.get('changedProperties');
       row.className = model.getStatusClassName();
       row.actions = this.serializeActions();
 
@@ -170,24 +169,22 @@ define([
     serializeDetails: function()
     {
       var model = this.model;
-      var airport = airports.map[model.get('airport')];
       var createdAtMoment = moment(model.get('createdAt'));
-      var details = {
+
+      return {
         kind: model.get('kind'),
-        changed: this.changed,
+        changed: model.get('changedProperties'),
         createdAt: {
           datetime: createdAtMoment.toISOString(),
           title: createdAtMoment.format('LLLL'),
           label: moment.duration(createdAtMoment.valueOf() - Date.now()).humanize(true)
         },
         creator: renderUser({user: model.get('creator')}),
-        airport: airport ? (airport.name + ' (' + airport.iata + ')') : null,
+        airport: airports.getLabel(model.get('airport')),
         flightNo: model.get('flightNo'),
         cargo: model.get('cargo'),
         notes: model.get('notes')
       };
-
-      return details;
     },
 
     serializeComments: function()

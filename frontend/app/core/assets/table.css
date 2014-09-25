@@ -33,9 +33,6 @@ td.is-min {
   width: 1px;
   white-space: nowrap;
 }
-.table .is-changed {
-  color: #e00;
-}
 .table .actions {
   white-space: nowrap;
   width: 1px;

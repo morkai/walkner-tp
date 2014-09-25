@@ -1,0 +1,118 @@
+<div class="panel panel-<%- item.panelType %> orderItems-details">
+  <div class="btn-toolbar">
+    <button id="<%- idPrefix %>-toggle" class="btn btn-default"><i class="fa fa-chevron-up"></i></button>
+    <span class="orderItems-details-summary"><%- item.rid %>: <%- item.kindText %></span>
+    <button id="<%- idPrefix %>-confirm" class="btn btn-default orderItems-details-action"><i class="fa fa-thumbs-o-up"></i><span><%- t('transportOrders', 'item:confirm') %></span></button>
+    <button id="<%- idPrefix %>-edit" class="btn btn-default orderItems-details-action"><i class="fa fa-edit"></i><span><%- t('transportOrders', 'item:edit') %></span></button>
+    <button id="<%- idPrefix %>-delete" class="btn btn-default orderItems-details-action"><i class="fa fa-times"></i><span><%- t('transportOrders', 'item:delete') %></span></button>
+  </div>
+  <div class="panel-details">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="props first">
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:rid') %></div>
+            <div class="prop-value"><%- item.rid %></div>
+          </div>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:kind') %></div>
+            <div class="prop-value"><%= item.kindText %></div>
+          </div>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:userDateTime') %></div>
+            <div class="prop-value"><%= item.userDate %>, <%= item.userTime %></div>
+          </div>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:quantity') %> [<%= item.unit %>]</div>
+            <div class="prop-value"><%= item.quantity %></div>
+          </div>
+          <% if (item.data && item.data.passengers) { %>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'data:passengers') %></div>
+            <div class="prop-value"><pre><%= item.data.passengers %></pre></div>
+          </div>
+          <% } %>
+          <% if (item.data && item.data.flightNo) { %>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'data:flightNo') %></div>
+            <div class="prop-value"><%= item.data.flightNo %></div>
+          </div>
+          <% } %>
+          <% if (item.data && item.data.airport) { %>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'data:airport') %></div>
+            <div class="prop-value"><%= item.data.airport %></div>
+          </div>
+          <% } %>
+          <% if (item.data && item.data.vehicle) { %>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'data:vehicle') %></div>
+            <div class="prop-value"><pre><%= item.data.vehicle %></pre></div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="props">
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:symbol') %></div>
+            <div class="prop-value"><%= item.symbol || '-' %></div>
+          </div>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:fromAddress') %></div>
+            <div class="prop-value">
+              <pre><%= item.fromAddress %></pre>
+            </div>
+          </div>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:toAddress') %></div>
+            <div class="prop-value">
+              <pre><%= item.toAddress || '-' %></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="props">
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:confirmed') %></div>
+            <div class="prop-value">
+              <span class="orderItems-confirmed is-<%- item.ownerConfirmed %>" title="<%- t('transportOrders', 'PROPERTY:ownerConfirmed') %>"><%- t('transportOrders', 'confirmed:owner') %></span>
+              <span class="orderItems-confirmed is-<%- item.dispatcherConfirmed %>" title="<%- t('transportOrders', 'PROPERTY:dispatcherConfirmed') %>"><%- t('transportOrders', 'confirmed:dispatcher') %></span>
+              <span class="orderItems-confirmed is-<%- item.driverConfirmed %>" title="<%- t('transportOrders', 'PROPERTY:driverConfirmed') %>"><%- t('transportOrders', 'confirmed:driver') %></span>
+            </div>
+          </div>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:driver') %></div>
+            <div class="prop-value"><%- item.driver %></div>
+          </div>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:driverDateTime') %></div>
+            <div class="prop-value">
+              <% if (item.driverDate) { %>
+              <%= item.driverDate %>, <%- item.driverTime %>
+              <% } else { %>
+              -
+              <% } %>
+            </div>
+          </div>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:km') %></div>
+            <div class="prop-value"><%= item.km %></div>
+          </div>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:hours') %></div>
+            <div class="prop-value"><%= item.hours %></div>
+          </div>
+          <div class="prop">
+            <div class="prop-name"><%- t('transportOrders', 'PROPERTY:price') %></div>
+            <div class="prop-value"><%= item.price %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% if (item.notes) { %>
+    <pre><%= item.notes %></pre>
+    <% } %>
+  </div>
+</div>

@@ -46,11 +46,15 @@ define([
 
     labelAttribute: 'rid',
 
-    defaults: {
-      quantity: 1,
-      km: 0,
-      hours: 0,
-      price: 0
+    defaults: function()
+    {
+      return {
+        quantity: 1,
+        km: 0,
+        hours: 0,
+        price: 0,
+        changedProperties: {}
+      };
     },
 
     initialize: function()
@@ -61,6 +65,10 @@ define([
       {
         this.set('unit', KIND_TO_UNIT[kind]);
       }
+
+      this.on('reset change', this.prepareChangedProperties);
+
+      this.prepareChangedProperties();
     },
 
     /**
@@ -78,14 +86,7 @@ define([
      */
     isNotSeen: function()
     {
-      var isNotSeen = this.get('isNotSeen');
-
-      if (isNotSeen === undefined)
-      {
-        this.getChangedProperties();
-      }
-
-      return isNotSeen;
+      return !_.isEmpty(this.get('changedProperties'));
     },
 
     /**
@@ -254,39 +255,10 @@ define([
       return time.getMoment(lastSeenAt).valueOf();
     },
 
-    /**
-     * @returns {object.<string, boolean>}
-     */
-    getChangedProperties: function()
-    {
-      var changes = {};
-
-      if (this.isDispatcher())
-      {
-        changes = this.getChangedPropertiesForUser('dispatcher');
-      }
-      else if (this.isDriver())
-      {
-        changes = this.getChangedPropertiesForUser('driver');
-      }
-      else if (this.isCreator())
-      {
-        changes = this.getChangedPropertiesForUser('creator');
-      }
-      else if (this.isOwner())
-      {
-        changes = this.getChangedPropertiesForUser('owner');
-      }
-
-      this.set('isNotSeen', Object.keys(changes).length > 0, {silent: true});
-
-      return changes;
-    },
-
     markAsSeen: function()
     {
       var changes = {
-        isNotSeen: false
+        changedProperties: null
       };
       var userTypes = [];
 
@@ -320,6 +292,37 @@ define([
       });
 
       this.set(changes);
+    },
+
+    /**
+     * @private
+     * @returns {object.<string, boolean>}
+     */
+    prepareChangedProperties: function()
+    {
+      var changes = {};
+
+      if (this.isDispatcher())
+      {
+        changes = _.defaults(changes, this.getChangedPropertiesForUser('dispatcher'));
+      }
+
+      if (this.isDriver())
+      {
+        changes = _.defaults(changes, this.getChangedPropertiesForUser('driver'));
+      }
+
+      if (this.isCreator())
+      {
+        changes = _.defaults(changes, this.getChangedPropertiesForUser('creator'));
+      }
+
+      if (this.isOwner())
+      {
+        changes = _.defaults(changes, this.getChangedPropertiesForUser('owner'));
+      }
+
+      this.attributes.changedProperties = changes;
     },
 
     /**

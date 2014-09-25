@@ -245,6 +245,17 @@ define([
   return {
     list: list,
     map: map,
-    select2: select2
+    select2: select2,
+    getLabel: function(iata)
+    {
+      var airport = map[iata];
+
+      if (!airport)
+      {
+        return null;
+      }
+
+      return airport.name + ' (' + airport.iata + ')';
+    }
   };
 });
