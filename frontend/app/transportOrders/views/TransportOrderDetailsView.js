@@ -34,6 +34,9 @@ define([
       var dispatcher = model.get('dispatcher');
       var unit = model.get('unit');
       var driverDate = model.get('driverDate');
+      var resolvedPanelType = !model.isResolved()
+        ? null
+        : model.get('status') === 'completed' ? 'success' : 'danger';
 
       return {
         idPrefix: this.idPrefix,
@@ -41,7 +44,7 @@ define([
         rid: model.get('rid'),
         kind: model.get('kind'),
         user: {
-          panelType: model.get('ownerConfirmed') ? 'info' : 'warning',
+          panelType: resolvedPanelType || (model.get('ownerConfirmed') ? 'info' : 'warning'),
           creator: {
             name: this.serializeUserName(creator),
             tel: creator.tel || '-'
@@ -59,7 +62,7 @@ define([
           toAddress: model.get('toAddress') || '-'
         },
         driver: {
-          panelType: model.get('driverConfirmed') ? 'info' : 'warning',
+          panelType: resolvedPanelType || (model.get('driverConfirmed') ? 'info' : 'warning'),
           name: this.serializeUserName(driver),
           tel: driver && driver.tel ? driver.tel : '-',
           date: driverDate ? time.format(driverDate, 'LLLL') : '-',
@@ -67,7 +70,7 @@ define([
           hours: model.get('hours').toLocaleString()
         },
         dispatcher: {
-          panelType: model.get('dispatcherConfirmed') ? 'info' : 'warning',
+          panelType: resolvedPanelType || (model.get('dispatcherConfirmed') ? 'info' : 'warning'),
           name: this.serializeUserName(dispatcher),
           tel: dispatcher && dispatcher.tel ? dispatcher.tel : '-',
           status: t('transportOrders', 'status:' + model.get('status')),
