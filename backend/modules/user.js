@@ -219,7 +219,7 @@ exports.start = function startUserModule(app, module)
     }
     else if (userData.firstName && userData.lastName)
     {
-      userInfo.label = userData.lastName + ' ' + userData.firstName;
+      userInfo.label = userData.firstName + ' ' + userData.lastName;
     }
     else
     {
