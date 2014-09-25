@@ -28,8 +28,8 @@ define([
     serialize: function()
     {
       var model = this.model;
-      var creator = model.get('creator');
-      var owner = model.get('owner');
+      var creator = model.get('creator') || {};
+      var owner = model.get('owner') || {};
       var driver = model.get('driver');
       var dispatcher = model.get('dispatcher');
       var unit = model.get('unit');
@@ -113,7 +113,7 @@ define([
         return user.firstName + ' ' + user.lastName;
       }
 
-      return user.login || user._id;
+      return user.login || user._id || '-';
     }
 
   });

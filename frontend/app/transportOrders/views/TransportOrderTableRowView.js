@@ -105,7 +105,7 @@ define([
       row.className = model.getStatusClassName();
       row.actions = this.serializeActions();
 
-      if (row.tel)
+      if (row.tel && row.owner)
       {
         row.owner.tel = row.tel;
       }
