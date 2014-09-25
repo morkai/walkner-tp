@@ -102,6 +102,7 @@
 }
 .tp-details .prop-name {
   padding-bottom: 0;
+  white-space: normal;
 }
 .tp-details .prop-value {
   padding-top: 0;

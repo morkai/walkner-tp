@@ -50,7 +50,7 @@ define([
           name: this.serializeUserName(owner),
           tel: model.get('tel') || owner.tel || '-',
           date: time.format(model.get('userDate'), 'LLLL'),
-          quantity: model.get('quantity').toLocaleString(),
+          quantity: this.serializeQuantity(),
           unit: t.has('transportOrders', 'unit:' + unit) ? t('transportOrders', 'unit:' + unit) : unit,
           cargo: model.get('cargo') || '-',
           airport: airports.getLabel(model.get('airport')) || '-',
@@ -74,6 +74,26 @@ define([
           price: preparePrice(model.get('price')).str
         }
       };
+    },
+
+    serializeQuantity: function()
+    {
+      var kind = this.model.get('kind');
+
+      if (kind === 'vehicleService')
+      {
+        return null;
+      }
+
+      var unit = this.model.get('unit');
+      var quantity = this.model.get('quantity').toLocaleString();
+
+      if (!t.has('transportOrders', 'unit:' + unit))
+      {
+        quantity += ' ' + unit;
+      }
+
+      return quantity;
     },
 
     serializeUserName: function(user)

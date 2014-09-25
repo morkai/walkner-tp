@@ -18,13 +18,15 @@
                   <div class="prop-value"><%= user.tel %></div>
                 </div>
                 <div class="prop">
-                  <div class="prop-name <%- changed.userDate ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:userDateTime') %></div>
+                  <div class="prop-name <%- changed.userDate ? 'is-changed' : '' %>"><%- t('transportOrders', 'userDate:' + kind) %></div>
                   <div class="prop-value"><%= user.date %></div>
                 </div>
+                <% if (user.quantity !== null) { %>
                 <div class="prop">
-                  <div class="prop-name <%- changed.quantity ? 'is-changed' : '' %>"><%- t('transportOrders', 'quantity:' + kind) %> [<%- t('transportOrders', 'PROPERTY:unit') %>]</div>
-                  <div class="prop-value"><%= user.quantity %> [<%- user.unit %>]</div>
+                  <div class="prop-name <%- changed.quantity ? 'is-changed' : '' %>"><%- t('transportOrders', 'quantity:' + kind) %></div>
+                  <div class="prop-value"><%= user.quantity %></div>
                 </div>
+                <% } %>
                 <div class="prop">
                   <div class="prop-name <%- changed.cargo ? 'is-changed' : '' %>"><%- t('transportOrders', 'cargo:' + kind) %></div>
                   <div class="prop-value text-mono"><%= user.cargo %></div>
@@ -56,11 +58,11 @@
                   <div class="prop-value"><%= user.createdAt %></div>
                 </div>
                 <div class="prop">
-                  <div class="prop-name <%- changed.fromAddress ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:fromAddress') %></div>
+                  <div class="prop-name <%- changed.fromAddress ? 'is-changed' : '' %>"><%- t('transportOrders', 'fromAddress:' + kind) %></div>
                   <div class="prop-value text-mono"><%= user.fromAddress %></div>
                 </div>
                 <div class="prop">
-                  <div class="prop-name <%- changed.toAddress ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:toAddress') %></div>
+                  <div class="prop-name <%- changed.toAddress ? 'is-changed' : '' %>"><%- t('transportOrders', 'toAddress:' + kind) %></div>
                   <div class="prop-value text-mono"><%= user.toAddress %></div>
                 </div>
               </div>

@@ -108,6 +108,7 @@
   "quantity:goodsTransport": "Ilość i jednostka",
   "quantity:airportArrival": "Liczba pasażerów",
   "quantity:airportDeparture": "Liczba pasażerów",
+  "quantity:vehicleService": "Ilość pojazdów",
 
   "fromAddress:peopleTransport": "Adres odbioru pasażerów (skąd)",
   "fromAddress:goodsTransport": "Adres odbioru rzeczy (skąd)",
