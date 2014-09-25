@@ -276,8 +276,8 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
 
     var inputProperties = this.getInputPropertiesForRoles(roles);
     var updaterId = updater._id.toString();
-    var isCreator = updaterId === this.creator._id.toString();
-    var isOwner = updaterId === this.owner._id.toString();
+    var isCreator = this.creator && updaterId === this.creator._id.toString();
+    var isOwner = this.owner && updaterId === this.owner._id.toString();
     var isDriver = this.driver && updaterId === this.driver._id.toString();
 
     if (!roles.dispatcher)
@@ -329,14 +329,14 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
   {
     var lastSeenAt = new Date();
 
-    if (userId === (this.creator._id || this.creator).toString())
+    if (this.creator && userId === (this.creator._id || this.creator).toString())
     {
       this.creatorLastSeenAt = lastSeenAt;
       this.creatorNotify = false;
       this.creatorChanges = null;
     }
 
-    if (userId === (this.owner._id || this.owner).toString())
+    if (this.owner && userId === (this.owner._id || this.owner).toString())
     {
       this.ownerLastSeenAt = lastSeenAt;
       this.ownerNotify = false;
@@ -569,8 +569,8 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
    */
   transportOrderSchema.methods.updateLastSeenProperties = function(changedProperties, changes, updaterId)
   {
-    var creatorId = this.creator._id.toString();
-    var ownerId = (this.owner._id || this.owner).toString();
+    var creatorId = this.creator ? this.creator._id.toString() : null;
+    var ownerId = this.driver ? (this.owner._id || this.owner).toString() : null;
     var dispatcherId = this.dispatcher ? (this.dispatcher._id || this.dispatcher).toString() : null;
     var driverId = this.driver ? (this.driver._id || this.driver).toString() : null;
     var now = new Date();
@@ -634,8 +634,15 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
     var newUsers = {};
     var oldUsers = this.users.map(String);
 
-    newUsers[this.creator._id || this.creator] = true;
-    newUsers[this.owner._id || this.owner] = true;
+    if (this.creator !== null)
+    {
+      newUsers[this.creator._id || this.creator] = true;
+    }
+
+    if (this.owner !== null)
+    {
+      newUsers[this.owner._id || this.owner] = true;
+    }
 
     if (this.dispatcher !== null)
     {
