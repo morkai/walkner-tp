@@ -29,7 +29,7 @@ define([
     {
       var actions = [pageActions.jump(this, this.collection)];
 
-      if (user.isAllowedTo('TRANSPORT_ORDERS:DISPATCHER', 'TRANSPORT_ORDERS:USER'))
+      if (user.isAllowedTo('TRANSPORT_ORDERS:USER'))
       {
         actions.push(pageActions.add(this.collection, null));
       }

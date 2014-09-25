@@ -24,7 +24,7 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
 
   express.post(
     '/transportOrders',
-    userModule.auth('TRANSPORT_ORDERS:USER', 'TRANSPORT_ORDERS:DISPATCHER'),
+    userModule.auth('TRANSPORT_ORDERS:USER'),
     addOrderRoute
   );
 
