@@ -91,7 +91,10 @@ define([
       this.model = bindLoadingMessage(this.model, this);
 
       this.detailsView = new TransportOrderDetailsView({model: this.model});
-      this.historyView = new TransportOrderHistoryView({model: this.model});
+      this.historyView = new TransportOrderHistoryView({
+        model: this.model,
+        showChanges: this.options.showChanges
+      });
 
       this.setView('.tp-detailsPage-details', this.detailsView);
       this.setView('.tp-detailsPage-history', this.historyView);

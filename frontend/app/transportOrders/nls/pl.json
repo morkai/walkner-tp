@@ -147,7 +147,13 @@
   "confirm:driver": "Wymuś potwierdzenie przez kierowcę",
 
   "noUser": "brak",
-  "noNotes": "utworzył zamówienie.",
+  "noNotes": "utworzono zamówienie.",
+
+  "history:info": "<span class=tp-history-entry-user>{user}</span>, <span class=tp-history-entry-time>{time}</span>:",
+  "history:property": "Atrybut",
+  "history:oldValue": "Stara wartość",
+  "history:newValue": "Nowa wartość",
+  "history:toggleComments": "Tylko komentarze",
 
   "ACTION_FORM:DIALOG_TITLE:delete": "Potwierdzenie usunięcia zamówienia",
   "ACTION_FORM:BUTTON:delete": "Usuń zamówienie",

@@ -39,7 +39,7 @@ define([
     }));
   });
 
-  router.map('/transportOrders;add', user.auth('TRANSPORT_ORDERS:DISPATCHER', 'TRANSPORT_ORDERS:USER'), function(req)
+  router.map('/transportOrders;add', user.auth('TRANSPORT_ORDERS:USER'), function(req)
   {
     viewport.showPage(new TransportOrderAddFormPage({
       model: new TransportOrder({
@@ -52,6 +52,7 @@ define([
   router.map('/transportOrders/:id', canAccess, function(req)
   {
     viewport.showPage(new TransportOrderDetailsPage({
+      showChanges: req.query.changes === '1',
       model: new TransportOrder({
         _id: req.params.id
       })

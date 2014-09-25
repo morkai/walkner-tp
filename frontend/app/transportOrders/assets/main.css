@@ -107,19 +107,55 @@
 .tp-details .prop-value {
   padding-top: 0;
 }
-.tp-details .row {
+.tp-details > .row {
   margin-left: -1em;
   margin-right: -1em;
 }
-.tp-details .col-md-3 {
+.tp-details > .row > .col-md-3 {
   padding-left: 1em;
   padding-right: 1em;
 }
-.tp-details .row .panel {
+.tp-details > .row .panel {
   margin-bottom: 1em;
 }
+.tp-details .is-changed .prop-value {
+  color: #333;
+}
+.tp-history-entry {
+  padding: .5em;
+}
+.tp-history-entry {
+  border-top: 1px dotted #d4d4d4;
+}
+.tp-history-entry:nth-child(odd) {
+  background-color: #fbfbfb;
+}
+.tp-history-entry:hover {
+  background-color: #ffffd6;
+}
+.tp-history-entry:first-child {
+  border-top: 0;
+}
+.is-comments-only .is-without-comment,
+.is-comments-only .table {
+  display: none;
+}
+.tp-history-entry-info {
+  margin-bottom: .25em;
+}
+.tp-history-entry-user {
+  font-weight: bold;
+}
+.tp-history-entry-text {
+  font-size: 1.1em;
+}
+.tp-history-entry-changes {
+  width: auto;
+  margin-bottom: 0.25em;
+  background-color: #fff;
+}
 @media (min-width: 992px) {
-  .tp-details .col-md-3 {
+  .tp-details > .row > .col-md-3 {
     margin-left: 0;
     padding-left: 0;
   }

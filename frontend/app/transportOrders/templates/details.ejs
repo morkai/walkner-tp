@@ -5,7 +5,7 @@
         <div class="panel-heading">
           <%- rid %>: <%- t('transportOrders', 'kind:' + kind) %>
         </div>
-        <div class="panel-details">
+        <div class="panel-details <%- changed.all ? 'is-changed' : '' %>">
           <div class="row">
             <div class="col-md-6">
               <div class="props first">
@@ -76,7 +76,7 @@
         <div class="panel-heading">
           <%- t('transportOrders', 'PANEL:TITLE:driverData') %>
         </div>
-        <div class="panel-details">
+        <div class="panel-details <%- changed.all ? 'is-changed' : '' %>"">
           <div class="props first">
             <div class="prop">
               <div class="prop-name <%- changed.driver ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:name') %></div>
@@ -107,7 +107,7 @@
         <div class="panel-heading">
           <%- t('transportOrders', 'PANEL:TITLE:dispatcherData') %>
         </div>
-        <div class="panel-details">
+        <div class="panel-details <%- changed.all ? 'is-changed' : '' %>"">
           <div class="props first">
             <div class="prop">
               <div class="prop-name <%- changed.dispatcher ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:name') %></div>

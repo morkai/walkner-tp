@@ -1,8 +1,44 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
+<div class="panel panel-default tp-history is-comments-only">
+  <div class="panel-heading is-with-actions">
     <%- t('transportOrders', 'PANEL:TITLE:history') %>
+    <div class="panel-actions">
+      <button id="<%- idPrefix %>-toggleComments" class="btn btn-default active" type="button" data-toggle="button"><i class="fa fa-comments-o"></i><span><%- t('transportOrders', 'history:toggleComments') %></span></button>
+    </div>
   </div>
-  <div class="panel-body">
-    <p class="text-mono"><%- notes %></p>
+  <div class="tp-history-entry">
+    <p class="tp-history-entry-info <%- isNew ? 'is-changed' : '' %>">
+      <%- t('transportOrders', 'history:info', {user: creator, time: createdAt}) %>
+    </p>
+    <p class="tp-history-entry-text text-mono"><%- notes || t('transportOrders', 'noNotes') %></p>
   </div>
+  <% entries.forEach(function(entry) { %>
+  <div class="tp-history-entry <%- entry.comment ? 'is-with-comment' : 'is-without-comment' %>">
+    <p class="tp-history-entry-info <%- isNew || entry.isNew ? 'is-changed' : '' %>">
+      <%- t('transportOrders', 'history:info', {user: entry.user, time: entry.time}) %>
+    </p>
+    <% if (entry.changes.length) { %>
+    <table class="table table-condensed table-bordered tp-history-entry-changes">
+      <thead>
+        <tr>
+          <th><%- t('transportOrders', 'history:property') %></th>
+          <th><%- t('transportOrders', 'history:oldValue') %></th>
+          <th><%- t('transportOrders', 'history:newValue') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% entry.changes.forEach(function(change) { %>
+        <tr>
+          <td><%- change.property %></td>
+          <td><%- change.oldValue %></td>
+          <td><%- change.newValue %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% } %>
+    <% if (entry.comment) { %>
+    <p class="tp-history-entry-text text-mono"><%- entry.comment %></p>
+    <% } %>
+  </div>
+  <% }) %>
 </div>

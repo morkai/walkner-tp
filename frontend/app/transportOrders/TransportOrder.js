@@ -343,7 +343,7 @@ define([
 
       if (changedProperties === null)
       {
-        changes.row = true;
+        changes.all = true;
       }
       else
       {
