@@ -124,7 +124,17 @@ define([
      */
     isEditable: function()
     {
-      return user.isAllowedTo('TRANSPORT_ORDERS:DISPATCHER') || this.isDriver() || this.isCreator() || this.isOwner();
+      if (user.isAllowedTo('TRANSPORT_ORDERS:DISPATCHER'))
+      {
+        return true;
+      }
+
+      if (this.isResolved())
+      {
+        return false;
+      }
+
+      return this.isDriver() || this.isCreator() || this.isOwner();
     },
 
     /**

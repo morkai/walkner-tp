@@ -183,13 +183,20 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
         return res.send(403);
       }
 
-      var createUserInfo = userModule.createUserInfo.bind(userModule);
-      var updater = createUserInfo(user, req);
       var roles = {
         dispatcher: userModule.isAllowedTo(user, 'TRANSPORT_ORDERS:DISPATCHER'),
         driver: userModule.isAllowedTo(user, 'TRANSPORT_ORDERS:DRIVER'),
         user: userModule.isAllowedTo(user, 'TRANSPORT_ORDERS:USER')
       };
+
+      if (!roles.dispatcher
+        && (transportOrder.status === 'completed' || transportOrder.status === 'cancelled'))
+      {
+        return res.send(403);
+      }
+
+      var createUserInfo = userModule.createUserInfo.bind(userModule);
+      var updater = createUserInfo(user, req);
 
       var changes = transportOrder.applyChanges(req.body, updater, roles, createUserInfo);
 
