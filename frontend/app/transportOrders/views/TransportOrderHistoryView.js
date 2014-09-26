@@ -30,8 +30,10 @@ define([
       {
         this.$el.toggleClass('is-comments-only');
 
+        this.options.showChanges = !this.$el.hasClass('is-comments-only');
+
         this.broker.publish('router.navigate', {
-          url: this.model.genClientUrl() + '?changes=' + (this.$el.hasClass('is-comments-only') ? 0 : 1),
+          url: this.model.genClientUrl() + '?changes=' + (this.options.showChanges ? 1 : 0),
           trigger: false,
           replace: true
         });
