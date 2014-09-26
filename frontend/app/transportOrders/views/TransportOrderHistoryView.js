@@ -106,7 +106,7 @@ define([
 
       if (property === 'price')
       {
-        return preparePrice(value);
+        return preparePrice(value).str;
       }
 
       if (typeof value === 'number')
