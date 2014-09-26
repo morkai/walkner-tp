@@ -3,6 +3,7 @@
   <div class="panel panel-primary">
     <div class="panel-heading"><%- panelTitleText %></div>
     <div class="panel-body">
+      <% if (isDispatcher || isUser) { %>
       <% if (editMode) { %>
       <div id="<%- idPrefix %>-ownerPanel" class="panel panel-default">
         <div class="panel-heading is-with-actions" role="togglePanel">
@@ -42,6 +43,7 @@
       <% if (editMode) { %>
         </div>
       </div>
+      <% } %>
       <% } %>
       <% if (editMode) { %>
       <% if (isDispatcher) { %>

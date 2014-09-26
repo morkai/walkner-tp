@@ -238,7 +238,8 @@ define([
       return _.extend(FormView.prototype.serialize.call(this), {
         transportKinds: transportKinds,
         isDispatcher: user.isAllowedTo('TRANSPORT_ORDERS:DISPATCHER'),
-        isDriver: this.model.isDriver()
+        isDriver: this.model.isDriver(),
+        isUser: !this.options.editMode || this.model.isOwner() || this.model.isCreator()
       });
     },
 
