@@ -80,6 +80,12 @@
         </div>
         <div class="panel-body tp-form-driver">
           <div class="tp-form-driver-fields">
+            <% if (!isDispatcher) { %>
+            <div class="form-group">
+              <label class="control-label"><%- t('transportOrders', 'userDate:' + model.kind) %></label>
+              <p><%= time.format(model.userDate, 'LLLL') %></p>
+            </div>
+            <% } %>
             <div class="form-group">
               <label for="<%- idPrefix %>-driverDate" class="control-label"><%- t('transportOrders', 'PROPERTY:driverDateTime') %></label>
               <div class="form-group-datetime">
