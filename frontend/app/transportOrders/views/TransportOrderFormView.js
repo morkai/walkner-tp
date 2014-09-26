@@ -4,6 +4,7 @@
 
 define([
   'underscore',
+  'jquery',
   'app/i18n',
   'app/time',
   'app/user',
@@ -20,6 +21,7 @@ define([
   'app/transportOrders/templates/kinds/vehicleServiceForm'
 ], function(
   _,
+  $,
   t,
   time,
   user,
@@ -91,8 +93,10 @@ define([
 
           timeEl.value = matches[1] + ':' + matches[2];
         }
+
+        this.toggleDateWarning(this.$(e.target));
       },
-      'change #-price': function(e)
+      'change #-price': function()
       {
         this.parsePrice();
       }
@@ -368,6 +372,27 @@ define([
       $price.val(price.str);
 
       return price.num;
+    },
+
+    toggleDateWarning: function($date)
+    {
+      var $group = $date.closest('.form-group');
+      var moment = time.getMoment($date.val());
+
+      if (!moment.isValid() || Math.abs(Math.ceil(moment.diff(Date.now(), 'days', true))) <= 30)
+      {
+        var $warning = $group.removeClass('has-warning').find('.help-block');
+
+        $warning.fadeOut('fast', function() { $warning.remove(); });
+      }
+      else
+      {
+        $('<span class="help-block text-warning"></span>')
+          .text(t('transportOrders', 'form:help:date'))
+          .hide()
+          .appendTo($group.addClass('has-warning'))
+          .fadeIn('fast');
+      }
     }
 
   });

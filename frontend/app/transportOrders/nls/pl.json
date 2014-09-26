@@ -139,6 +139,7 @@
   "FORM:ERROR:editFailure": "Nie udało się zmodyfikować zamówienia :-(",
   "form:placeholder:driver": "Wybierz kierowcę...",
   "form:help:kind": "UWAGA: Zmiana rodzaju usługi wyczyści wszystkie poniższe pola!",
+  "form:help:date": "UWAGA: Różnica między wybraną datą a dzisiejszym dniem wynosi ponad 30 dni.",
 
   "confirmAs:owner": "Potwierdź jako własciciel",
   "confirmAs:driver": "Potwierdź jako kierowca",
