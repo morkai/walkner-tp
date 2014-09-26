@@ -46,6 +46,26 @@
 .tp-form-number {
   width: 256px;
 }
+.tp-form-driver {
+  padding-bottom: 0;
+  padding-right: 0;
+}
+.tp-form-driver-fields,
+.tp-form-driver-help {
+  display: inline-block;
+  vertical-align: top;
+}
+.tp-form-driver-fields {
+  margin-right: 1em;
+}
+.tp-form-driver-fields > .form-group:last-child {
+  margin-bottom: 1em;
+}
+.tp-form-driver-help > .form-group {
+  display: inline-block;
+  margin-right: 1em;
+  margin-bottom: 1em;
+}
 .tp-list-table .table,
 .tp-list-table .table tr th,
 .tp-list-table .table tr td,

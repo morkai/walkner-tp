@@ -78,22 +78,36 @@
             <button class="btn btn-default" type="button" role="togglePanel"><i class="fa fa-chevron-up"></i></button>
           </div>
         </div>
-        <div class="panel-body">
-          <div class="form-group">
-            <label for="<%- idPrefix %>-driverDate" class="control-label"><%- t('transportOrders', 'PROPERTY:driverDateTime') %></label>
-            <div class="form-group-datetime">
-              <input id="<%- idPrefix %>-driverDate" class="form-control" type="date" name="driverDate">
-              <input id="<%- idPrefix %>-driverTime" class="form-control" type="time" name="driverTime">
+        <div class="panel-body tp-form-driver">
+          <div class="tp-form-driver-fields">
+            <div class="form-group">
+              <label for="<%- idPrefix %>-driverDate" class="control-label"><%- t('transportOrders', 'PROPERTY:driverDateTime') %></label>
+              <div class="form-group-datetime">
+                <input id="<%- idPrefix %>-driverDate" class="form-control" type="date" name="driverDate">
+                <input id="<%- idPrefix %>-driverTime" class="form-control" type="time" name="driverTime">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="<%- idPrefix %>-km" class="control-label"><%- t('transportOrders', 'PROPERTY:km') %></label>
+              <input id="<%- idPrefix %>-km" class="form-control tp-form-number" name="km" type="number" min="0" step="1">
+            </div>
+            <div class="form-group">
+              <label for="<%- idPrefix %>-hours" class="control-label"><%- t('transportOrders', 'PROPERTY:hours') %></label>
+              <input id="<%- idPrefix %>-hours" class="form-control tp-form-number" name="hours" type="number" min="0" step="1">
             </div>
           </div>
-          <div class="form-group">
-            <label for="<%- idPrefix %>-km" class="control-label"><%- t('transportOrders', 'PROPERTY:km') %></label>
-            <input id="<%- idPrefix %>-km" class="form-control tp-form-number" name="km" type="number" min="0" step="1">
+          <% if (!isDispatcher) { %>
+          <div class="tp-form-driver-help">
+            <div class="form-group">
+              <label class="control-label"><%- t('transportOrders', 'fromAddress:' + model.kind) %></label>
+              <p class="text-mono"><%= model.fromAddress %></p>
+            </div>
+            <div class="form-group">
+              <label class="control-label"><%- t('transportOrders', 'toAddress:' + model.kind) %></label>
+              <p class="text-mono"><%= model.toAddress || '-' %></p>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="<%- idPrefix %>-hours" class="control-label"><%- t('transportOrders', 'PROPERTY:hours') %></label>
-            <input id="<%- idPrefix %>-hours" class="form-control tp-form-number" name="hours" type="number" min="0" step="1">
-          </div>
+          <% } %>
         </div>
       </div>
       <% } %>
