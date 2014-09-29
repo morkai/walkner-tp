@@ -83,12 +83,10 @@ body.print {
   body {
     margin-top: 0!important;
   }
+  .page-breadcrumbs,
   .page-actions,
   .ft {
     display: none!important;
-  }
-  .page-breadcrumbs li {
-    font-size: 24px!important;
   }
   .highcharts-button {
     display: none;
