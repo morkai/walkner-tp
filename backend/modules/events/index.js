@@ -5,6 +5,7 @@
 'use strict';
 
 var lodash = require('lodash');
+var mongoose = require('mongoose');
 var setUpEventsRoutes = require('./routes');
 
 exports.DEFAULT_CONFIG = {
@@ -138,7 +139,7 @@ exports.start = function startEventsModule(app, module)
     if (lodash.isObject(data.user))
     {
       user = {
-        _id: String(data.user._id),
+        _id: new mongoose.Types.ObjectId(data.user._id),
         name: data.user.lastName && data.user.firstName
           ? (data.user.lastName + ' ' + data.user.firstName)
           : data.user.login,
