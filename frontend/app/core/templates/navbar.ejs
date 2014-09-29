@@ -12,6 +12,14 @@
       <li><a href="#"><%- t('core', 'NAVBAR:DASHBOARD') %></a>
       <li data-online data-privilege="EVENTS:VIEW" data-module><a href="#events"><%- t('core', 'NAVBAR:EVENTS') %></a>
       <li data-online data-privilege="TRANSPORT_ORDERS:*" data-module><a href="#transportOrders"><%- t('core', 'NAVBAR:TRANSPORT_ORDERS') %></a>
+      <li class="dropdown" data-online data-privilege="REPORTS:VIEW">
+        <a class="dropdown-toggle" data-toggle="dropdown">
+          <%- t('core', 'NAVBAR:REPORTS') %>
+          <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="#reports/tp/user"><%- t('core', 'NAVBAR:REPORTS:USER') %></a>
+        </ul>
       <li data-online data-privilege="USERS:VIEW" data-module><a href="#users"><%- t('core', 'NAVBAR:USERS') %></a>
     </ul>
     <ul class="nav navbar-nav navbar-right">
@@ -19,7 +27,8 @@
         <a href="#account" class="dropdown-toggle" data-toggle="dropdown">
           <i class="fa fa-user fa-lg navbar-account-status"></i>
           <%- user.getLabel() %>
-          <b class="caret"></b> </a>
+          <b class="caret"></b>
+        </a>
         <ul class="dropdown-menu">
           <li data-online data-loggedin><a href="#users/<%- user.data._id %>"><%- t('core', 'NAVBAR:MY_ACCOUNT') %></a>
           <li class="divider">

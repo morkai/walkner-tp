@@ -4,8 +4,9 @@
 
 'use strict';
 
-var limitToUser = require('./limitToUser');
-var limitUserData = require('./limitUserData');
+var limitToUser = require('../limitToUser');
+var limitUserData = require('../limitUserData');
+var userReportRoute = require('./userReport');
 
 module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
 {
@@ -38,6 +39,12 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
     '/transportOrders/:id',
     userModule.auth('TRANSPORT_ORDERS:DISPATCHER'),
     express.crud.deleteRoute.bind(null, app, TransportOrder)
+  );
+
+  express.get(
+    '/reports/tp/user',
+    userModule.auth('REPORTS:VIEW'),
+    userReportRoute.bind(null, app, transportOrdersModule)
   );
 
   function findOrderByRidRoute(req, res, next)

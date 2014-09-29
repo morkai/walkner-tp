@@ -1,0 +1,50 @@
+<div class="tpReport userReport table-responsive">
+  <table class="table table-condensed table-bordered">
+    <thead>
+      <tr>
+        <th><%- t('core', '#') %></th>
+        <th><%- t('transportOrders', 'PROPERTY:kind') %></th>
+        <th><%- t('transportOrders', 'PROPERTY:userDate') %></th>
+        <th><%- t('transportOrders', 'PROPERTY:userTime') %></th>
+        <th><%- t('transportOrders', 'PROPERTY:quantity') %></th>
+        <th><%- t('transportOrders', 'PROPERTY:unit') %></th>
+        <th><%- t('transportOrders', 'PROPERTY:fromAddress') %></th>
+        <th><%- t('transportOrders', 'PROPERTY:toAddress') %></th>
+        <th><%- t('transportOrders', 'PROPERTY:km') %></th>
+        <th><%- t('transportOrders', 'PROPERTY:hours') %></th>
+        <th><%- t('transportOrders', 'PROPERTY:price') %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (!collection.length) { %>
+      <tr>
+        <td colspan="11"><%- t('core', 'LIST:NO_DATA') %></td>
+      </tr>
+      <% } else { %>
+      <% collection.forEach(function(item, i) { %>
+      <tr>
+        <td class="is-number is-min"><%- i + 1 %>.</td>
+        <td><%- item.kind %></td>
+        <td class="is-min"><%- item.userDate %></td>
+        <td class="is-min"><%- item.userTime %></td>
+        <td class="is-number is-min"><%- item.quantity %></td>
+        <td class="is-min"><%- item.unit %></td>
+        <td><%- item.fromAddress %></td>
+        <td><%- item.toAddress %></td>
+        <td class="is-number is-min"><%- item.km %></td>
+        <td class="is-number is-min"><%- item.hours %></td>
+        <td class="is-number is-min"><%- item.price %></td>
+      </tr>
+      <% }) %>
+      <% if (collection.length > 1) { %>
+      <tr>
+        <td class="tpReport-noBorders" colspan="8"></td>
+        <td class="is-number"><%- summary.km %></td>
+        <td class="is-number"><%- summary.hours %></td>
+        <td class="is-number"><%- summary.price %></td>
+      </tr>
+      <% } %>
+      <% } %>
+    </tbody>
+  </table>
+</div>

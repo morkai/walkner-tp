@@ -1,0 +1,32 @@
+.reports-filter-summary {
+  display: none;
+}
+.reports-filter-user {
+  width: 225px;
+}
+@media print {
+  .tpReport th,
+  .tpReport td {
+    font-size: 10px!important;
+    border-color: #000!important;
+    padding: 2px!important;
+  }
+  .userReport {
+    overflow: visible!important;
+    border: 0!important;
+  }
+  .reports-filter {
+    padding: 0!important;
+    border: 0!important;
+  }
+  .reports-filter .form-group,
+  .filter-toggle {
+    display: none!important;
+  }
+  .reports-filter-summary {
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+  }
+}

@@ -53,6 +53,8 @@
   "NAVBAR:LOG_IN": "Zaloguj się",
   "NAVBAR:LOG_OUT": "Wyloguj się",
   "NAVBAR:TRANSPORT_ORDERS": "Zamówienia",
+  "NAVBAR:REPORTS": "Raporty",
+  "NAVBAR:REPORTS:USER": "Użytkownik",
 
   "ACTION_FORM:BUTTON": "Wykonaj akcję",
   "ACTION_FORM:BUTTON:delete": "Usuń",

@@ -1,0 +1,12 @@
+{
+  "BREADCRUMBS:reports": "Raporty",
+  "BREADCRUMBS:user": "Użytkownik",
+
+  "MSG:LOADING_SINGLE_FAILURE": "Ładowanie raportu nie powiodło się :(",
+
+  "PAGE_ACTION:print": "Drukuj raport",
+
+  "filter:submit": "Filtruj raport",
+  "filter:summary:all": "Wszystkie",
+  "filter:summary:user": "{status} zamówienia od {fromDate} do {toDate} zainicjowane przez {owner}"
+}
