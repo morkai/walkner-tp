@@ -8,17 +8,16 @@ define([
   'app/time',
   'app/users/util/setUpUserSelect2',
   'app/core/views/FilterView',
-  'app/transportOrders/templates/filter',
-  '../util/prepareDateRange'
+  'app/core/util/prepareDateRange',
+  'app/transportOrders/templates/filter'
 ], function(
   _,
   user,
   time,
   setUpUserSelect2,
   FilterView,
-  template,
-  prepareDateRange
-
+  prepareDateRange,
+  template
 ) {
   'use strict';
 

@@ -3,7 +3,7 @@
 // Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
 
 define([
-  'app/time'
+  '../../time'
 ], function(
   time
 ) {
