@@ -9,11 +9,11 @@
     </div>
   </div>
   <div class="form-group has-required-select2 reports-filter-user">
-    <label for="<%- idPrefix %>-owner"><%- t('transportOrders', 'PROPERTY:owner') %></label>
+    <label for="<%- idPrefix %>-owner" class="control-label is-required"><%- t('transportOrders', 'PROPERTY:owner') %></label>
     <input id="<%- idPrefix %>-owner" name="owner" type="text" required>
   </div>
   <div class="form-group">
-    <label for="<%- idPrefix %>-from"><%- t('transportOrders', 'filter:dateMode:user') %></label>
+    <label for="<%- idPrefix %>-from" class="control-label is-required"><%- t('transportOrders', 'filter:dateMode:user') %></label>
     <div class="filter-inlineInputLabels">
       <label for="<%- idPrefix %>-from" class="control-label">
         <span class="visible-xs-block"><%- t('core', 'filter:date:from') %></span>
