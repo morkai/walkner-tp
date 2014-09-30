@@ -4,16 +4,24 @@
 .reports-filter-user {
   width: 225px;
 }
+.table-bordered .reports-table-rowGroup > td {
+  border-top-width: 2px!important;
+  font-weight: bold;
+}
+.reports-table-summary > td {
+  border-top-width: 2px!important;
+  font-weight: bold;
+}
+.table-bordered .reports-table-summary > td:first-child {
+  border-bottom-color: #fff!important;
+  border-left-color: #fff!important;
+}
 @media print {
-  .tpReport th,
-  .tpReport td {
+  .reports-table th,
+  .reports-table td {
     font-size: 10px!important;
     border-color: #000!important;
     padding: 2px!important;
-  }
-  .userReport {
-    overflow: visible!important;
-    border: 0!important;
   }
   .reports-filter {
     padding: 0!important;
