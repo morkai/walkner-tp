@@ -6,19 +6,32 @@ define([
   '../router',
   '../viewport',
   '../user',
+  './SymbolReport',
   './UserReport',
+  './pages/SymbolReportPage',
   './pages/UserReportPage',
   'i18n!app/nls/reports'
 ], function(
   router,
   viewport,
   user,
+  SymbolReport,
   UserReport,
+  SymbolReportPage,
   UserReportPage
 ) {
   'use strict';
 
   var canView = user.auth('REPORTS:VIEW');
+
+  router.map('/reports/tp/symbol', canView, function(req)
+  {
+    viewport.showPage(new SymbolReportPage({
+      model: new SymbolReport(null, {
+        rqlQuery: req.rql
+      })
+    }));
+  });
 
   router.map('/reports/tp/user', canView, function(req)
   {

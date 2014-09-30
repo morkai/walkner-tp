@@ -54,6 +54,7 @@
   "NAVBAR:LOG_OUT": "Wyloguj się",
   "NAVBAR:TRANSPORT_ORDERS": "Zamówienia",
   "NAVBAR:REPORTS": "Raporty",
+  "NAVBAR:REPORTS:SYMBOL": "Symbol MPK",
   "NAVBAR:REPORTS:USER": "Użytkownik",
 
   "ACTION_FORM:BUTTON": "Wykonaj akcję",

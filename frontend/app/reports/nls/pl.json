@@ -1,5 +1,6 @@
 {
   "BREADCRUMBS:reports": "Raporty",
+  "BREADCRUMBS:symbol": "Symbol MPK",
   "BREADCRUMBS:user": "Użytkownik",
 
   "MSG:LOADING_SINGLE_FAILURE": "Ładowanie raportu nie powiodło się :(",
@@ -8,5 +9,6 @@
 
   "filter:submit": "Filtruj raport",
   "filter:summary:all": "Wszystkie",
+  "filter:summary:symbol": "{status} zamówienia od {fromDate} do {toDate} po symbolach MPK",
   "filter:summary:user": "{status} zamówienia od {fromDate} do {toDate} zainicjowane przez {owner}"
 }
