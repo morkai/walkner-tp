@@ -24,11 +24,9 @@ define([
       return {
         _id: 'user',
         collection: [],
-        summary: {
-          km: 0,
-          hours: 0,
-          price: 0.00
-        }
+        km: 0,
+        hours: 0,
+        price: 0.00
       };
     },
 

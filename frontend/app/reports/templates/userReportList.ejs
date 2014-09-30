@@ -18,9 +18,9 @@
   <tfoot>
     <tr class="reports-table-summary">
       <td colspan="8"></td>
-      <td class="is-number"><%- summary.km %></td>
-      <td class="is-number"><%- summary.hours %></td>
-      <td class="is-number"><%- summary.price %></td>
+      <td class="is-number"><%- km %></td>
+      <td class="is-number"><%- hours %></td>
+      <td class="is-number"><%- price %></td>
     </tr>
   </tfoot>
   <% } %>
@@ -37,9 +37,9 @@
       <td class="is-min"><%- item.userDate %></td>
       <td class="is-min"><%- item.userTime %></td>
       <td class="is-number is-min"><%- item.quantity %></td>
-      <td class="is-min"><%- item.unit %></td>
-      <td><%- item.fromAddress %></td>
-      <td><%- item.toAddress %></td>
+      <td class="is-min"><%= item.unit %></td>
+      <td><%= item.fromAddress %></td>
+      <td><%= item.toAddress %></td>
       <td class="is-number is-min"><%- item.km %></td>
       <td class="is-number is-min"><%- item.hours %></td>
       <td class="is-number is-min"><%- item.price %></td>

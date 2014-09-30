@@ -13,19 +13,18 @@ module.exports = function userReportRoute(app, transportOrdersModule, req, res, 
 
   var result = {
     collection: [],
-    summary: {
-      km: 0,
-      hours: 0,
-      price: 0.00
-    }
+    km: 0,
+    hours: 0,
+    price: 0.00
   };
 
-  if (!req.query.owner)
+  var conditions = mongoSerializer.fromQuery(req.rql).selector;
+
+  if (!conditions.userDate || !conditions.owner)
   {
     return res.json(result);
   }
 
-  var conditions = mongoSerializer.fromQuery(req.rql).selector;
   var fields = {
     _id: 0,
     status: 1,
@@ -66,7 +65,7 @@ module.exports = function userReportRoute(app, transportOrdersModule, req, res, 
       return;
     }
 
-    result.summary.price = Math.round(result.summary.price * 100) / 100;
+    result.price = Math.round(result.price * 100) / 100;
 
     res.json(result);
   });
@@ -74,8 +73,8 @@ module.exports = function userReportRoute(app, transportOrdersModule, req, res, 
   stream.on('data', function(transportOrder)
   {
     result.collection.push(transportOrder);
-    result.summary.km += transportOrder.km;
-    result.summary.hours += transportOrder.hours;
-    result.summary.price += transportOrder.price;
+    result.km += transportOrder.km;
+    result.hours += transportOrder.hours;
+    result.price += transportOrder.price;
   });
 };

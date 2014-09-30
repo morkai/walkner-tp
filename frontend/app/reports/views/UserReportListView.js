@@ -33,16 +33,14 @@ define([
 
     serialize: function()
     {
-      var summary = this.model.get('summary');
+      var model = this.model;
 
       return {
         idPrefix: this.idPrefix,
-        collection: this.model.get('collection').map(this.serializeItem, this),
-        summary: {
-          km: summary.km.toLocaleString(),
-          hours: summary.hours.toLocaleString(),
-          price: preparePrice(summary.price).str
-        }
+        collection: model.get('collection').map(this.serializeItem, this),
+        km: model.get('km').toLocaleString(),
+        hours: model.get('hours').toLocaleString(),
+        price: preparePrice(model.get('price')).str
       };
     },
 
