@@ -8,6 +8,7 @@ var limitToUser = require('../limitToUser');
 var limitUserData = require('../limitUserData');
 var userReportRoute = require('./userReport');
 var symbolReportRoute = require('./symbolReport');
+var driverReportRoute = require('./driverReport');
 
 module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
 {
@@ -52,6 +53,12 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
     '/reports/tp/symbol',
     userModule.auth('REPORTS:VIEW'),
     symbolReportRoute.bind(null, app, transportOrdersModule)
+  );
+
+  express.get(
+    '/reports/tp/driver',
+    userModule.auth('REPORTS:VIEW'),
+    driverReportRoute.bind(null, app, transportOrdersModule)
   );
 
   function findOrderByRidRoute(req, res, next)

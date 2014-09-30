@@ -1,0 +1,49 @@
+<form class="well filter-form reports-filter">
+  <div class="form-group">
+    <label><%- t('transportOrders', 'PROPERTY:status') %></label>
+    <div id="<%- idPrefix %>-status" class="btn-group filter-btn-group" data-toggle="buttons">
+      <label class="btn btn-default" title="<%- t('transportOrders', 'status:pending') %>"><input type="checkbox" name="status[]" value="pending"><i class="fa fa-question text-warning"></i></label>
+      <label class="btn btn-default" title="<%- t('transportOrders', 'status:confirmed') %>"><input type="checkbox" name="status[]" value="confirmed"><i class="fa fa-check text-primary"></i></label>
+      <label class="btn btn-default" title="<%- t('transportOrders', 'status:completed') %>"><input type="checkbox" name="status[]" value="completed"><i class="fa fa-thumbs-o-up text-success"></i></label>
+      <label class="btn btn-default" title="<%- t('transportOrders', 'status:cancelled') %>"><input type="checkbox" name="status[]" value="cancelled"><i class="fa fa-ban text-danger"></i></label>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="<%- idPrefix %>-from" class="control-label is-required"><%- t('transportOrders', 'filter:dateMode:user') %></label>
+    <div class="filter-inlineInputLabels">
+      <label for="<%- idPrefix %>-from" class="control-label">
+        <span class="visible-xs-block"><%- t('core', 'filter:date:from') %></span>
+        <input id="<%- idPrefix %>-from" class="form-control tp-filter-date" name="from" type="date" required>
+        <span class="hidden-xs">-</span>
+      </label>
+      <label for="<%- idPrefix %>-to" class="control-label tp-filter-to">
+        <span class="visible-xs-block"><%- t('core', 'filter:date:to') %></span>
+        <input id="<%- idPrefix %>-to" class="form-control tp-filter-date" name="to" type="date" required>
+      </label>
+      <div class="btn-group">
+        <button class="btn btn-default dropdown-toggle" type="button" title="<%- t('transportOrders', 'filter:datePicker') %>" data-toggle="dropdown"><i class="fa fa-calendar"></i><span class="visible-xs-inline"><%- t('transportOrders', 'filter:datePicker') %></span></button>
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li><a data-range="today"><%= t('transportOrders', 'filter:submit:today') %></a></li>
+          <li><a data-range="tomorrow"><%= t('transportOrders', 'filter:submit:tomorrow') %></a></li>
+          <li><a data-range="yesterday"><%= t('transportOrders', 'filter:submit:yesterday') %></a></li>
+          <li class="divider"></li>
+          <li><a data-range="currentWeek"><%= t('transportOrders', 'filter:submit:currentWeek') %></a></li>
+          <li><a data-range="nextWeek"><%= t('transportOrders', 'filter:submit:nextWeek') %></a></li>
+          <li><a data-range="prevWeek"><%= t('transportOrders', 'filter:submit:prevWeek') %></a></li>
+          <li class="divider"></li>
+          <li><a data-range="currentMonth"><%= t('transportOrders', 'filter:submit:currentMonth') %></a></li>
+          <li><a data-range="nextMonth"><%= t('transportOrders', 'filter:submit:nextMonth') %></a></li>
+          <li><a data-range="prevMonth"><%= t('transportOrders', 'filter:submit:prevMonth') %></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="form-group reports-filter-user">
+    <label for="<%- idPrefix %>-driver"><%- t('transportOrders', 'PROPERTY:driver') %></label>
+    <input id="<%- idPrefix %>-driver" name="driver" type="text">
+  </div>
+  <div class="form-group filter-actions">
+    <button type="submit" class="btn btn-default"><i class="fa fa-filter"></i><span><%- t('reports', 'filter:submit') %></span></button>
+  </div>
+  <p id="<%- idPrefix %>-summary" class="reports-filter-summary"></p>
+</form>

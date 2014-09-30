@@ -55,7 +55,8 @@
   "NAVBAR:TRANSPORT_ORDERS": "Zamówienia",
   "NAVBAR:REPORTS": "Raporty",
   "NAVBAR:REPORTS:SYMBOL": "Symbol MPK",
-  "NAVBAR:REPORTS:USER": "Użytkownik",
+  "NAVBAR:REPORTS:DRIVER": "Kierowca",
+  "NAVBAR:REPORTS:USER": "Uzytkownik",
 
   "ACTION_FORM:BUTTON": "Wykonaj akcję",
   "ACTION_FORM:BUTTON:delete": "Usuń",

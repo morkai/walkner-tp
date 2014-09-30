@@ -7,8 +7,10 @@ define([
   '../viewport',
   '../user',
   './SymbolReport',
+  './DriverReport',
   './UserReport',
   './pages/SymbolReportPage',
+  './pages/DriverReportPage',
   './pages/UserReportPage',
   'i18n!app/nls/reports'
 ], function(
@@ -16,8 +18,10 @@ define([
   viewport,
   user,
   SymbolReport,
+  DriverReport,
   UserReport,
   SymbolReportPage,
+  DriverReportPage,
   UserReportPage
 ) {
   'use strict';
@@ -28,6 +32,15 @@ define([
   {
     viewport.showPage(new SymbolReportPage({
       model: new SymbolReport(null, {
+        rqlQuery: req.rql
+      })
+    }));
+  });
+
+  router.map('/reports/tp/driver', canView, function(req)
+  {
+    viewport.showPage(new DriverReportPage({
+      model: new DriverReport(null, {
         rqlQuery: req.rql
       })
     }));
