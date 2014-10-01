@@ -74,7 +74,8 @@ define([
           name: this.serializeUserName(dispatcher),
           tel: dispatcher && dispatcher.tel ? dispatcher.tel : '-',
           status: t('transportOrders', 'status:' + model.get('status')),
-          price: preparePrice(model.get('price')).str
+          price: preparePrice(model.get('price')).str,
+          cash: t('core', 'BOOL:' + !!model.get('cash'))
         }
       };
     },

@@ -63,6 +63,14 @@
             <label for="<%- idPrefix %>-price" class="control-label"><%- t('transportOrders', 'PROPERTY:price') %></label>
             <input id="<%- idPrefix %>-price" class="form-control tp-form-number" name="price" type="text">
           </div>
+          <div class="form-group tp-form-cashGroup">
+            <div class="checkbox">
+              <label>
+                <input id="<%- idPrefix %>-cash" name="cash" type="checkbox" value="1">
+                <%- t('transportOrders', 'PROPERTY:cash') %>
+              </label>
+            </div>
+          </div>
           <div class="form-group">
             <label class="control-label"><%- t('transportOrders', 'PROPERTY:status') %></label>
             <div class="radio"><label><input id="<%- idPrefix %>-status-open" name="status" type="radio" value="open"> <%- t('transportOrders', 'status:open') %></label></div>

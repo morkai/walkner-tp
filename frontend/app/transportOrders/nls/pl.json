@@ -78,6 +78,7 @@
   "PROPERTY:km": "Ilość [km]",
   "PROPERTY:hours": "Ilość [h]",
   "PROPERTY:price": "Cena [zł]",
+  "PROPERTY:cash": "Zapłacone gotówką",
   "PROPERTY:flightNo": "Nr lotu",
   "PROPERTY:airport": "Lotnisko",
   "PROPERTY:name": "Imię i nazwisko",

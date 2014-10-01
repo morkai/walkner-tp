@@ -161,6 +161,11 @@ define([
       row.hours = row.hours.toLocaleString();
       row.price = preparePrice(row.price).str;
 
+      if (row.price && row.cash)
+      {
+        row.price = '<span class="fa fa-money"></span><span>' + row.price + '</span>';
+      }
+
       return {
         row: row
       };

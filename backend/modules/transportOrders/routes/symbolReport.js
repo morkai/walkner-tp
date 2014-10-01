@@ -26,6 +26,15 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
     return res.json(result);
   }
 
+  if (conditions.cash)
+  {
+    delete conditions.cash;
+  }
+  else
+  {
+    conditions.cash = false;
+  }
+
   var fields = {
     _id: 0,
     owner: 1,

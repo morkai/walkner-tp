@@ -322,6 +322,7 @@ define([
         formData.price = this.parsePrice();
       }
 
+      formData.cash = formData.cash === '1';
       formData.quantity = parseInt(formData.quantity, 10) || 0;
       formData.km = parseInt(formData.km, 10) || 0;
       formData.hours = parseInt(formData.hours, 10) || 0;

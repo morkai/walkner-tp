@@ -125,6 +125,10 @@
               <div class="prop-name <%- changed.price ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:price') %></div>
               <div class="prop-value"><%= dispatcher.price %></div>
             </div>
+            <div class="prop">
+              <div class="prop-name <%- changed.cash ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:cash') %></div>
+              <div class="prop-value"><%- dispatcher.cash %></div>
+            </div>
           </div>
         </div>
       </div>

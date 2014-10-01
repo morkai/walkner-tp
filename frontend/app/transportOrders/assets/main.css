@@ -66,6 +66,9 @@
   margin-right: 1em;
   margin-bottom: 1em;
 }
+.tp-form-cashGroup {
+  margin-top: -10px;
+}
 .tp-list-table .table,
 .tp-list-table .table tr th,
 .tp-list-table .table tr td,

@@ -27,6 +27,15 @@ module.exports = function driverReportRoute(app, transportOrdersModule, req, res
     return res.json(result);
   }
 
+  if (conditions.cash)
+  {
+    delete conditions.cash;
+  }
+  else
+  {
+    conditions.cash = false;
+  }
+
   var fields = {
     _id: 0,
     driver: 1,

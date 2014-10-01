@@ -46,6 +46,7 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
   var DISPATCHER_PROPERTIES = [
     'driver',
     'price',
+    'cash',
     'status',
     'ownerConfirmed',
     'driverConfirmed',
@@ -202,6 +203,10 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
       type: Number,
       default: 0,
       min: 0
+    },
+    cash: {
+      type: Boolean,
+      default: false
     },
     ownerConfirmed: {
       type: Boolean,

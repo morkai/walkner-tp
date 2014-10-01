@@ -41,7 +41,8 @@ define([
       status: ['pending', 'confirmed', 'completed', 'cancelled'],
       driver: null,
       from: null,
-      to: null
+      to: null,
+      cash: false
     },
 
     termToForm: {
@@ -56,7 +57,8 @@ define([
       'userDate': function(propertyName, term, formData)
       {
         formData[term.name === 'ge' ? 'from' : 'to'] = time.format(term.args[1], 'YYYY-MM-DD');
-      }
+      },
+      'cash': 'driver'
     },
 
     serializeFormToQuery: function(selector)
@@ -65,6 +67,7 @@ define([
       var driver = this.$id('driver').val();
       var fromMoment = time.getMoment(this.$id('from').val());
       var toMoment = time.getMoment(this.$id('to').val());
+      var cash = this.getButtonGroupValue('cash');
 
       if (status.length === 1)
       {
@@ -90,6 +93,8 @@ define([
         selector.push({name: 'lt', args: ['userDate', toMoment.valueOf()]});
       }
 
+      selector.push({name: 'eq', args: ['cash', !!cash]});
+
       this.updateSummary();
     },
 
@@ -104,6 +109,7 @@ define([
       });
 
       this.toggleButtonGroup('status');
+      this.toggleButtonGroup('cash');
       this.updateSummary();
     },
 
@@ -114,14 +120,21 @@ define([
       var fromMoment = time.getMoment(this.$id('from').val());
       var toMoment = time.getMoment(this.$id('to').val());
 
-      this.$id('summary').html(t('reports', 'filter:summary:driver' + (driver ? '' : 's'), {
+      var summary = t('reports', 'filter:summary:driver' + (driver ? '' : 's'), {
         status: status.length === 0 || status.length === 4
           ? t('reports', 'filter:summary:all')
           : status.map(function(status) { return t('transportOrders', 'status:' + status); }).join(', '),
         driver: driver ? driver.text : '?',
         fromDate: fromMoment.isValid() ? fromMoment.format('YYYY-MM-DD') : '?',
         toDate: toMoment.isValid() ? toMoment.format('YYYY-MM-DD') : '?'
-      }));
+      });
+
+      if (this.getButtonGroupValue('cash'))
+      {
+        summary += '<br><em>' + t('reports', 'filter:summary:cash') + '</em>';
+      }
+
+      this.$id('summary').html(summary);
     }
 
   });
