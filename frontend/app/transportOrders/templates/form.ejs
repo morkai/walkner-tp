@@ -90,12 +90,10 @@
         </div>
         <div class="panel-body tp-form-driver">
           <div class="tp-form-driver-fields">
-            <% if (!isDispatcher) { %>
             <div class="form-group">
               <label class="control-label"><%- t('transportOrders', 'userDate:' + model.kind) %></label>
               <p><%= time.format(model.userDate, 'LLLL') %></p>
             </div>
-            <% } %>
             <div class="form-group">
               <label for="<%- idPrefix %>-driverDate" class="control-label"><%- t('transportOrders', 'PROPERTY:driverDateTime') %></label>
               <div class="form-group-datetime">
@@ -112,7 +110,6 @@
               <input id="<%- idPrefix %>-hours" class="form-control tp-form-number" name="hours" type="number" min="0" step="1">
             </div>
           </div>
-          <% if (!isDispatcher) { %>
           <div class="tp-form-driver-help">
             <div class="form-group">
               <label class="control-label"><%- t('transportOrders', 'fromAddress:' + model.kind) %></label>
@@ -123,7 +120,6 @@
               <p class="text-mono"><%= model.toAddress || '-' %></p>
             </div>
           </div>
-          <% } %>
         </div>
       </div>
       <% } %>
