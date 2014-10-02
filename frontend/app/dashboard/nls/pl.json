@@ -1,3 +1,12 @@
 {
-  "breadcrumbs:logIn": "Logowanie do systemu"
+  "breadcrumbs:logIn": "Logowanie do systemu",
+
+  "hello": "Witaj w systemie Travelka!",
+  "viewOrders": "Przejdź do <a href='#transportOrders'>zakładki Zamówienia</a>, aby wyświetlić swoje zamówienia transportu.",
+  "addOrder": "Możesz także dodać nowe zamówienie {transportKinds}.",
+  "addOrder:peopleTransport": "Przewozu osób",
+  "addOrder:airportArrival": "Przylotu",
+  "addOrder:airportDeparture": "Odlotu",
+  "addOrder:goodsTransport": "Transportu rzeczy",
+  "addOrder:vehicleService": "Serwisu"
 }

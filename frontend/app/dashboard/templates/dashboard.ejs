@@ -1,3 +1,8 @@
-<div>
-  <h1>WIP</h1>
+<div class="dashboard">
+  <h1><i class="fa fa-taxi"></i><span>Travelka</span></h1>
+  <p><%- t('dashboard', 'hello') %></p>
+  <p><%- t('dashboard', 'viewOrders') %></p>
+  <% if (user.isAllowedTo('TRANSPORT_ORDERS:USER')) { %>
+  <p><%- t('dashboard', 'addOrder', {transportKinds: transportKinds}) %></p>
+  <% } %>
 </div>
