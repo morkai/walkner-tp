@@ -18,6 +18,10 @@
                   <div class="prop-value"><%= user.tel %></div>
                 </div>
                 <div class="prop">
+                  <div class="prop-name <%- changed.symbol ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:symbol') %></div>
+                  <div class="prop-value"><%= user.symbol %></div>
+                </div>
+                <div class="prop">
                   <div class="prop-name <%- changed.userDate ? 'is-changed' : '' %>"><%- t('transportOrders', 'userDate:' + kind) %></div>
                   <div class="prop-value"><%= user.date %></div>
                 </div>

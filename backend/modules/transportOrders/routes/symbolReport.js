@@ -35,6 +35,10 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
     conditions.cash = false;
   }
 
+  var self = !!conditions.self;
+
+  delete conditions.self;
+
   var fields = {
     _id: 0,
     owner: 1,
@@ -87,6 +91,11 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
 
   stream.on('data', function(transportOrder)
   {
+    if (transportOrder.symbol === '_SELF' && !self)
+    {
+      return;
+    }
+
     ensureData(transportOrder);
 
     var symbolSummary = symbolSummaries[transportOrder.symbol];

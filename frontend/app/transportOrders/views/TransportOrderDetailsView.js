@@ -37,6 +37,16 @@ define([
       var resolvedPanelType = !model.isResolved()
         ? null
         : model.get('status') === 'completed' ? 'success' : 'danger';
+      var symbol = model.get('symbol');
+
+      if (symbol === '_SELF')
+      {
+        symbol = t('transportOrders', 'symbol:self');
+      }
+      else if (!symbol)
+      {
+        symbol = '-';
+      }
 
       return {
         idPrefix: this.idPrefix,
@@ -53,6 +63,7 @@ define([
           name: this.serializeUserName(owner),
           tel: model.get('tel') || owner.tel || '-',
           date: time.format(model.get('userDate'), 'LLLL'),
+          symbol: symbol,
           quantity: this.serializeQuantity(),
           unit: t.has('transportOrders', 'unit:' + unit) ? t('transportOrders', 'unit:' + unit) : unit,
           cargo: model.get('cargo') || '-',

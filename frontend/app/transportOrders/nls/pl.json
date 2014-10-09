@@ -87,6 +87,8 @@
   "confirmed:dispatcher": "D",
   "confirmed:driver": "K",
 
+  "symbol:self": "Płacą sami",
+
   "status:open": "Otwarte",
   "status:completed": "Zakończone",
   "status:cancelled": "Anulowane",

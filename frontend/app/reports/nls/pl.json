@@ -16,5 +16,6 @@
   "filter:summary:drivers": "{status} zamówienia od {fromDate} do {toDate} - wszyscy kierowcy",
   "filter:summary:driver": "{status} zamówienia od {fromDate} do {toDate} - kierowca: {driver}",
   "filter:summary:user": "{status} zamówienia od {fromDate} do {toDate} zainicjowane przez {owner}",
-  "filter:summary:cash": "Do raportu wliczone zostały zamówienia opłacone gotówką."
+  "filter:summary:cash": "Do raportu wliczone zostały zamówienia opłacone gotówką.",
+  "filter:summary:self": "Do raportu wliczone zostały zamówienia opłacone przez klientów."
 }

@@ -39,7 +39,8 @@ define([
       status: ['pending', 'confirmed', 'completed', 'cancelled'],
       from: null,
       to: null,
-      cash: false
+      cash: false,
+      self: false
     },
 
     termToForm: {
@@ -54,7 +55,8 @@ define([
       'cash': function(propertyName, term, formData)
       {
         formData[propertyName] = term.args[1];
-      }
+      },
+      'self': 'cash'
     },
 
     serializeFormToQuery: function(selector)
@@ -83,7 +85,8 @@ define([
         selector.push({name: 'lt', args: ['userDate', toMoment.valueOf()]});
       }
 
-      selector.push({name: 'eq', args: ['cash', !!cash]});
+      selector.push({name: 'eq', args: ['cash', cash.indexOf('cash') !== -1]});
+      selector.push({name: 'eq', args: ['self', cash.indexOf('self') !== -1]});
 
       this.updateSummary();
     },

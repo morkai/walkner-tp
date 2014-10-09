@@ -36,8 +36,13 @@ module.exports = function driverReportRoute(app, transportOrdersModule, req, res
     conditions.cash = false;
   }
 
+  var self = !!conditions.self;
+
+  delete conditions.self;
+
   var fields = {
     _id: 0,
+    symbol: 1,
     driver: 1,
     km: 1,
     hours: 1,
@@ -81,6 +86,11 @@ module.exports = function driverReportRoute(app, transportOrdersModule, req, res
 
   stream.on('data', function(transportOrder)
   {
+    if (transportOrder.symbol === '_SELF' && !self)
+    {
+      return;
+    }
+
     if (transportOrder.driver === null)
     {
       transportOrder.driver = {_id: '', label: '?'};

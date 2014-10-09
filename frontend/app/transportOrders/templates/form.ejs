@@ -24,7 +24,12 @@
           <input id="<%- idPrefix %>-tel" class="form-control" type="text" name="tel" maxlength="20">
         </div>
         <div class="col-md-3 form-group">
-          <label for="<%- idPrefix %>-symbol" class="control-label"><%- t('transportOrders', 'PROPERTY:symbol') %></label>
+          <label class="radio-inline control-label">
+            <input type="radio" name="symbolMode" value="symbol"> <%- t('transportOrders', 'PROPERTY:symbol') %>
+          </label>
+          <label class="radio-inline control-label">
+            <input type="radio" name="symbolMode" value="self"> <%- t('transportOrders', 'symbol:self') %>
+          </label>
           <input id="<%- idPrefix %>-symbol" class="form-control" type="text" name="symbol" maxlength="20">
         </div>
       </div>

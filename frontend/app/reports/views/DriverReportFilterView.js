@@ -42,7 +42,8 @@ define([
       driver: null,
       from: null,
       to: null,
-      cash: false
+      cash: false,
+      self: false
     },
 
     termToForm: {
@@ -58,7 +59,8 @@ define([
       {
         formData[term.name === 'ge' ? 'from' : 'to'] = time.format(term.args[1], 'YYYY-MM-DD');
       },
-      'cash': 'driver'
+      'cash': 'driver',
+      'self': 'driver'
     },
 
     serializeFormToQuery: function(selector)
@@ -93,7 +95,8 @@ define([
         selector.push({name: 'lt', args: ['userDate', toMoment.valueOf()]});
       }
 
-      selector.push({name: 'eq', args: ['cash', !!cash]});
+      selector.push({name: 'eq', args: ['cash', cash.indexOf('cash') !== -1]});
+      selector.push({name: 'eq', args: ['self', cash.indexOf('self') !== -1]});
 
       this.updateSummary();
     },
@@ -119,6 +122,7 @@ define([
       var driver = this.$id('driver').select2('data');
       var fromMoment = time.getMoment(this.$id('from').val());
       var toMoment = time.getMoment(this.$id('to').val());
+      var cash = this.getButtonGroupValue('cash');
 
       var summary = t('reports', 'filter:summary:driver' + (driver ? '' : 's'), {
         status: status.length === 0 || status.length === 4
@@ -129,9 +133,14 @@ define([
         toDate: toMoment.isValid() ? toMoment.format('YYYY-MM-DD') : '?'
       });
 
-      if (this.getButtonGroupValue('cash'))
+      if (cash.indexOf('cash') !== -1)
       {
         summary += '<br><em>' + t('reports', 'filter:summary:cash') + '</em>';
+      }
+
+      if (cash.indexOf('self') !== -1)
+      {
+        summary += '<br><em>' + t('reports', 'filter:summary:self') + '</em>';
       }
 
       this.$id('summary').html(summary);

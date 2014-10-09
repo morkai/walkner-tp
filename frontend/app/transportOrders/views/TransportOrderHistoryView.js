@@ -141,6 +141,11 @@ define([
         return '<span class="text-mono">' + value + '</span>';
       }
 
+      if (property === 'symbol' && value === '_SELF')
+      {
+        return t('transportOrders', 'symbol:self');
+      }
+
       return value;
     },
 

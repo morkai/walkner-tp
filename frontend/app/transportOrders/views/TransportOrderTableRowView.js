@@ -156,6 +156,10 @@ define([
       {
         row.symbol = '-';
       }
+      else if (row.symbol === '_SELF')
+      {
+        row.symbol = t('transportOrders', 'symbol:self');
+      }
 
       row.km = row.km.toLocaleString();
       row.hours = row.hours.toLocaleString();

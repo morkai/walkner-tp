@@ -48,7 +48,15 @@ define([
 
     serializeSymbol: function(data)
     {
-      data.symbol = data.symbol || '?';
+      if (data.symbol === '_SELF')
+      {
+        data.symbol = t('transportOrders', 'symbol:self');
+      }
+      else if (!data.symbol)
+      {
+        data.symbol = '?';
+      }
+
       data.km = data.km.toLocaleString();
       data.hours = data.hours.toLocaleString();
       data.price = preparePrice(data.price).str;

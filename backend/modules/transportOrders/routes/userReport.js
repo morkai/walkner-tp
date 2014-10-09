@@ -34,6 +34,10 @@ module.exports = function userReportRoute(app, transportOrdersModule, req, res, 
     conditions.cash = false;
   }
 
+  var self = !!conditions.self;
+
+  delete conditions.self;
+
   var fields = {
     _id: 0,
     status: 1,
@@ -81,6 +85,11 @@ module.exports = function userReportRoute(app, transportOrdersModule, req, res, 
 
   stream.on('data', function(transportOrder)
   {
+    if (transportOrder.symbol === '_SELF' && !self)
+    {
+      return;
+    }
+
     result.collection.push(transportOrder);
     result.km += transportOrder.km;
     result.hours += transportOrder.hours;

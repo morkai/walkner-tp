@@ -99,7 +99,8 @@ define([
       'change #-price': function()
       {
         this.parsePrice();
-      }
+      },
+      'change [name=symbolMode]': 'toggleSymbolMode'
 
     }),
 
@@ -147,6 +148,8 @@ define([
       {
         this.togglePanel(this.$id('driverPanel'), false);
       }
+
+      this.toggleSymbolMode();
     },
 
     renderKindFields: function()
@@ -189,6 +192,8 @@ define([
           {
             view.$id('symbol').val($owner.select2('data').user.symbol);
           }
+
+          view.toggleSymbolMode();
         }
       });
 
@@ -295,6 +300,16 @@ define([
 
       formData.price = formData.price.toLocaleString();
 
+      if (formData.symbol === '_SELF')
+      {
+        formData.symbolMode = 'self';
+        formData.symbol = '';
+      }
+      else
+      {
+        formData.symbolMode = 'symbol';
+      }
+
       return formData;
     },
 
@@ -327,8 +342,14 @@ define([
       formData.km = parseInt(formData.km, 10) || 0;
       formData.hours = parseInt(formData.hours, 10) || 0;
 
+      if (formData.symbolMode === 'self')
+      {
+        formData.symbol = '_SELF';
+      }
+
       delete formData.userTime;
       delete formData.driverTime;
+      delete formData.symbolMode;
 
       return formData;
     },
@@ -364,6 +385,24 @@ define([
       $toggle
         .removeClass('fa-chevron-up fa-chevron-down')
         .addClass('fa-chevron-' + (collapsed ? 'up' : 'down'));
+    },
+
+    toggleSymbolMode: function()
+    {
+      var $symbol = this.$id('symbol');
+      var self = this.$('input[name=symbolMode]:checked').val() === 'self';
+
+      $symbol.prop('disabled', self);
+
+      if (!self && $symbol.val().trim() === '')
+      {
+        var owner = this.$id('owner').select2('data');
+
+        if (owner && owner.user)
+        {
+          $symbol.val(owner.user.symbol);
+        }
+      }
     },
 
     parsePrice: function()
