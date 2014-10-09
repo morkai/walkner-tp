@@ -49,6 +49,7 @@ define([
     defaults: function()
     {
       return {
+        symbol: [],
         quantity: 1,
         km: 0,
         hours: 0,
