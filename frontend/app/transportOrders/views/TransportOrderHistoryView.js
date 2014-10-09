@@ -9,7 +9,8 @@ define([
   'app/core/View',
   'app/transportOrders/templates/history',
   'app/transportOrders/templates/user',
-  '../util/preparePrice'
+  '../util/preparePrice',
+  '../util/serializeSymbol'
 ], function(
   t,
   time,
@@ -17,7 +18,8 @@ define([
   View,
   detailsTemplate,
   renderUser,
-  preparePrice
+  preparePrice,
+  serializeSymbol
 ) {
   'use strict';
 
@@ -111,6 +113,11 @@ define([
         return preparePrice(value).str;
       }
 
+      if (property === 'symbol')
+      {
+        return serializeSymbol(value);
+      }
+
       if (typeof value === 'number')
       {
         return value.toLocaleString();
@@ -139,11 +146,6 @@ define([
       if (property === 'cargo' || property === 'fromAddress' || property === 'toAddress' || property === 'notes')
       {
         return '<span class="text-mono">' + value + '</span>';
-      }
-
-      if (property === 'symbol' && value === '_SELF')
-      {
-        return t('transportOrders', 'symbol:self');
       }
 
       return value;

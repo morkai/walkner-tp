@@ -13,6 +13,7 @@ define([
   'app/data/airports',
   'app/users/util/setUpUserSelect2',
   '../util/preparePrice',
+  '../util/serializeSymbol',
   'app/transportOrders/templates/form',
   'app/transportOrders/templates/kinds/peopleTransportForm',
   'app/transportOrders/templates/kinds/airportArrivalForm',
@@ -30,6 +31,7 @@ define([
   airports,
   setUpUserSelect2,
   preparePrice,
+  serializeSymbol,
   formTemplate,
   peopleTransportFormTemplate,
   airportArrivalFormTemplate,
@@ -101,28 +103,7 @@ define([
         this.parsePrice();
       },
       'change [name=symbolMode]': 'toggleSymbolMode',
-      'change #-symbol': function()
-      {
-        var symbols = [];
-        var $symbol = this.$id('symbol');
-        var rawValue = $symbol.val();
-        var re = /((?:[a-z]{2}[0-9]{2})?[a-z]{2}[0-9]{2})/ig;
-        var matches;
-
-        while ((matches = re.exec(rawValue)) !== null)
-        {
-          var symbol = matches[1].toUpperCase();
-
-          if (symbol.length === 4)
-          {
-            symbol = 'PL02' + symbol;
-          }
-
-          symbols.push(symbol);
-        }
-
-        $symbol.val(symbols.join(', '));
-      }
+      'change #-symbol': 'updateSymbol'
 
     }),
 
@@ -322,14 +303,15 @@ define([
 
       formData.price = formData.price.toLocaleString();
 
-      if (formData.symbol === '_SELF')
+      if (Array.isArray(formData.symbol))
       {
-        formData.symbolMode = 'self';
-        formData.symbol = '';
+        formData.symbolMode = 'symbol';
+        formData.symbol = serializeSymbol(formData.symbol, '');
       }
       else
       {
-        formData.symbolMode = 'symbol';
+        formData.symbolMode = 'self';
+        formData.symbol = '';
       }
 
       return formData;
@@ -366,7 +348,11 @@ define([
 
       if (formData.symbolMode === 'self')
       {
-        formData.symbol = '_SELF';
+        formData.symbol = null;
+      }
+      else
+      {
+        formData.symbol = this.updateSymbol();
       }
 
       delete formData.userTime;
@@ -456,6 +442,49 @@ define([
           .appendTo($group.addClass('has-warning'))
           .fadeIn('fast');
       }
+    },
+
+    updateSymbol: function()
+    {
+      var fullSymbols = [];
+      var shortSymbols = [];
+      var $symbol = this.$id('symbol');
+      var rawValue = $symbol.val();
+      var re = /(?:([0-9]+)\s*x)?\s*((?:[a-z]{2}[0-9]{2})?[a-z]{2}[0-9]{2})(?:\s*x\s*([0-9]+))?/ig;
+      var matches;
+
+      while ((matches = re.exec(rawValue)) !== null)
+      {
+        var symbol = matches[2].toUpperCase();
+        var count = 1;
+
+        if (symbol.length === 8)
+        {
+          symbol = symbol.replace('PL02', '');
+        }
+
+        if (matches[1] !== undefined)
+        {
+          count = parseInt(matches[1], 10);
+        }
+        else if (matches[3] !== undefined)
+        {
+          count = parseInt(matches[3], 10);
+        }
+
+        shortSymbols.push(count > 1 ? (count + 'x' + symbol) : symbol);
+
+        var fullSymbol = (symbol.length === 4 ? 'PL02' : '') + symbol;
+
+        for (var i = 0; i < count; ++i)
+        {
+          fullSymbols.push(fullSymbol);
+        }
+      }
+
+      $symbol.val(serializeSymbol(fullSymbols, ''));
+
+      return fullSymbols;
     }
 
   });

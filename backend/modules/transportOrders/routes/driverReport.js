@@ -86,7 +86,7 @@ module.exports = function driverReportRoute(app, transportOrdersModule, req, res
 
   stream.on('data', function(transportOrder)
   {
-    if (transportOrder.symbol === '_SELF' && !self)
+    if (!self && transportOrder.symbol === null)
     {
       return;
     }

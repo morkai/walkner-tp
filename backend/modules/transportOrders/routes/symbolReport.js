@@ -91,7 +91,7 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
 
   stream.on('data', function(transportOrder)
   {
-    if (transportOrder.symbol === '_SELF' && !self)
+    if (!self && transportOrder.symbol === null)
     {
       return;
     }
@@ -121,8 +121,6 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
     {
       transportOrder.owner = {_id: '', label: '?'};
     }
-
-    transportOrder.symbol = typeof transportOrder.symbol === 'string' ? transportOrder.symbol.trim() : '';
 
     var symbol = transportOrder.symbol;
 

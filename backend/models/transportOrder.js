@@ -126,9 +126,8 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
       default: ''
     },
     symbol: {
-      type: String,
-      trim: true,
-      default: ''
+      type: [String],
+      default: []
     },
     status: {
       type: String,
@@ -529,6 +528,10 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
     if (oldValue instanceof mongoose.Types.ObjectId)
     {
       oldValue = oldValue.toString();
+    }
+    else if (lodash.isObject(oldValue) && lodash.isFunction(oldValue.toObject))
+    {
+      oldValue = oldValue.toObject();
     }
     else if (property === 'owner' || property === 'dispatcher' || property === 'driver')
     {

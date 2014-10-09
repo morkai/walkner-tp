@@ -13,6 +13,7 @@ define([
   'app/core/views/ListView',
   'app/data/airports',
   '../util/preparePrice',
+  '../util/serializeSymbol',
   'app/transportOrders/templates/tableRow',
   'app/transportOrders/templates/tableRowDetails',
   'app/transportOrders/templates/user'
@@ -27,6 +28,7 @@ define([
   ListView,
   airports,
   preparePrice,
+  serializeSymbol,
   template,
   renderDetails,
   renderUser
@@ -151,16 +153,7 @@ define([
 
       row.quantity = row.quantity.toLocaleString();
       row.unit = t.has('transportOrders', 'unit:' + row.unit) ? t('transportOrders', 'unit:' + row.unit) : row.unit;
-
-      if (!row.symbol)
-      {
-        row.symbol = '-';
-      }
-      else if (row.symbol === '_SELF')
-      {
-        row.symbol = t('transportOrders', 'symbol:self');
-      }
-
+      row.symbol = serializeSymbol(row.symbol);
       row.km = row.km.toLocaleString();
       row.hours = row.hours.toLocaleString();
       row.price = preparePrice(row.price).str;
