@@ -100,7 +100,29 @@ define([
       {
         this.parsePrice();
       },
-      'change [name=symbolMode]': 'toggleSymbolMode'
+      'change [name=symbolMode]': 'toggleSymbolMode',
+      'change #-symbol': function()
+      {
+        var symbols = [];
+        var $symbol = this.$id('symbol');
+        var rawValue = $symbol.val();
+        var re = /((?:[a-z]{2}[0-9]{2})?[a-z]{2}[0-9]{2})/ig;
+        var matches;
+
+        while ((matches = re.exec(rawValue)) !== null)
+        {
+          var symbol = matches[1].toUpperCase();
+
+          if (symbol.length === 4)
+          {
+            symbol = 'PL02' + symbol;
+          }
+
+          symbols.push(symbol);
+        }
+
+        $symbol.val(symbols.join(', '));
+      }
 
     }),
 
