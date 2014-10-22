@@ -1,10 +1,28 @@
 // Copyright (c) 2014, Łukasz Walukiewicz <lukasz@walukiewicz.eu>. Some Rights Reserved.
 // Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
-// Part of the walkner-wmes project <http://lukasz.walukiewicz.eu/p/walkner-wmes>
+// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-wmes>
 
 (function()
 {
   'use strict';
+
+  var location = window.location;
+  var matches = location.hash.match(/^(?:#proxy=([0-9]+))?(#.*?)?$/);
+
+  if (!matches || matches[1] === undefined || matches[1] === localStorage.getItem('PROXY'))
+  {
+    var origin = location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '');
+
+    location.href = 'http://walkner.pl/projects/?referrer=' + encodeURIComponent(
+      origin + '/#proxy=' + Date.now() + (matches && matches[2] ? matches[2] : '#')
+    );
+
+    return;
+  }
+
+  window.location.hash = matches && matches[2] ? matches[2] : '#';
+
+  localStorage.setItem('PROXY', matches[1]);
 
   var locale = localStorage.getItem('LOCALE') || navigator.language || 'pl';
 
