@@ -94,12 +94,13 @@ define([
 
     serialize: function()
     {
+      var canViewAll = user.isAllowedTo('TRANSPORT_ORDERS:ALL');
       var isDispatcher = user.isAllowedTo('TRANSPORT_ORDERS:DISPATCHER');
       var isDriver = user.isAllowedTo('TRANSPORT_ORDERS:DRIVER');
 
       return _.extend(FilterView.prototype.serialize.call(this), {
-        showOwnerGroup: isDispatcher || isDriver,
-        showDriverGroup: isDispatcher
+        showOwnerGroup: canViewAll || isDispatcher || isDriver,
+        showDriverGroup: canViewAll || isDispatcher
       });
     },
 
