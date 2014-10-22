@@ -36,7 +36,8 @@ exports.events = {
     ],
     warning: [
       'users.loginFailure',
-      'users.deleted'
+      'users.deleted',
+      'transportOrders.deleted'
     ],
     error: [
 

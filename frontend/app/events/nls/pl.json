@@ -26,5 +26,7 @@
   "TYPE:users.edited": "Użytkownicy: edycja",
   "TEXT:users.edited": "Zmodyfikowano użytkownika: <a href='\\#users/{model->_id}'>{model->login}</a>",
   "TYPE:users.deleted": "Użytkownicy: usunięcie",
-  "TEXT:users.deleted": "Usunięto użytkownika: <em>{model->login}</em>"
+  "TEXT:users.deleted": "Usunięto użytkownika: <em>{model->login}</em>",
+  "TYPE:transportOrders.deleted": "Zamówienia: usunięcie",
+  "TEXT:transportOrders.deleted": "Usunięto zamówienie: <em>{model->rid}</em>"
 }
