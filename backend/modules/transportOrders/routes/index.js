@@ -39,7 +39,7 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
 
   express.delete(
     '/transportOrders/:id',
-    userModule.auth('TRANSPORT_ORDERS:DISPATCHER'),
+    userModule.auth('TRANSPORT_ORDERS:DELETE'),
     express.crud.deleteRoute.bind(null, app, TransportOrder)
   );
 

@@ -52,6 +52,8 @@
   "PRIVILEGE:TRANSPORT_ORDERS:DISPATCHER": "Zamówienia: dyspozytor",
   "PRIVILEGE:TRANSPORT_ORDERS:DRIVER": "Zamówienia: kierowca",
   "PRIVILEGE:TRANSPORT_ORDERS:USER": "Zamówienia: użytkownik",
+  "PRIVILEGE:TRANSPORT_ORDERS:ALL": "Zamówienia: dostęp do wszystkich",
+  "PRIVILEGE:TRANSPORT_ORDERS:DELETE": "Zamówienia: usuwanie",
   "PRIVILEGE:REPORTS:VIEW": "Raporty: przeglądanie",
 
   "select2:placeholder": "Szukaj po nazwisku...",

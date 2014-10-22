@@ -11,7 +11,7 @@ module.exports = function limitToUser(userModule, req, res, next)
   var user = req.session.user || {};
   var selectors = req.rql.selector.args;
 
-  if (userModule.isAllowedTo(user, 'TRANSPORT_ORDERS:DISPATCHER'))
+  if (userModule.isAllowedTo(user, [['TRANSPORT_ORDERS:DISPATCHER'], ['TRANSPORT_ORDERS:ALL']]))
   {
     return next();
   }

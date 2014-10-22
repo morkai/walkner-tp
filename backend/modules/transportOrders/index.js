@@ -20,8 +20,10 @@ exports.start = function startTransportOrdersModule(app, transportOrdersModule)
 {
   transportOrdersModule.hasAccessTo = function hasAccessTo(user, transportOrder)
   {
-    return app[transportOrdersModule.config.userId].isAllowedTo(user, 'TRANSPORT_ORDERS:DISPATCHER')
-      || lodash.contains(lodash.map(transportOrder.users, String), user._id.toString());
+    var userModule = app[transportOrdersModule.config.userId];
+    var canViewAll = userModule.isAllowedTo(user, [['TRANSPORT_ORDERS:DISPATCHER'], ['TRANSPORT_ORDERS:ALL']]);
+
+    return canViewAll || lodash.contains(lodash.map(transportOrder.users, String), user._id.toString());
   };
 
   app.onModuleReady(

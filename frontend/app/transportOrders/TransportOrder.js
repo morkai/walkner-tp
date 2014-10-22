@@ -144,7 +144,7 @@ define([
      */
     isDeletable: function()
     {
-      return user.data.super || (!this.isResolved() && user.isAllowedTo('TRANSPORT_ORDERS:DISPATCHER'));
+      return user.data.super || (!this.isResolved() && user.isAllowedTo('TRANSPORT_ORDERS:DELETE'));
     },
 
     /**
