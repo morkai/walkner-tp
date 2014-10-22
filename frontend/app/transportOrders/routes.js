@@ -13,6 +13,7 @@ define([
   './pages/TransportOrderDetailsPage',
   './pages/TransportOrderAddFormPage',
   './pages/TransportOrderEditFormPage',
+  './pages/TransportOrderCancelFormPage',
   'i18n!app/nls/transportOrders'
 ], function(
   router,
@@ -24,7 +25,8 @@ define([
   TransportOrderListPage,
   TransportOrderDetailsPage,
   TransportOrderAddFormPage,
-  TransportOrderEditFormPage
+  TransportOrderEditFormPage,
+  TransportOrderCancelFormPage
 ) {
   'use strict';
 
@@ -66,6 +68,16 @@ define([
         _id: req.params.id
       }),
       confirm: req.query.confirm === '1',
+      referrer: referrer
+    }));
+  });
+
+  router.map('/transportOrders/:id;cancel', canAccess, function(req, referrer)
+  {
+    viewport.showPage(new TransportOrderCancelFormPage({
+      model: new TransportOrder({
+        _id: req.params.id
+      }),
       referrer: referrer
     }));
   });

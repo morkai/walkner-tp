@@ -5,23 +5,27 @@
 define([
   'app/i18n',
   'app/user',
+  'app/viewport',
   'app/core/View',
   'app/core/util/pageActions',
   'app/core/util/bindLoadingMessage',
   'app/core/util/onModelDeleted',
   'app/transportOrders/templates/detailsPage',
   '../views/TransportOrderDetailsView',
-  '../views/TransportOrderHistoryView'
+  '../views/TransportOrderHistoryView',
+  '../views/TransportOrderCancelFormView'
 ], function(
   t,
   user,
+  viewport,
   View,
   pageActions,
   bindLoadingMessage,
   onModelDeleted,
   template,
   TransportOrderDetailsView,
-  TransportOrderHistoryView
+  TransportOrderHistoryView,
+  TransportOrderCancelFormView
 ) {
   'use strict';
 
@@ -76,6 +80,30 @@ define([
           href: model.genClientUrl('edit') + '?confirm=1'
         });
         actions.push(pageActions.edit(model, null));
+      }
+
+      if (model.isCancelable())
+      {
+        actions.push({
+          id: 'cancel',
+          icon: 'ban',
+          label: t('transportOrders', 'PAGE_ACTION:cancel'),
+          href: model.genClientUrl('cancel'),
+          callback: function(e)
+          {
+            if (e.button === 0)
+            {
+              e.preventDefault();
+
+              var cancelDialogView = new TransportOrderCancelFormView({
+                model: model,
+                done: function() { viewport.closeDialog(); }
+              });
+
+              viewport.showDialog(cancelDialogView, t.bound('transportOrders', 'cancel:title'));
+            }
+          }
+        });
       }
 
       if (model.isDeletable())

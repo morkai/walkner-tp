@@ -1,0 +1,16 @@
+<form class="action-form tp-form" method="post">
+  <input type="hidden" name="_method" value="put">
+  <input type="hidden" name="status" value="cancelled">
+  <p><%- t('transportOrders', 'cancel:message', {label: label}) %></p>
+  <div class="form-group">
+    <textarea id="<%- idPrefix %>-comment" name="comment" class="form-control" rows="3" placeholder="<%- t('transportOrders', 'cancel:comment') %>"></textarea>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-danger"><%- t('transportOrders', 'cancel:submit') %></button>
+    <% if (cancelUrl === '#') { %>
+    <button type="button" class="cancel btn btn-link"><%- t('core', 'ACTION_FORM:BUTTON:cancel') %></button>
+    <% } else { %>
+    <a class="cancel" href="<%- cancelUrl %>"><%- t('core', 'ACTION_FORM:BUTTON:cancel') %></a>
+    <% } %>
+  </div>
+</form>

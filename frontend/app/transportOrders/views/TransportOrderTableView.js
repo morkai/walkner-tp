@@ -7,16 +7,20 @@ define([
   'app/time',
   'app/user',
   'app/i18n',
+  'app/viewport',
   'app/core/views/ListView',
   './TransportOrderTableRowView',
+  './TransportOrderCancelFormView',
   'app/transportOrders/templates/table'
 ], function(
   _,
   time,
   user,
   t,
+  viewport,
   ListView,
   TransportOrderTableRowView,
+  TransportOrderCancelFormView,
   template
 ) {
   'use strict';
@@ -51,6 +55,17 @@ define([
         });
 
         return false;
+      },
+      'click .action-cancel': function(e)
+      {
+        e.preventDefault();
+
+        var cancelDialogView = new TransportOrderCancelFormView({
+          model: this.getModelFromEvent(e),
+          done: function () { viewport.closeDialog(); }
+        });
+
+        viewport.showDialog(cancelDialogView, t.bound('transportOrders', 'cancel:title'));
       },
       'click .actions .btn': function(e)
       {

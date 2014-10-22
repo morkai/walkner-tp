@@ -142,6 +142,15 @@ define([
     /**
      * @returns {boolean}
      */
+    isCancelable: function()
+    {
+      return !this.isResolved()
+        && (user.isAllowedTo('TRANSPORT_ORDERS:DISPATCHER') || this.isCreator() || this.isOwner());
+    },
+
+    /**
+     * @returns {boolean}
+     */
     isDeletable: function()
     {
       return user.data.super || (!this.isResolved() && user.isAllowedTo('TRANSPORT_ORDERS:DELETE'));

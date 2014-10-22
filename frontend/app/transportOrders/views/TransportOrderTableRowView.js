@@ -89,6 +89,16 @@ define([
         actions.push(ListView.actions.edit(model));
       }
 
+      if (model.isCancelable())
+      {
+        actions.push({
+          id: 'cancel',
+          icon: 'ban',
+          label: t('transportOrders', 'LIST:ACTION:cancel'),
+          href: model.genClientUrl('cancel')
+        });
+      }
+
       if (model.isDeletable())
       {
         actions.push(ListView.actions.delete(model));

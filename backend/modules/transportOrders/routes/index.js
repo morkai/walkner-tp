@@ -37,6 +37,8 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
 
   express.put('/transportOrders/:id', editOrderRoute);
 
+  express.patch('/transportOrders/:id', editOrderRoute);
+
   express.delete(
     '/transportOrders/:id',
     userModule.auth('TRANSPORT_ORDERS:DELETE'),

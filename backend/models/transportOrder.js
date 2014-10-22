@@ -284,6 +284,11 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
     var isOwner = this.owner && updaterId === this.owner._id.toString();
     var isDriver = this.driver && updaterId === this.driver._id.toString();
 
+    if (roles.user && input.status === 'cancelled' && this.status !== 'completed')
+    {
+      inputProperties.push('status');
+    }
+
     if (!roles.dispatcher)
     {
       this.prepareConfirmationProperties(input, inputProperties, isCreator || isOwner, isDriver);
@@ -525,15 +530,7 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
     var oldValueChange;
     var newValueChange;
 
-    if (oldValue instanceof mongoose.Types.ObjectId)
-    {
-      oldValue = oldValue.toString();
-    }
-    else if (lodash.isObject(oldValue) && lodash.isFunction(oldValue.toObject))
-    {
-      oldValue = oldValue.toObject();
-    }
-    else if (property === 'owner' || property === 'dispatcher' || property === 'driver')
+    if (property === 'owner' || property === 'dispatcher' || property === 'driver')
     {
       newValueChange = createUserInfo(newValue);
       newValue = newValue && newValue._id ? newValue._id.toString() : null;
@@ -552,6 +549,14 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
     else if (property === 'status' && newValue === 'open')
     {
       newValue = this.ownerConfirmed && this.dispatcherConfirmed && this.driverConfirmed ? 'confirmed' : 'pending';
+    }
+    else if (oldValue instanceof mongoose.Types.ObjectId)
+    {
+      oldValue = oldValue.toString();
+    }
+    else if (lodash.isObject(oldValue) && lodash.isFunction(oldValue.toObject))
+    {
+      oldValue = oldValue.toObject();
     }
     else if (lodash.isString(newValue))
     {

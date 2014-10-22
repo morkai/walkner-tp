@@ -14,10 +14,12 @@
   "PAGE_ACTION:delete": "Usuń",
   "PAGE_ACTION:confirm": "Zmień potwierdzenie",
   "PAGE_ACTION:markAsSeen": "Oznacz jako przeczytane",
+  "PAGE_ACTION:cancel": "Anuluj",
   "PAGE_ACTION:jump:title": "Skocz do zamówienia po ID",
   "PAGE_ACTION:jump:placeholder": "ID zamówienia",
 
   "LIST:ACTION:confirm": "Zmień potwierdzenie",
+  "LIST:ACTION:cancel": "Anuluj zamówienie",
   "LIST:ACTION:markAsSeen": "Oznacz jako przeczytane",
 
   "PANEL:TITLE:history": "Historia zmian zamówienia",
@@ -149,6 +151,11 @@
   "confirm:owner": "Wymuś potwierdzenie właściciela zamówienia",
   "confirm:dispatcher": "Wymuś potwierdzenie przez dyspozytora",
   "confirm:driver": "Wymuś potwierdzenie przez kierowcę",
+
+  "cancel:title": "Potwierdzenie anulowania zamówienia",
+  "cancel:message": "Czy na pewno chcesz anulować zamówienie <em>{label}</em>?",
+  "cancel:comment": "Opcjonalny komentarz...",
+  "cancel:submit": "Anuluj zamówienie",
 
   "noUser": "brak",
   "noNotes": "utworzono zamówienie.",

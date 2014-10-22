@@ -107,11 +107,6 @@ define([
 
     }),
 
-    initialize: function()
-    {
-      FormView.prototype.initialize.call(this);
-    },
-
     destroy: function()
     {
       this.$('.select2-offscreen[tabindex="-1"]').select2('destroy');
@@ -360,11 +355,6 @@ define([
       delete formData.symbolMode;
 
       return formData;
-    },
-
-    checkValidity: function()
-    {
-      return true;
     },
 
     togglePanel: function($panel, animate)
