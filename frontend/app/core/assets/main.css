@@ -195,9 +195,9 @@ kbd {
 }
 
 .panel-heading {
+  font-family: Verdana, sans-serif;
   text-shadow: 1px 1px 1px #333;
   font-weight: bold;
-  letter-spacing: 0.025em;
 }
 .panel-default > .panel-heading {
   text-shadow: none;
