@@ -34,10 +34,10 @@ exports.start = function startMailSenderModule(app, module)
     var controller = app[config.controllerId];
     var values = controller && controller.values ? controller.values : {};
     var mailOptions = {
-      from: String(values[config.from.tagName] || config.from.default),
+      from: String(values[config.from.tagName] || config.from.default || config.from),
       to: Array.isArray(to) ? to.join(', ') : to,
-      bcc: String(values[config.bcc.tagName] || config.bcc.default),
-      replyTo: String(values[config.replyTo.tagName] || config.replyTo.default),
+      bcc: String(values[config.bcc.tagName] || config.bcc.default || config.bcc),
+      replyTo: String(values[config.replyTo.tagName] || config.replyTo.default || config.replyTo),
       subject: subject,
       text: String(text)
     };
