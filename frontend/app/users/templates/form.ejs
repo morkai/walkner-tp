@@ -37,11 +37,11 @@
       </div>
       <div class="row">
         <div class="col-md-3 form-group">
-          <label for="<%- idPrefix %>-password" class="control-label"><%- t('users', 'PROPERTY:password') %></label>
+          <label for="<%- idPrefix %>-password" class="control-label <%- editMode ? '' : 'is-required' %>"><%- t('users', 'PROPERTY:password') %></label>
           <input id="<%- idPrefix %>-password" class="form-control" type="password" name="password">
         </div>
         <div class="col-md-3 form-group">
-          <label for="<%- idPrefix %>-password2" class="control-label"><%- t('users', 'PROPERTY:password2') %></label>
+          <label for="<%- idPrefix %>-password2" class="control-label <%- editMode ? '' : 'is-required' %>"><%- t('users', 'PROPERTY:password2') %></label>
           <input id="<%- idPrefix %>-password2" class="form-control" type="password">
         </div>
       </div>
