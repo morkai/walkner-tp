@@ -57,7 +57,7 @@ define([
       openOnEnter: null,
       allowClear: true,
       minimumInputLength: 3,
-      placeholder: t('users', 'select2:placeholder'),
+      placeholder: t('users', 'select2:users:placeholder'),
       ajax: {
         cache: true,
         quietMillis: 300,

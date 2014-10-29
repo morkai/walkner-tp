@@ -440,7 +440,7 @@ define([
       var shortSymbols = [];
       var $symbol = this.$id('symbol');
       var rawValue = $symbol.val();
-      var re = /(?:([0-9]+)\s*x)?\s*((?:[a-z]{2}[0-9]{2})?[a-z]{2}[0-9]{2})(?:\s*x\s*([0-9]+))?/ig;
+      var re = /(?:([0-9]+)\s*x)?\s*((?:[a-z]{2}[0-9]{2})?[a-z]{2}[a-z0-9]{2})(?:\s*x\s*([0-9]+))?/ig;
       var matches;
 
       while ((matches = re.exec(rawValue)) !== null)

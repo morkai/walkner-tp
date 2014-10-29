@@ -38,7 +38,6 @@
   "FORM:ERROR:addFailure": "Nie udało się dodać użytkownika :-(",
   "FORM:ERROR:editFailure": "Nie udało się zmodyfikować użytkownika :-(",
   "FORM:ERROR:duplicateLogin": "Użytkownik o podanym loginie już istnieje!",
-  "FORM:help:symbol": "Format: AA00AA00, np. PL04AD01",
 
   "ACTION_FORM:DIALOG_TITLE:delete": "Potwierdzenie usunięcia użytkownika",
   "ACTION_FORM:BUTTON:delete": "Usuń użytkownika",
@@ -59,6 +58,6 @@
   "PRIVILEGE:TRANSPORT_ORDERS:DELETE": "Zamówienia: usuwanie",
   "PRIVILEGE:REPORTS:VIEW": "Raporty: przeglądanie",
 
-  "select2:placeholder": "Szukaj po nazwisku...",
+  "select2:users:placeholder": "Szukaj po nazwisku...",
   "select2:users:system": "System"
 }

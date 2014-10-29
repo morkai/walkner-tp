@@ -3,9 +3,11 @@
 // Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
 
 define([
-  '../core/Model'
+  '../core/Model',
+  '../data/symbols'
 ], function(
-  Model
+  Model,
+  symbols
 ) {
   'use strict';
 
@@ -29,7 +31,8 @@ define([
       privileges: null,
       firstName: null,
       lastName: null,
-      tel: null
+      tel: null,
+      symbol: null
     },
 
     initialize: function()
@@ -51,6 +54,20 @@ define([
     serialize: function()
     {
       return this.toJSON();
+    },
+
+    serializeDetails: function()
+    {
+      var obj = this.toJSON();
+
+      obj.symbol = symbols.getLabel(obj.symbol);
+
+      return obj;
+    },
+
+    serializeRow: function()
+    {
+      return this.serializeDetails();
     }
 
   });
