@@ -8,8 +8,7 @@ var nodemailer = require('nodemailer');
 
 exports.DEFAULT_CONFIG = {
   controllerId: 'controller',
-  transport: null,
-  options: {},
+  smtp: {},
   from: {tagName: 'mailer.from', default: 'someone@the.net'},
   bcc: {tagName: 'mailer.bcc', default: ''},
   replyTo: {tagName: 'mailer.replyTo', default: 'someone@the.net'}
@@ -18,10 +17,7 @@ exports.DEFAULT_CONFIG = {
 exports.start = function startMailSenderModule(app, module)
 {
   var config = module.config;
-  var transport = nodemailer.createTransport(
-    module.config.transport,
-    module.config.options
-  );
+  var transport = nodemailer.createTransport(module.config.smtp);
 
   /**
    * @param {string|Array.<string>} to
