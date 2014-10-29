@@ -36,6 +36,7 @@
   "FORM:ERROR:passwordMismatch": "Podane hasła nie pasują do siebie.",
   "FORM:ERROR:addFailure": "Nie udało się dodać użytkownika :-(",
   "FORM:ERROR:editFailure": "Nie udało się zmodyfikować użytkownika :-(",
+  "FORM:ERROR:duplicateLogin": "Użytkownik o podanym loginie już istnieje!",
 
   "ACTION_FORM:DIALOG_TITLE:delete": "Potwierdzenie usunięcia użytkownika",
   "ACTION_FORM:BUTTON:delete": "Usuń użytkownika",

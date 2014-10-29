@@ -37,6 +37,7 @@
     "FORM:ERROR:passwordMismatch": "The specified passwords do not match.",
     "FORM:ERROR:addFailure": "Failed to add the user :-(",
     "FORM:ERROR:editFailure": "Failed to edit the user :-(",
+    "FORM:ERROR:duplicateLogin": "The specified login is already used!",
 
     "ACTION_FORM:DIALOG_TITLE:delete": "User deletion confirmation",
     "ACTION_FORM:BUTTON:delete": "Delete user",

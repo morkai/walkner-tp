@@ -167,6 +167,18 @@ define([
       }
 
       return formData;
+    },
+
+    handleFailure: function(res)
+    {
+      if (res.responseJSON.error.code === 'DUPLICATE_KEY')
+      {
+        this.$id('login').select();
+
+        return this.showErrorMessage(t('users', 'FORM:ERROR:duplicateLogin'));
+      }
+
+      return FormView.prototype.handleFailure.apply(this, arguments);
     }
 
   });
