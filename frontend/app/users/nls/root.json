@@ -12,6 +12,7 @@
 
     "PAGE_ACTION:add": "Add user",
     "PAGE_ACTION:edit": "Edit user",
+    "PAGE_ACTION:editAccount": "Edit account",
     "PAGE_ACTION:delete": "Delete user",
 
     "PANEL:TITLE:details": "User details",

@@ -22,7 +22,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
 
   express.get('/users/:id', canViewDetails, express.crud.readRoute.bind(null, app, User));
 
-  express.put('/users/:id', canManage, restrictSpecial, hashPassword, express.crud.editRoute.bind(null, app, User));
+  express.put('/users/:id', canEdit, restrictSpecial, hashPassword, express.crud.editRoute.bind(null, app, User));
 
   express.delete('/users/:id', canManage, restrictSpecial, express.crud.deleteRoute.bind(null, app, User));
 
@@ -39,6 +39,23 @@ module.exports = function setUpUsersRoutes(app, usersModule)
     else
     {
       canView(req, res, next);
+    }
+  }
+
+  function canEdit(req, res, next)
+  {
+    if (req.session.user && req.params.id === req.session.user._id)
+    {
+      if (req.body.privileges && req.session.user.privileges.indexOf('USERS:MANAGE') === -1)
+      {
+        delete req.body.privileges;
+      }
+
+      next();
+    }
+    else
+    {
+      canManage(req, res, next);
     }
   }
 

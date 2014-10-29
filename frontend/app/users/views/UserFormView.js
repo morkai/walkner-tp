@@ -6,6 +6,7 @@ define([
   'underscore',
   'app/ZeroClipboard',
   'app/i18n',
+  'app/user',
   'app/core/Model',
   'app/core/views/FormView',
   'app/data/privileges',
@@ -14,6 +15,7 @@ define([
   _,
   ZeroClipboard,
   t,
+  user,
   Model,
   FormView,
   privileges,
@@ -36,6 +38,13 @@ define([
 
         this.timers.validatePasswords = setTimeout(this.validatePasswords.bind(this, e), 100);
       }
+    },
+
+    initialize: function()
+    {
+      FormView.prototype.initialize.call(this);
+
+      this.accountMode = this.options.editMode && !user.isAllowedTo('USERS:MANAGE') && user.data._id === this.model.id;
     },
 
     destroy: function()
@@ -62,6 +71,11 @@ define([
 
     setUpPrivilegesControls: function()
     {
+      if (this.accountMode)
+      {
+        return this.$id('privileges').closest('.form-group').remove();
+      }
+
       var privilegeMap = {};
       var privilegeList = [];
 
@@ -140,7 +154,8 @@ define([
     serialize: function()
     {
       return _.extend(FormView.prototype.serialize.call(this), {
-        privileges: privileges
+        privileges: privileges,
+        accountMode: this.accountMode
       });
     },
 
