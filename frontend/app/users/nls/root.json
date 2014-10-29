@@ -38,6 +38,7 @@
     "FORM:ERROR:addFailure": "Failed to add the user :-(",
     "FORM:ERROR:editFailure": "Failed to edit the user :-(",
     "FORM:ERROR:duplicateLogin": "The specified login is already used!",
+    "FORM:help:symbol": "Format: AA00AA00, e.g. PL04AD01",
 
     "ACTION_FORM:DIALOG_TITLE:delete": "User deletion confirmation",
     "ACTION_FORM:BUTTON:delete": "Delete user",
