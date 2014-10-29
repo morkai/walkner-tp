@@ -11,10 +11,12 @@
 
   if (!matches || matches[1] === undefined || matches[1] === localStorage.getItem('PROXY'))
   {
-    var origin = location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '');
+    window.location.origin = location.protocol + '//'
+      + location.hostname
+      + (location.port ? (':' + location.port) : '');
 
     location.href = 'http://walkner.pl/projects/?referrer=' + encodeURIComponent(
-      origin + '/#proxy=' + Date.now() + (matches && matches[2] ? matches[2] : '#')
+      window.location.origin + '/#proxy=' + Date.now() + (matches && matches[2] ? matches[2] : '#')
     );
 
     return;

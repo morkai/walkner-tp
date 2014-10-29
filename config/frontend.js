@@ -7,6 +7,7 @@ exports.modules = [
   'mongoose',
   'events',
   'pubsub',
+  'mail/sender',
   'user',
   'express',
   'users',
@@ -73,7 +74,7 @@ exports.mongoose = {
   uri: require('./mongodb').uri,
   options: {},
   models: [
-    'event', 'user', 'transportOrder'
+    'event', 'user', 'transportOrder', 'passwordResetRequest'
   ]
 };
 
@@ -100,6 +101,21 @@ exports.user = {
     'TRANSPORT_ORDERS:ALL', 'TRANSPORT_ORDERS:DELETE',
     'REPORTS:VIEW'
   ]
+};
+
+exports['mail/sender'] = {
+  smtp: {
+    host: 'smtp.localhost',
+    port: 465,
+    secureConnection: true,
+    auth: {
+      user: 'support@localhost',
+      pass: '123456'
+    },
+    maxConnections: 2
+  },
+  from: 'support@localhost',
+  replyTo: 'support+tp@localhost'
 };
 
 exports.updater = {

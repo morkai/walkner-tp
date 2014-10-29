@@ -6,12 +6,16 @@
 
 var lodash = require('lodash');
 var bcrypt = require('bcrypt');
+var crypto = require('crypto');
+var step = require('h5.step');
 
 module.exports = function setUpUsersRoutes(app, usersModule)
 {
   var express = app[usersModule.config.expressId];
   var userModule = app[usersModule.config.userId];
-  var User = app[usersModule.config.mongooseId].model('User');
+  var mongoose = app[usersModule.config.mongooseId];
+  var User = mongoose.model('User');
+  var PasswordResetRequest = mongoose.model('PasswordResetRequest');
 
   var canView = userModule.auth('USERS:VIEW');
   var canManage = userModule.auth('USERS:MANAGE');
@@ -29,6 +33,9 @@ module.exports = function setUpUsersRoutes(app, usersModule)
   express.post('/login', loginRoute);
 
   express.get('/logout', logoutRoute);
+
+  express.post('/resetPassword/request', hashPassword, requestPasswordResetRoute);
+  express.get('/resetPassword/:id', confirmPasswordResetRoute);
 
   function canViewDetails(req, res, next)
   {
@@ -207,6 +214,190 @@ module.exports = function setUpUsersRoutes(app, usersModule)
     });
   }
 
+  function requestPasswordResetRoute(req, res, next)
+  {
+    var mailSender = app[usersModule.config.mailSenderId];
+
+    if (!mailSender)
+    {
+      return res.send(500);
+    }
+
+    if (!lodash.isString(req.body.subject)
+      || !lodash.isString(req.body.text)
+      || !lodash.isString(req.body.login)
+      || !lodash.isString(req.body.passwordText))
+    {
+      return res.send(400);
+    }
+
+    step(
+      function findUserStep()
+      {
+        User.findOne({login: req.body.login}, {login: 1, email: 1}).lean().exec(this.next());
+      },
+      function validateUserStep(err, user)
+      {
+        if (err)
+        {
+          return this.skip(err);
+        }
+
+        if (!user)
+        {
+          err = new Error('NOT_FOUND');
+          err.status = 404;
+
+          return this.skip(err);
+        }
+
+        if (!/^.+@.+\.[a-z]+$/.test(user.email))
+        {
+          err = new Error('INVALID_EMAIL');
+          err.status = 400;
+
+          return this.skip(err);
+        }
+
+        this.user = user;
+      },
+      function generateIdStep()
+      {
+        crypto.pseudoRandomBytes(32, this.next());
+      },
+      function createPasswordResetRequestStep(err, idBytes)
+      {
+        if (err)
+        {
+          return this.skip(err);
+        }
+
+        this.passwordResetRequest = new PasswordResetRequest({
+          _id: idBytes.toString('hex').toUpperCase(),
+          createdAt: new Date(),
+          creator: userModule.createUserInfo(req.session.user, req),
+          user: this.user._id,
+          password: req.body.password
+        });
+        this.passwordResetRequest.save(this.next());
+      },
+      function sendEmailStep(err)
+      {
+        if (err)
+        {
+          return this.skip(err);
+        }
+
+        var subject = req.body.subject;
+        var text = req.body.text
+          .replace(/\{REQUEST_ID\}/g, this.passwordResetRequest._id)
+          .replace(/\{LOGIN\}/g, this.user.login)
+          .replace(/\{PASSWORD\}/g, req.body.passwordText);
+
+        mailSender.send(this.user.email, subject, text, this.next());
+      },
+      function sendResponseStep(err)
+      {
+        if (err)
+        {
+          return next(err);
+        }
+
+        return res.send(204);
+      }
+    );
+  }
+
+  function confirmPasswordResetRoute(req, res, next)
+  {
+    step(
+      function findRequestStep()
+      {
+        PasswordResetRequest.findById(req.params.id, this.next());
+      },
+      function validateRequestStep(err, passwordResetRequest)
+      {
+        if (err)
+        {
+          return this.skip(err);
+        }
+
+        if (!passwordResetRequest)
+        {
+          err = new Error('REQUEST_NOT_FOUND');
+          err.status = 404;
+
+          return this.skip(err);
+        }
+
+        if ((Date.now() - passwordResetRequest.createdAt.getTime()) > 3600 * 24 * 1000)
+        {
+          err = new Error('REQUEST_EXPIRED');
+          err.status = 400;
+
+          return this.skip(err);
+        }
+
+        this.passwordResetRequest = passwordResetRequest;
+      },
+      function findUserStep()
+      {
+        User.findById(this.passwordResetRequest.user, this.next());
+      },
+      function validateUserStep(err, user)
+      {
+        if (err)
+        {
+          return this.skip(err);
+        }
+
+        if (!user)
+        {
+          err = new Error('USER_NOT_FOUND');
+          err.status = 400;
+
+          return this.skip(err);
+        }
+
+        this.user = user;
+      },
+      function updatePasswordStep()
+      {
+        this.user.password = this.passwordResetRequest.password;
+        this.user.save(this.next());
+      },
+      function sendResponseStep(err)
+      {
+        if (err)
+        {
+          return next(err);
+        }
+
+        res.redirect(303, '/');
+
+        if (this.passwordResetRequest)
+        {
+          var passwordResetRequest = this.passwordResetRequest;
+
+          passwordResetRequest.remove(function (err)
+          {
+            if (err)
+            {
+              usersModule.error(
+                "Failed to remove the password reset request [%s]: %s",
+                passwordResetRequest._id,
+                err.message
+              );
+            }
+          });
+        }
+
+        this.passwordResetRequest = null;
+        this.user = null;
+      }
+    );
+  }
+
   /**
    * @private
    */
@@ -231,6 +422,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
         return next(err);
       }
 
+      req.body.passwordText = password;
       req.body.password = hash;
 
       next();
