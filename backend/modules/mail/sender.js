@@ -8,8 +8,8 @@ var nodemailer = require('nodemailer');
 
 exports.DEFAULT_CONFIG = {
   controllerId: 'controller',
-  serviceType: null,
-  serviceOptions: {},
+  transport: null,
+  options: {},
   from: {tagName: 'mailer.from', default: 'someone@the.net'},
   bcc: {tagName: 'mailer.bcc', default: ''},
   replyTo: {tagName: 'mailer.replyTo', default: 'someone@the.net'}
