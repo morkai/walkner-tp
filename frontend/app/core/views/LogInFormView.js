@@ -33,6 +33,7 @@ define([
         this.$id('loginLink').hide();
         this.$id('resetLink').show();
         this.$id('login').select();
+        this.$id('password').attr('placeholder', t('core', 'LOG_IN_FORM:LABEL:PASSWORD'));
         this.$('.logInForm-submit-label').text(t('core', 'LOG_IN_FORM:SUBMIT:LOG_IN'));
 
         this.resetting = false;
@@ -45,7 +46,7 @@ define([
         this.$id('resetLink').hide();
         this.$id('loginLink').show();
         this.$id('login').select();
-        this.$id('password').val('');
+        this.$id('password').val('').attr('placeholder', t('core', 'LOG_IN_FORM:LABEL:NEW_PASSWORD'));
         this.$('.logInForm-submit-label').text(t('core', 'LOG_IN_FORM:SUBMIT:RESET'));
 
         this.resetting = true;
