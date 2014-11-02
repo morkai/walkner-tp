@@ -1,10 +1,10 @@
 <form class="well filter-form reports-filter">
   <% include _statusFilter.ejs %>
+  <% include _dateFilter.ejs %>
   <div class="form-group has-required-select2 reports-filter-user">
     <label for="<%- idPrefix %>-owner" class="control-label is-required"><%- t('transportOrders', 'PROPERTY:owner') %></label>
     <input id="<%- idPrefix %>-owner" name="owner" type="text" required>
   </div>
-  <% include _dateFilter.ejs %>
   <% include _cashFilter.ejs %>
   <div class="form-group filter-actions">
     <button type="submit" class="btn btn-default"><i class="fa fa-filter"></i><span><%- t('reports', 'filter:submit') %></span></button>
