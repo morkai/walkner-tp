@@ -153,10 +153,13 @@ define([
 
       req.always(function()
       {
-        view.$submit.attr('disabled', false);
-        view.$('.btn-link').prop('disabled', false);
-        view.$el.removeClass('logInForm-loading');
-        view.$('[autofocus]').focus();
+        if (view.$submit)
+        {
+          view.$submit.attr('disabled', false);
+          view.$('.btn-link').prop('disabled', false);
+          view.$el.removeClass('logInForm-loading');
+          view.$('[autofocus]').focus();
+        }
 
         if (view.resetting)
         {
