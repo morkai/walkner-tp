@@ -8,5 +8,6 @@
   "addOrder:airportArrival": "Przylotu",
   "addOrder:airportDeparture": "Odlotu",
   "addOrder:goodsTransport": "Transportu rzeczy",
-  "addOrder:vehicleService": "Serwisu"
+  "addOrder:vehicleService": "Serwisu",
+  "addOrder:carWash": "Myjni"
 }
