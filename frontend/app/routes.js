@@ -7,7 +7,8 @@ define([
   './events/routes',
   './users/routes',
   './transportOrders/routes',
-  './reports/routes'
+  './reports/routes',
+  './symbols/routes'
 ], function()
 {
   'use strict';

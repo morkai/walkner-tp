@@ -12,7 +12,7 @@ define([
   'app/data/transportKinds',
   'app/data/airports',
   'app/data/symbols',
-  'app/users/util/setUpSymbolSelect2',
+  'app/symbols/util/setUpSymbolSelect2',
   'app/users/util/setUpUserSelect2',
   '../util/preparePrice',
   '../util/serializeSymbol',
@@ -221,10 +221,19 @@ define([
 
       function updateSymbol(symbolId)
       {
-        view.$id('symbol').select2('data', !symbolId ? [] : [{
-          id: '$0$' + symbolId,
-          text: symbols.map[symbolId] || symbolId
-        }]);
+        var data = [];
+
+        if (symbolId)
+        {
+          var symbolModel = symbols.get(symbolId);
+
+          data.push({
+            id: '$0$' + symbolId,
+            text: symbolModel ? symbolModel.get('name') : symbolId
+          });
+        }
+
+        view.$id('symbol').select2('data', data);
       }
     },
 

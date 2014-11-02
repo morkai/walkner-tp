@@ -10,8 +10,8 @@ define([
   'app/core/Model',
   'app/core/views/FormView',
   'app/data/privileges',
-  'app/users/templates/form',
-  'app/users/util/setUpSymbolSelect2'
+  'app/symbols/util/setUpSymbolSelect2',
+  'app/users/templates/form'
 ], function(
   _,
   ZeroClipboard,
@@ -20,8 +20,8 @@ define([
   Model,
   FormView,
   privileges,
-  formTemplate,
-  setUpSymbolSelect2
+  setUpSymbolSelect2,
+  formTemplate
 ) {
   'use strict';
 

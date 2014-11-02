@@ -20,9 +20,11 @@ define([
 
     if (!Array.isArray(symbol))
     {
-      if (symbol)
+      var model = symbols.get(symbol);
+
+      if (model)
       {
-        return text ? symbols.getLabel(symbol) : symbol;
+        return text ? model.getLabel() : model.getShortId();
       }
 
       return defaultValue === undefined ? '-' : defaultValue;
@@ -54,8 +56,14 @@ define([
     Object.keys(symbolToCount).forEach(function(s)
     {
       var count = symbolToCount[s];
+      var model = symbols.get(s);
 
-      result.push((count > 1 ? (count + 'x') : '') + (text ? symbols.getLabel(s) : symbols.getShortId(s)));
+      if (model)
+      {
+        s = text ? model.getLabel() : model.getShortId();
+      }
+
+      result.push((count > 1 ? (count + 'x') : '') + s);
     });
 
     return result.join(text ? '<br>' : ', ');

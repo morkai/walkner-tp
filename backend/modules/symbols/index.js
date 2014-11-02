@@ -2,14 +2,9 @@
 // Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
 // Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
 
-define([
-  'app/symbols/SymbolCollection',
-  './createStorage'
-], function(
-  SymbolCollection,
-  createStorage
-) {
-  'use strict';
+'use strict';
 
-  return createStorage('SYMBOLS', 'symbols', SymbolCollection);
-});
+module.exports = require('../createDictionaryModule')(
+  'Symbol',
+  require('./routes')
+);

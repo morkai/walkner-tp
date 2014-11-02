@@ -28,5 +28,11 @@
   "TYPE:users.deleted": "Użytkownicy: usunięcie",
   "TEXT:users.deleted": "Usunięto użytkownika: <em>{model->login}</em>",
   "TYPE:transportOrders.deleted": "Zamówienia: usunięcie",
-  "TEXT:transportOrders.deleted": "Usunięto zamówienie: <em>{model->rid}</em>"
+  "TEXT:transportOrders.deleted": "Usunięto zamówienie: <em>{model->rid}</em>",
+  "TYPE:symbols.added": "Symbole MPK: dodanie",
+  "TEXT:symbols.added": "Dodano symbol MPK: <a href='\\#symbols/{model->_id}'>{model->_id}</a>",
+  "TYPE:symbols.edited": "Symbole MPK: edycja",
+  "TEXT:symbols.edited": "Zmodyfikowano symbol MPK: <a href='\\#symbols/{model->_id}'>{model->_id}</a>",
+  "TYPE:symbols.deleted": "Symbole MPK: usunięcie",
+  "TEXT:symbols.deleted": "Usunięto symbol MPK: <em>{model->_id}</em>"
 }

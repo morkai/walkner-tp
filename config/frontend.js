@@ -11,6 +11,7 @@ exports.modules = [
   'user',
   'express',
   'users',
+  'symbols',
   'transportOrders',
   'httpServer',
   'httpsServer',
@@ -20,7 +21,7 @@ exports.modules = [
 exports.dashboardUrlAfterLogIn = '/transportOrders';
 
 exports.dictionaryModules = {
-
+  symbols: 'SYMBOLS'
 };
 
 exports.events = {
@@ -30,7 +31,8 @@ exports.events = {
     debug: [
       'app.started',
       'users.login', 'users.logout',
-      'users.added', 'users.edited'
+      'users.added', 'users.edited',
+      'symbols.added', 'symbols.edited'
     ],
     info: [
       'events.**'
@@ -38,6 +40,7 @@ exports.events = {
     warning: [
       'users.loginFailure',
       'users.deleted',
+      'symbols.deleted',
       'transportOrders.deleted'
     ],
     error: [
@@ -63,6 +66,7 @@ exports.pubsub = {
   republishTopics: [
     'events.saved',
     'users.added', 'users.edited', 'users.deleted',
+    'symbols.added', 'symbols.edited', 'symbols.deleted',
     'updater.newVersion',
     'transportOrders.added.*.*', 'transportOrders.edited.*.*', 'transportOrders.deleted.*.*'
   ]
@@ -74,7 +78,7 @@ exports.mongoose = {
   uri: require('./mongodb').uri,
   options: {},
   models: [
-    'event', 'user', 'transportOrder', 'passwordResetRequest'
+    'event', 'user', 'transportOrder', 'passwordResetRequest', 'symbol'
   ]
 };
 
@@ -99,7 +103,8 @@ exports.user = {
     'USERS:VIEW', 'USERS:MANAGE',
     'TRANSPORT_ORDERS:DISPATCHER', 'TRANSPORT_ORDERS:DRIVER', 'TRANSPORT_ORDERS:USER',
     'TRANSPORT_ORDERS:ALL', 'TRANSPORT_ORDERS:DELETE',
-    'REPORTS:VIEW'
+    'REPORTS:VIEW',
+    'DICTIONARIES:VIEW', 'DICTIONARIES:MANAGE'
   ]
 };
 

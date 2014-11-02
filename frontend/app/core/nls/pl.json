@@ -70,6 +70,8 @@
   "NAVBAR:REPORTS:DRIVER": "Kierowca",
   "NAVBAR:REPORTS:USER": "Użytkownik",
   "NAVBAR:REPORTS:KIND": "Rodzaj usługi",
+  "NAVBAR:DICTIONARIES": "Słowniki",
+  "NAVBAR:SYMBOLS": "Symbole MPK",
 
   "ACTION_FORM:BUTTON": "Wykonaj akcję",
   "ACTION_FORM:BUTTON:delete": "Usuń",

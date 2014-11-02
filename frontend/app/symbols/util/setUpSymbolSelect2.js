@@ -31,7 +31,7 @@ define([
       id = id.replace(/^\$?[0-9]+\$/, '');
     }
 
-    return '<code>' + id.replace(/^PL02/, '') + '</code> <span>' + item.text + '</span>';
+    return '<code>' + symbols.makeShortId(id) + '</code> <span>' + item.text + '</span>';
   }
 
   function matchMultiple(term, text, item)
@@ -56,7 +56,9 @@ define([
       placeholder: ' ',
       formatResult: format,
       formatSelection: format,
-      data: multiple ? symbols.createSelect2Generator() : symbols.select2,
+      data: multiple
+        ? symbols.serializeToMultipleSelect2.bind(symbols)
+        : symbols.serializeToSingleSelect2.bind(symbols),
       matcher: multiple ? matchMultiple : $.fn.select2.defaults.matcher
     }, options));
 
@@ -64,11 +66,11 @@ define([
     {
       $input.select2('data', originalValue.split(' ').map(function(id, i)
       {
-        var text = symbols.map[id];
+        var symbolModel = symbols.get(id);
 
         return {
           id: '$' + i + '$' + id,
-          text: text || id
+          text: symbolModel ? symbolModel.get('name') : id
         };
       }));
     }
