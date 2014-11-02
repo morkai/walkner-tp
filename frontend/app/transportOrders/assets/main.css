@@ -120,6 +120,12 @@
   font-size: 0.8em;
   font-weight: normal;
 }
+.tp-list-table .table-responsive > .table > tbody > tr > td {
+  white-space: normal;
+}
+.tp-list-table .table-responsive > .table > tbody > tr > td.actions {
+  white-space: nowrap;
+}
 .tp-details .props,
 .tp-details .prop,
 .tp-details .prop-name,
