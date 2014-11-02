@@ -19,6 +19,8 @@ define([
 
     clientUrlRoot: '#reports/tp',
 
+    nlsDomain: 'reports',
+
     defaults: function()
     {
       return {
