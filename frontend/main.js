@@ -258,6 +258,14 @@
         });
       });
 
+      if (window.ENV === 'development')
+      {
+        broker.subscribe('socket.connected', function()
+        {
+          window.location.reload();
+        });
+      }
+
       domReady(function()
       {
         $('#app-loading').fadeOut(function() { $(this).remove(); });
