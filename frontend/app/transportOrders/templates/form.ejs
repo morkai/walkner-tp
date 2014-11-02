@@ -15,7 +15,7 @@
         <div class="panel-body">
       <% } %>
       <div class="row">
-        <div class="col-md-6 form-group has-required-select2">
+        <div class="col-md-9 form-group has-required-select2">
           <label for="<%- idPrefix %>-owner" class="control-label is-required"><%- t('transportOrders', 'PROPERTY:owner') %></label>
           <input id="<%- idPrefix %>-owner" type="text" name="owner" required>
         </div>
@@ -23,15 +23,15 @@
           <label for="<%- idPrefix %>-tel" class="control-label"><%- t('transportOrders', 'PROPERTY:tel') %></label>
           <input id="<%- idPrefix %>-tel" class="form-control" type="text" name="tel" maxlength="20">
         </div>
-        <div class="col-md-3 form-group">
-          <label class="radio-inline control-label">
-            <input type="radio" name="symbolMode" value="symbol"> <%- t('transportOrders', 'PROPERTY:symbol') %>
-          </label>
-          <label class="radio-inline control-label">
-            <input type="radio" name="symbolMode" value="self"> <%- t('transportOrders', 'symbol:self') %>
-          </label>
-          <input id="<%- idPrefix %>-symbol" class="form-control" type="text" name="symbol">
-        </div>
+      </div>
+      <div class="form-group">
+        <label class="radio-inline control-label">
+          <input type="radio" name="symbolMode" value="symbol"> <%- t('transportOrders', 'PROPERTY:symbol') %>
+        </label>
+        <label class="radio-inline control-label">
+          <input type="radio" name="symbolMode" value="self"> <%- t('transportOrders', 'symbol:self') %>
+        </label>
+        <input id="<%- idPrefix %>-symbol" class="form-control" type="text" name="symbol">
       </div>
       <% if (!editMode) { %>
       <div class="form-group tp-form-kindGroup">

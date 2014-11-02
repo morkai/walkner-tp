@@ -11,6 +11,8 @@ define([
   'app/core/views/FormView',
   'app/data/transportKinds',
   'app/data/airports',
+  'app/data/symbols',
+  'app/users/util/setUpSymbolSelect2',
   'app/users/util/setUpUserSelect2',
   '../util/preparePrice',
   '../util/serializeSymbol',
@@ -30,6 +32,8 @@ define([
   FormView,
   transportKinds,
   airports,
+  symbols,
+  setUpSymbolSelect2,
   setUpUserSelect2,
   preparePrice,
   serializeSymbol,
@@ -105,8 +109,8 @@ define([
       {
         this.parsePrice();
       },
-      'change [name=symbolMode]': 'toggleSymbolMode',
-      'change #-symbol': 'updateSymbol'
+      'change [name=symbolMode]': 'toggleSymbolMode'
+      //'change #-symbol': 'updateSymbol'
 
     }),
 
@@ -123,6 +127,7 @@ define([
 
       this.$id('airport').select2('val', this.$id('airport').val());
 
+      this.setUpSymbolSelect2();
       this.setUpKindSelect2();
       this.setUpOwnerSelect2();
       this.setUpDriverSelect2();
@@ -169,6 +174,13 @@ define([
       this.setUpAirportSelect2();
     },
 
+    setUpSymbolSelect2: function()
+    {
+      setUpSymbolSelect2(this.$id('symbol').removeClass('form-control'), {
+        multiple: true
+      });
+    },
+
     setUpKindSelect2: function()
     {
       this.$id('kind').select2({
@@ -191,7 +203,7 @@ define([
 
           if (view.$id('symbol').val() === '')
           {
-            view.$id('symbol').val($owner.select2('data').user.symbol);
+            updateSymbol($owner.select2('data').user.symbol);
           }
 
           view.toggleSymbolMode();
@@ -203,9 +215,17 @@ define([
         if (e.added)
         {
           view.$id('tel').val(e.added.user.tel);
-          view.$id('symbol').val(e.added.user.symbol);
+          updateSymbol(e.added.user.symbol);
         }
       });
+
+      function updateSymbol(symbolId)
+      {
+        view.$id('symbol').select2('data', !symbolId ? [] : [{
+          id: '$0$' + symbolId,
+          text: symbols.map[symbolId] || symbolId
+        }]);
+      }
     },
 
     setUpDriverSelect2: function()
@@ -304,7 +324,7 @@ define([
       if (Array.isArray(formData.symbol))
       {
         formData.symbolMode = 'symbol';
-        formData.symbol = serializeSymbol(formData.symbol, '');
+        formData.symbol = formData.symbol.join(' ');
       }
       else
       {
@@ -350,7 +370,10 @@ define([
       }
       else
       {
-        formData.symbol = this.updateSymbol();
+        formData.symbol = this.$id('symbol').select2('val').map(function(id)
+        {
+          return id.replace(/^\$?[0-9]+\$/, '');
+        });
       }
 
       delete formData.userTime;
@@ -393,9 +416,9 @@ define([
       var $symbol = this.$id('symbol');
       var self = this.$('input[name=symbolMode]:checked').val() === 'self';
 
-      $symbol.prop('disabled', self);
+      $symbol.select2('enable', !self);
 
-      if (!self && $symbol.val().trim() === '')
+      if (!self && !$symbol.val().length)
       {
         var owner = this.$id('owner').select2('data');
 

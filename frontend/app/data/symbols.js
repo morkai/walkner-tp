@@ -9,6 +9,8 @@ define([
 ) {
   'use strict';
 
+  var DEFAULT_PREFIX = 'PL02';
+
   var select2 = [
     {
       text: 'Produkcja',
@@ -151,12 +153,55 @@ define([
     {
       var text = map[symbol];
 
+      if (symbol)
+      {
+        symbol = this.getShortId(symbol);
+      }
+
       if (!text)
       {
-        return null;
+        return symbol || null;
       }
 
       return text + ' (' + symbol + ')';
+    },
+    getShortId: function(fullId)
+    {
+      return fullId.replace(new RegExp('^' + DEFAULT_PREFIX), '');
+    },
+    createSelect2Generator: function()
+    {
+      var counter = 0;
+
+      return function generateSelect2Results()
+      {
+        ++counter;
+
+        var results = [];
+
+        for (var i = 0, l = select2.length; i < l; ++i)
+        {
+          var sourceGroup = select2[i];
+          var targetGroup = {
+            text: sourceGroup.text,
+            children: []
+          };
+
+          for (var ii = 0, ll = sourceGroup.children.length; ii < ll; ++ii)
+          {
+            var symbol = sourceGroup.children[ii];
+
+            targetGroup.children.push({
+              id: counter + '$' + symbol.id,
+              text: symbol.text
+            });
+          }
+
+          results.push(targetGroup);
+        }
+
+        return {results: results};
+      };
     }
   };
 });

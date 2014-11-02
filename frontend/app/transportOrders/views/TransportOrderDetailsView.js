@@ -55,7 +55,7 @@ define([
           name: this.serializeUserName(owner),
           tel: model.get('tel') || owner.tel || '-',
           date: time.format(model.get('userDate'), 'LLLL'),
-          symbol: serializeSymbol(model.get('symbol')),
+          symbol: serializeSymbol(model.get('symbol'), '-', true),
           quantity: this.serializeQuantity(),
           unit: t.has('transportOrders', 'unit:' + unit) ? t('transportOrders', 'unit:' + unit) : unit,
           cargo: model.get('cargo') || '-',

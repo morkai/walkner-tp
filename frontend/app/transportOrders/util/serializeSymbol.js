@@ -3,13 +3,15 @@
 // Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
 
 define([
-  'app/i18n'
+  'app/i18n',
+  'app/data/symbols'
 ], function(
-  t
+  t,
+  symbols
 ) {
   'use strict';
 
-  return function serializeSymbol(symbol, defaultValue)
+  return function serializeSymbol(symbol, defaultValue, text)
   {
     if (symbol === null)
     {
@@ -18,7 +20,12 @@ define([
 
     if (!Array.isArray(symbol))
     {
-      return symbol || (defaultValue === undefined ? '-' : defaultValue);
+      if (symbol)
+      {
+        return text ? symbols.getLabel(symbol) : symbol;
+      }
+
+      return defaultValue === undefined ? '-' : defaultValue;
     }
 
     var l = symbol.length;
@@ -28,29 +35,29 @@ define([
       return defaultValue === undefined ? '-' : defaultValue;
     }
 
-    var symbols = {};
+    var symbolToCount = {};
 
     for (var i = 0; i < l; ++i)
     {
       var s = symbol[i];
 
-      if (symbols[s] === undefined)
+      if (symbolToCount[s] === undefined)
       {
-        symbols[s] = 0;
+        symbolToCount[s] = 0;
       }
 
-      symbols[s] += 1;
+      symbolToCount[s] += 1;
     }
 
     var result = [];
 
-    Object.keys(symbols).forEach(function(s)
+    Object.keys(symbolToCount).forEach(function(s)
     {
-      var count = symbols[s];
+      var count = symbolToCount[s];
 
-      result.push((count > 1 ? (count + 'x') : '') + s.replace('PL02', ''));
+      result.push((count > 1 ? (count + 'x') : '') + (text ? symbols.getLabel(s) : symbols.getShortId(s)));
     });
 
-    return result.join(', ');
+    return result.join(text ? '<br>' : ', ');
   };
 });
