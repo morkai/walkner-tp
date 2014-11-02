@@ -3,6 +3,7 @@
     <tr>
       <th><%- t('core', '#') %></th>
       <th><%- t('transportOrders', 'PROPERTY:symbol') %>/<%- t('transportOrders', 'PROPERTY:owner') %></th>
+      <th class="is-min"><%- t('reports', 'orderCount') %></th>
       <th class="is-min"><%- t('transportOrders', 'PROPERTY:km') %></th>
       <th class="is-min"><%- t('transportOrders', 'PROPERTY:hours') %></th>
       <th class="is-min"><%- t('transportOrders', 'PROPERTY:price') %></th>
@@ -12,6 +13,7 @@
   <tfoot>
     <tr class="reports-table-summary">
       <td colspan="2"></td>
+      <td class="is-number"><%- summary.orders %></td>
       <td class="is-number is-min"><%- summary.km %></td>
       <td class="is-number is-min"><%- summary.hours %></td>
       <td class="is-number is-min"><%- summary.price %></td>
@@ -21,7 +23,7 @@
   <% if (!collection.length) { %>
   <tbody>
     <tr>
-      <td colspan="5"><%- t('core', 'LIST:NO_DATA') %></td>
+      <td colspan="6"><%- t('core', 'LIST:NO_DATA') %></td>
     </tr>
   </tbody>
   <% } else { %>
@@ -30,6 +32,7 @@
     <tr class="reports-table-rowGroup">
       <td class="is-number is-min"><%- i + 1 %>.</td>
       <td><%= symbol.symbol %></td>
+      <td class="is-number is-min"><%- symbol.orders %></td>
       <td class="is-number is-min"><%- symbol.km %></td>
       <td class="is-number is-min"><%- symbol.hours %></td>
       <td class="is-number is-min"><%- symbol.price %></td>
@@ -38,6 +41,7 @@
     <tr>
       <td class="is-number is-min"><%- i + 1 %>.<%- j + 1 %>.</td>
       <td><%= owner.owner %></td>
+      <td class="is-number is-min"><%- owner.orders %></td>
       <td class="is-number is-min"><%- owner.km %></td>
       <td class="is-number is-min"><%- owner.hours %></td>
       <td class="is-number is-min"><%- owner.price %></td>

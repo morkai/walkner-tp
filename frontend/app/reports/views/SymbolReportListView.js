@@ -51,6 +51,7 @@ define([
     serializeSymbol: function(data)
     {
       data.symbol = serializeSymbol(data.symbol, '?');
+      data.orders = data.orders.toLocaleString();
       data.km = data.km.toLocaleString();
       data.hours = data.hours.toLocaleString();
       data.price = preparePrice(data.price).str;
@@ -62,6 +63,7 @@ define([
     serializeOwner: function(data)
     {
       data.owner = data.owner || '?';
+      data.orders = data.orders.toLocaleString();
       data.km = data.km.toLocaleString();
       data.hours = data.hours.toLocaleString();
       data.price = preparePrice(data.price).str;

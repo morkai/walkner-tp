@@ -14,6 +14,7 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
 
   var result = {
     collection: [],
+    orders: 0,
     km: 0,
     hours: 0,
     price: 0.00
@@ -100,16 +101,19 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
 
     var symbolSummary = symbolSummaries[transportOrder.symbol];
 
+    symbolSummary.orders += 1;
     symbolSummary.km += transportOrder.km;
     symbolSummary.hours += transportOrder.hours;
     symbolSummary.price += transportOrder.price;
 
     var ownerSummary = symbolSummary.owners[transportOrder.owner._id];
 
+    ownerSummary.orders += 1;
     ownerSummary.km += transportOrder.km;
     ownerSummary.hours += transportOrder.hours;
     ownerSummary.price += transportOrder.price;
 
+    result.orders += 1;
     result.km += transportOrder.km;
     result.hours += transportOrder.hours;
     result.price += transportOrder.price;
@@ -129,6 +133,7 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
       symbolSummaries[symbol] = {
         symbol: symbol,
         owners: {},
+        orders: 0,
         km: 0,
         hours: 0,
         price: 0.00
@@ -141,6 +146,7 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
     {
       symbolSummaries[symbol].owners[owner._id] = {
         owner: owner.label || (owner.firstName + ' ' + owner.lastName).trim() || owner._id,
+        orders: 0,
         km: 0,
         hours: 0,
         price: 0.00
