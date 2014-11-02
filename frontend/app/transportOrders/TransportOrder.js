@@ -22,7 +22,8 @@ define([
     airportArrival: 'person',
     airportDeparture: 'person',
     goodsTransport: 'kg',
-    vehicleService: 'vehicle'
+    vehicleService: 'vehicle',
+    carWash: 'vehicle'
   };
 
   var STATUS_TO_CLASS = {

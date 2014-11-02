@@ -87,7 +87,7 @@ define([
     {
       var kind = this.model.get('kind');
 
-      if (kind === 'vehicleService')
+      if (kind === 'vehicleService' || kind === 'carWash')
       {
         return null;
       }

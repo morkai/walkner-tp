@@ -19,7 +19,8 @@ define([
   'app/transportOrders/templates/kinds/airportArrivalForm',
   'app/transportOrders/templates/kinds/airportDepartureForm',
   'app/transportOrders/templates/kinds/goodsTransportForm',
-  'app/transportOrders/templates/kinds/vehicleServiceForm'
+  'app/transportOrders/templates/kinds/vehicleServiceForm',
+  'app/transportOrders/templates/kinds/carWashForm'
 ], function(
   _,
   $,
@@ -37,7 +38,8 @@ define([
   airportArrivalFormTemplate,
   airportDepartureFormTemplate,
   goodsTransportFormTemplate,
-  vehicleServiceFormTemplate
+  vehicleServiceFormTemplate,
+  carWashFormTemplate
 ) {
   'use strict';
 
@@ -46,7 +48,8 @@ define([
     airportArrival: airportArrivalFormTemplate,
     airportDeparture: airportDepartureFormTemplate,
     goodsTransport: goodsTransportFormTemplate,
-    vehicleService: vehicleServiceFormTemplate
+    vehicleService: vehicleServiceFormTemplate,
+    carWash: carWashFormTemplate
   };
 
   return FormView.extend({

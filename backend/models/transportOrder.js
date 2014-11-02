@@ -23,7 +23,8 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
     'airportArrival',
     'airportDeparture',
     'goodsTransport',
-    'vehicleService'
+    'vehicleService',
+    'carWash'
   ];
 
   var USER_PROPERTIES = [
