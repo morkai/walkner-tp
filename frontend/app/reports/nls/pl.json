@@ -3,6 +3,7 @@
   "BREADCRUMBS:symbol": "Symbol MPK",
   "BREADCRUMBS:driver": "Kierowca",
   "BREADCRUMBS:user": "Użytkownik",
+  "BREADCRUMBS:kind": "Rodzaj usługi",
 
   "MSG:LOADING_SINGLE_FAILURE": "Ładowanie raportu nie powiodło się :(",
 
@@ -16,6 +17,7 @@
   "filter:summary:drivers": "{status} zamówienia od {fromDate} do {toDate} - wszyscy kierowcy",
   "filter:summary:driver": "{status} zamówienia od {fromDate} do {toDate} - kierowca: {driver}",
   "filter:summary:user": "{status} zamówienia od {fromDate} do {toDate} zainicjowane przez {owner}",
+  "filter:summary:kind": "{status} zamówienia od {fromDate} do {toDate} po rodzajach usług",
   "filter:summary:cash": "Do raportu wliczone zostały zamówienia opłacone gotówką.",
   "filter:summary:self": "Do raportu wliczone zostały zamówienia opłacone przez klientów."
 }

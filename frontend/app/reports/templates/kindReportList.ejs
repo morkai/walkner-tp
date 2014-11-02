@@ -1,0 +1,41 @@
+<table class="table table-condensed table-bordered reports-table">
+  <thead>
+    <tr>
+      <th><%- t('core', '#') %></th>
+      <th><%- t('transportOrders', 'PROPERTY:kind') %></th>
+      <th class="is-min"><%- t('reports', 'orderCount') %></th>
+      <th class="is-min"><%- t('transportOrders', 'PROPERTY:km') %></th>
+      <th class="is-min"><%- t('transportOrders', 'PROPERTY:hours') %></th>
+      <th class="is-min"><%- t('transportOrders', 'PROPERTY:price') %></th>
+    </tr>
+  </thead>
+  <% if (collection.length > 1) { %>
+  <tfoot>
+    <tr class="reports-table-summary">
+      <td colspan="2"></td>
+      <td class="is-number"><%- summary.orders %></td>
+      <td class="is-number"><%- summary.km %></td>
+      <td class="is-number"><%- summary.hours %></td>
+      <td class="is-number"><%- summary.price %></td>
+    </tr>
+  </tfoot>
+  <% } %>
+  <tbody>
+    <% if (!collection.length) { %>
+    <tr>
+      <td colspan="6"><%- t('core', 'LIST:NO_DATA') %></td>
+    </tr>
+    <% } else { %>
+    <% collection.forEach(function(item, i) { %>
+    <tr>
+      <td class="is-number is-min"><%- i + 1 %>.</td>
+      <td><%= t('transportOrders', 'kind:' + item.kind) %></td>
+      <td class="is-number is-min"><%- item.orders %></td>
+      <td class="is-number is-min"><%- item.km %></td>
+      <td class="is-number is-min"><%- item.hours %></td>
+      <td class="is-number is-min"><%- item.price %></td>
+    </tr>
+    <% }) %>
+    <% } %>
+  </tbody>
+</table>

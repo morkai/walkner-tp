@@ -1,0 +1,9 @@
+<div class="form-group">
+  <label><%- t('transportOrders', 'PROPERTY:status') %></label>
+  <div id="<%- idPrefix %>-status" class="btn-group filter-btn-group" data-toggle="buttons">
+    <label class="btn btn-default" title="<%- t('transportOrders', 'status:pending') %>"><input type="checkbox" name="status[]" value="pending"><i class="fa fa-question text-warning"></i></label>
+    <label class="btn btn-default" title="<%- t('transportOrders', 'status:confirmed') %>"><input type="checkbox" name="status[]" value="confirmed"><i class="fa fa-check text-primary"></i></label>
+    <label class="btn btn-default" title="<%- t('transportOrders', 'status:completed') %>"><input type="checkbox" name="status[]" value="completed"><i class="fa fa-thumbs-o-up text-success"></i></label>
+    <label class="btn btn-default" title="<%- t('transportOrders', 'status:cancelled') %>"><input type="checkbox" name="status[]" value="cancelled"><i class="fa fa-ban text-danger"></i></label>
+  </div>
+</div>

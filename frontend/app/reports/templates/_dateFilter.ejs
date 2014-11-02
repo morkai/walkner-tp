@@ -1,0 +1,30 @@
+<div class="form-group">
+  <label for="<%- idPrefix %>-from" class="control-label is-required"><%- t('transportOrders', 'filter:dateMode:user') %></label>
+  <div class="filter-inlineInputLabels">
+    <label for="<%- idPrefix %>-from" class="control-label">
+      <span class="visible-xs-block"><%- t('core', 'filter:date:from') %></span>
+      <input id="<%- idPrefix %>-from" class="form-control tp-filter-date" name="from" type="date" required>
+      <span class="hidden-xs">-</span>
+    </label>
+    <label for="<%- idPrefix %>-to" class="control-label tp-filter-to">
+      <span class="visible-xs-block"><%- t('core', 'filter:date:to') %></span>
+      <input id="<%- idPrefix %>-to" class="form-control tp-filter-date" name="to" type="date" required>
+    </label>
+    <div class="btn-group">
+      <button class="btn btn-default dropdown-toggle" type="button" title="<%- t('transportOrders', 'filter:datePicker') %>" data-toggle="dropdown"><i class="fa fa-calendar"></i><span class="visible-xs-inline"><%- t('transportOrders', 'filter:datePicker') %></span></button>
+      <ul class="dropdown-menu dropdown-menu-right">
+        <li><a data-range="today"><%= t('transportOrders', 'filter:submit:today') %></a></li>
+        <li><a data-range="tomorrow"><%= t('transportOrders', 'filter:submit:tomorrow') %></a></li>
+        <li><a data-range="yesterday"><%= t('transportOrders', 'filter:submit:yesterday') %></a></li>
+        <li class="divider"></li>
+        <li><a data-range="currentWeek"><%= t('transportOrders', 'filter:submit:currentWeek') %></a></li>
+        <li><a data-range="nextWeek"><%= t('transportOrders', 'filter:submit:nextWeek') %></a></li>
+        <li><a data-range="prevWeek"><%= t('transportOrders', 'filter:submit:prevWeek') %></a></li>
+        <li class="divider"></li>
+        <li><a data-range="currentMonth"><%= t('transportOrders', 'filter:submit:currentMonth') %></a></li>
+        <li><a data-range="nextMonth"><%= t('transportOrders', 'filter:submit:nextMonth') %></a></li>
+        <li><a data-range="prevMonth"><%= t('transportOrders', 'filter:submit:prevMonth') %></a></li>
+      </ul>
+    </div>
+  </div>
+</div>

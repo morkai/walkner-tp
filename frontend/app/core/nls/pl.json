@@ -68,6 +68,7 @@
   "NAVBAR:REPORTS:SYMBOL": "Symbol MPK",
   "NAVBAR:REPORTS:DRIVER": "Kierowca",
   "NAVBAR:REPORTS:USER": "Użytkownik",
+  "NAVBAR:REPORTS:KIND": "Rodzaj usługi",
 
   "ACTION_FORM:BUTTON": "Wykonaj akcję",
   "ACTION_FORM:BUTTON:delete": "Usuń",
