@@ -243,6 +243,7 @@ define([
         width: '100%',
         allowClear: true,
         placeholder: t('transportOrders', 'form:placeholder:driver'),
+        dropdownCssClass: 'tp-drivers',
         data: (this.options.drivers || []).map(function(driver)
         {
           return {

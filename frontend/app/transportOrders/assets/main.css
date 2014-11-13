@@ -73,6 +73,9 @@
 .tp-form .control-label.radio-inline {
   margin-bottom: 5px;
 }
+.tp-drivers > .select2-results {
+  max-height: 300px;
+}
 .tp-list-table .table,
 .tp-list-table .table tr th,
 .tp-list-table .table tr td,
