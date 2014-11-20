@@ -44,7 +44,7 @@ npm install
 
 ## Configuration
 
-TODO
+Tinker with files in the `config/` directory.
 
 ## Starting
 

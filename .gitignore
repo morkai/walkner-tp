@@ -1,7 +1,6 @@
 .idea
 node_modules
 build
-config/production/
 config/development/
 config/vps/
 config/license.ed.private.pem

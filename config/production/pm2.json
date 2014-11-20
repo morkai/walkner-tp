@@ -1,0 +1,12 @@
+[
+  {
+    "name": "walkner-tp",
+    "script": "backend/main.js",
+    "args": "['../config/production/frontend.js']",
+    "cwd": "/var/www/walkner-tp",
+    "env": {
+      "NODE_ENV": "production"
+    },
+    "exec_mode": "fork_mode"
+  }
+]
