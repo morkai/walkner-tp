@@ -129,6 +129,11 @@
 .tp-list-table .table-responsive > .table > tbody > tr > td.actions {
   white-space: nowrap;
 }
+.tp-list-date {
+  display: block;
+  font-weight: bold;
+  white-space: nowrap;
+}
 .tp-details .props,
 .tp-details .prop,
 .tp-details .prop-name,

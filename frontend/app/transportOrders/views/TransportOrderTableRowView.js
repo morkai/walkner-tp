@@ -142,6 +142,7 @@ define([
 
       row.userDate = userMoment.format('YYYY-MM-DD');
       row.userTime = userMoment.format('HH:mm');
+      row.userDay = userMoment.format('dddd');
 
       if (row.driverDate)
       {
@@ -149,11 +150,13 @@ define([
 
         row.driverDate = driverMoment.format('YYYY-MM-DD');
         row.driverTime = driverMoment.format('HH:mm');
+        row.driverDay = driverMoment.format('dddd');
       }
       else
       {
         row.driverDate = '-';
         row.driverTime = '-';
+        row.driverDay = '-';
       }
 
       if (!row.toAddress)
