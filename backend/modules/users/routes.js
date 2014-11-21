@@ -87,7 +87,18 @@ module.exports = function setUpUsersRoutes(app, usersModule)
       );
     }
 
-    User.findOne({login: credentials.login}, function(err, user)
+    var conditions = {};
+
+    if (/^.*?@.*?\.[a-zA-Z]+/.test(credentials.login))
+    {
+      conditions.email = credentials.login;
+    }
+    else
+    {
+      conditions.login = credentials.login;
+    }
+
+    User.findOne(conditions, function(err, user)
     {
       if (err)
       {
