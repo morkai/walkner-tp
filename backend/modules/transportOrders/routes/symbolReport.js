@@ -74,10 +74,16 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
 
     lodash.forEach(symbolSummaries, function(symbolSummary)
     {
-      symbolSummary.price = Math.round(symbolSummary.price * 100) / 100;
+      symbolSummary.orders = round(symbolSummary.orders);
+      symbolSummary.km = round(symbolSummary.km);
+      symbolSummary.hours = round(symbolSummary.hours);
+      symbolSummary.price = round(symbolSummary.price);
       symbolSummary.owners = lodash.map(symbolSummary.owners, function(ownerSummary)
       {
-        ownerSummary.price = Math.round(ownerSummary.price * 100) / 100;
+        ownerSummary.orders = round(ownerSummary.orders);
+        ownerSummary.km = round(ownerSummary.km);
+        ownerSummary.hours = round(ownerSummary.hours);
+        ownerSummary.price = round(ownerSummary.price);
 
         return ownerSummary;
       });
@@ -85,7 +91,7 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
       result.collection.push(symbolSummary);
     });
 
-    result.price = Math.round(result.price * 100) / 100;
+    result.price = round(result.price);
 
     res.json(result);
   });
@@ -97,27 +103,65 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
       return;
     }
 
-    ensureData(transportOrder);
+    var splitTransportOrders = splitOrder(transportOrder);
 
-    var symbolSummary = symbolSummaries[transportOrder.symbol];
+    lodash.forEach(splitTransportOrders, function(splitTransportOrder)
+    {
+      ensureData(splitTransportOrder);
 
-    symbolSummary.orders += 1;
-    symbolSummary.km += transportOrder.km;
-    symbolSummary.hours += transportOrder.hours;
-    symbolSummary.price += transportOrder.price;
+      var symbolSummary = symbolSummaries[splitTransportOrder.symbol];
 
-    var ownerSummary = symbolSummary.owners[transportOrder.owner._id];
+      symbolSummary.orders += 1 / splitTransportOrders.length;
+      symbolSummary.km += splitTransportOrder.km;
+      symbolSummary.hours += splitTransportOrder.hours;
+      symbolSummary.price += splitTransportOrder.price;
 
-    ownerSummary.orders += 1;
-    ownerSummary.km += transportOrder.km;
-    ownerSummary.hours += transportOrder.hours;
-    ownerSummary.price += transportOrder.price;
+      var ownerSummary = symbolSummary.owners[splitTransportOrder.owner._id];
+
+      ownerSummary.orders += 1 / splitTransportOrders.length;
+      ownerSummary.km += splitTransportOrder.km;
+      ownerSummary.hours += splitTransportOrder.hours;
+      ownerSummary.price += splitTransportOrder.price;
+    });
 
     result.orders += 1;
     result.km += transportOrder.km;
     result.hours += transportOrder.hours;
     result.price += transportOrder.price;
   });
+
+  function round(num)
+  {
+    return Math.round(num * 100) / 100;
+  }
+
+  function splitOrder(transportOrder)
+  {
+    var splitTransportOrders = {};
+    var symbolCount = transportOrder.symbol.length;
+
+    lodash.forEach(transportOrder.symbol, function(symbol)
+    {
+      if (!splitTransportOrders[symbol])
+      {
+        splitTransportOrders[symbol] = {
+          owner: transportOrder.owner,
+          symbol: symbol,
+          km: 0,
+          hours: 0,
+          price: 0
+        };
+      }
+
+      var splitTransportOrder = splitTransportOrders[symbol];
+
+      splitTransportOrder.km += transportOrder.km / symbolCount;
+      splitTransportOrder.hours += transportOrder.hours / symbolCount;
+      splitTransportOrder.price += transportOrder.price / symbolCount;
+    });
+
+    return lodash.values(splitTransportOrders);
+  }
 
   function ensureData(transportOrder)
   {
