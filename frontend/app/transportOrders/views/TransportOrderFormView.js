@@ -380,9 +380,14 @@ define([
       }
       else
       {
-        formData.symbol = this.$id('symbol').select2('val').map(function(id)
+        formData.symbol = [];
+
+        this.$id('symbol').select2('data').forEach(function(item)
         {
-          return id.replace(/^\$?[0-9]+\$/, '');
+          for (var i = 0; i < item.multiplier; ++i)
+          {
+            formData.symbol.push(item.symbol);
+          }
         });
       }
 
