@@ -41,6 +41,7 @@ define([
         idPrefix: this.idPrefix,
         collection: model.get('collection').map(this.serializeSymbol, this),
         summary: {
+          orders: model.get('orders').toLocaleString(),
           km: model.get('km').toLocaleString(),
           hours: model.get('hours').toLocaleString(),
           price: preparePrice(model.get('price')).str
