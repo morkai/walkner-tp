@@ -36,7 +36,7 @@ define([
     }),
 
     defaultFormData: {
-      status: ['pending', 'confirmed', 'completed', 'cancelled'],
+      status: ['pending', 'confirmed', 'completed'],
       from: null,
       to: null,
       cash: false,
