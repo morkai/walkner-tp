@@ -36,6 +36,7 @@ define([
       var dispatcher = model.get('dispatcher');
       var unit = model.get('unit');
       var driverDate = model.get('driverDate');
+      var costs = model.get('costs');
       var resolvedPanelType = !model.isResolved()
         ? null
         : model.get('status') === 'completed' ? 'success' : 'danger';
@@ -62,7 +63,8 @@ define([
           airport: airports.getLabel(model.get('airport')) || '-',
           flightNo: model.get('flightNo'),
           fromAddress: model.get('fromAddress'),
-          toAddress: model.get('toAddress') || '-'
+          toAddress: model.get('toAddress') || '-',
+          costs: typeof costs === 'string' && costs.length > 0 ? costs : null
         },
         driver: {
           panelType: resolvedPanelType || (model.get('driverConfirmed') ? 'info' : 'warning'),

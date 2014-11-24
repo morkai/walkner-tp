@@ -72,6 +72,14 @@
               </div>
             </div>
           </div>
+          <% if (user.costs) { %>
+          <div class="props">
+            <div class="prop tp-details-costs">
+              <div class="prop-name <%- changed.costs ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:costs') %></div>
+              <div class="prop-value text-mono"><%= user.costs %></div>
+            </div>
+          </div>
+          <% } %>
         </div>
       </div>
     </div>

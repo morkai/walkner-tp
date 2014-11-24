@@ -198,6 +198,7 @@ define([
         airport: airports.getLabel(model.get('airport')),
         flightNo: model.get('flightNo'),
         cargo: model.get('cargo'),
+        costs: model.get('costs'),
         notes: model.get('notes')
       };
     },

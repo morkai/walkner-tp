@@ -41,7 +41,8 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
     'cargo',
     'airport',
     'flightNo',
-    'notes'
+    'notes',
+    'costs'
   ];
 
   var DISPATCHER_PROPERTIES = [
@@ -185,6 +186,11 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
       default: ''
     },
     notes: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    costs: {
       type: String,
       trim: true,
       default: ''

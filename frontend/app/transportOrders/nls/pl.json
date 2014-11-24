@@ -59,6 +59,7 @@
   "PROPERTY:tel": "Telefon kontaktowy",
   "PROPERTY:status": "Status",
   "PROPERTY:items": "Pozycje",
+  "PROPERTY:costs": "Informacje o kosztach",
   "PROPERTY:notes": "Uwagi, dodatkowe informacje",
   "PROPERTY:symbol": "Symbol MPK",
   "PROPERTY:comment": "Komentarz",

@@ -162,6 +162,9 @@
 .tp-details .is-changed .prop-value {
   color: #333;
 }
+.tp-details-costs:first-child {
+  border-top: 1px dotted #d4d4d4;
+}
 .tp-history-entry {
   padding: .5em;
 }

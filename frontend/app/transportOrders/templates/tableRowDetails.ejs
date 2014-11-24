@@ -12,16 +12,18 @@
           <div class="prop-value"><%- details.flightNo || '-' %></div>
         </div>
         <% } %>
+        <% if (details.cargo) { %>
         <div class="prop">
           <div class="prop-name <%- details.changed.all || details.changed.cargo ? 'is-changed' : '' %>"><%- t('transportOrders', 'cargo:' + details.kind) %></div>
-          <div class="prop-value">
-            <% if (details.cargo) { %>
-            <span class="text-mono"><%= details.cargo %></span>
-            <% } else { %>
-            -
-            <% } %>
-          </div>
+          <div class="prop-value text-mono"><%= details.cargo %></div>
         </div>
+        <% } %>
+        <% if (details.costs) { %>
+        <div class="prop">
+          <div class="prop-name <%- details.changed.all || details.changed.costs ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:costs') %></div>
+          <div class="prop-value text-mono"><%= details.costs %></div>
+        </div>
+        <% } %>
         <div class="prop">
           <div class="prop-name <%- details.changed.all || details.changed.notes ? 'is-changed' : '' %>">
             <%- details.creator %>
