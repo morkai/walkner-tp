@@ -207,6 +207,13 @@ define([
       iata: 'WAW'
     },
     {
+      toponym: 'Wilno',
+      name: 'Międzynarodowy port lotniczy Wilno',
+      city: 'Wilno',
+      icao: 'EYVI',
+      iata: 'VNO'
+    },
+    {
       toponym: 'Włocławek- Kruszyn',
       name: 'Lotnisko Włocławek-Kruszyn',
       city: 'Włocławek',
