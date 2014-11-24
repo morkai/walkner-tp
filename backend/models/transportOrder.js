@@ -590,7 +590,7 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
   transportOrderSchema.methods.updateLastSeenProperties = function(changedProperties, changes, updaterId)
   {
     var creatorId = this.creator ? this.creator._id.toString() : null;
-    var ownerId = this.driver ? (this.owner._id || this.owner).toString() : null;
+    var ownerId = this.owner ? (this.owner._id || this.owner).toString() : null;
     var dispatcherId = this.dispatcher ? (this.dispatcher._id || this.dispatcher).toString() : null;
     var driverId = this.driver ? (this.driver._id || this.driver).toString() : null;
     var now = new Date();
