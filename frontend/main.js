@@ -15,7 +15,7 @@
       + location.hostname
       + (location.port ? (':' + location.port) : '');
 
-    location.href = 'http://walkner.pl/projects/?referrer=' + encodeURIComponent(
+    location.href = '/redirect?referrer=' + encodeURIComponent(
       window.location.origin + '/#proxy=' + Date.now() + (matches && matches[2] ? matches[2] : '#')
     );
 

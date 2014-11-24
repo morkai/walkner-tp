@@ -39,7 +39,9 @@ module.exports = function startCoreRoutes(app, express)
     Object.keys(app.options.dictionaryModules).forEach(setUpFrontendVersionUpdater);
   }
 
-  express.get('/', showIndex);
+  express.get('/', showIndexRoute);
+
+  express.get('/redirect', redirectRoute);
 
   express.get('/time', function(req, res)
   {
@@ -52,9 +54,9 @@ module.exports = function startCoreRoutes(app, express)
     res.send('pong');
   });
 
-  express.get('/config.js', sendRequireJsConfig);
+  express.get('/config.js', sendRequireJsConfigRoute);
 
-  function showIndex(req, res)
+  function showIndexRoute(req, res)
   {
     var sessionUser = req.session.user;
     var locale = sessionUser && sessionUser.locale ? sessionUser.locale : 'pl';
@@ -86,7 +88,12 @@ module.exports = function startCoreRoutes(app, express)
     });
   }
 
-  function sendRequireJsConfig(req, res)
+  function redirectRoute(req, res)
+  {
+    res.redirect(req.query.referrer || '/');
+  }
+
+  function sendRequireJsConfigRoute(req, res)
   {
     res.type('js');
     res.render('config.js.ejs', {
