@@ -40,6 +40,7 @@ module.exports = function userReportRoute(app, transportOrdersModule, req, res, 
 
   var fields = {
     _id: 0,
+    rid: 1,
     status: 1,
     kind: 1,
     owner: 1,

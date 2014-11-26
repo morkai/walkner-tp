@@ -2,6 +2,7 @@
   <thead>
     <tr>
       <th><%- t('core', '#') %></th>
+      <th><%- t('transportOrders', 'PROPERTY:rid') %></th>
       <th><%- t('transportOrders', 'PROPERTY:kind') %></th>
       <th><%- t('transportOrders', 'PROPERTY:userDate') %></th>
       <th><%- t('transportOrders', 'PROPERTY:userTime') %></th>
@@ -17,7 +18,7 @@
   <% if (collection.length > 1) { %>
   <tfoot>
     <tr class="reports-table-summary">
-      <td colspan="8"></td>
+      <td colspan="9"></td>
       <td class="is-number"><%- km %></td>
       <td class="is-number"><%- hours %></td>
       <td class="is-number"><%- price %></td>
@@ -27,12 +28,13 @@
   <tbody>
     <% if (!collection.length) { %>
     <tr>
-      <td colspan="11"><%- t('core', 'LIST:NO_DATA') %></td>
+      <td colspan="12"><%- t('core', 'LIST:NO_DATA') %></td>
     </tr>
     <% } else { %>
     <% collection.forEach(function(item, i) { %>
     <tr>
       <td class="is-number is-min"><%- i + 1 %>.</td>
+      <td class="is-number is-min"><%- item.rid %></td>
       <td><%- item.kind %></td>
       <td class="is-min"><%- item.userDate %></td>
       <td class="is-min"><%- item.userTime %></td>
