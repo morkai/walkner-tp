@@ -15,9 +15,19 @@ define([
 
     model: Symbol,
 
-    rqlQuery: 'sort(group,name)',
+    rqlQuery: 'sort(group,_id)',
 
-    comparator: 'group',
+    comparator: function(a, b)
+    {
+      var cmp  = a.attributes.group.localeCompare(b.attributes.group);
+
+      if (cmp === 0)
+      {
+        cmp = a.attributes._id.localeCompare(b.attributes._id);
+      }
+
+      return cmp;
+    },
 
     initialize: function()
     {
