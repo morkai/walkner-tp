@@ -1,9 +1,9 @@
 {
   "private": true,
   "name": "walkner-tp",
-  "version": "0.6.0",
-  "backendVersion": 15,
-  "frontendVersion": 21,
+  "version": "0.7.0",
+  "backendVersion": 16,
+  "frontendVersion": 22,
   "description": "Transport ordering application.",
   "license": "CC BY-NC-SA 4.0",
   "homepage": "https://github.com/morkai/walkner-tp",
