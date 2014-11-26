@@ -13,6 +13,7 @@ exports.modules = [
   'express',
   'users',
   'symbols',
+  'currencyRates/nbp',
   'transportOrders',
   'httpServer',
   'httpsServer',

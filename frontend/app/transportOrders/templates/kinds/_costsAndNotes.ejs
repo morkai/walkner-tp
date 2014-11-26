@@ -1,7 +1,31 @@
+<% if (editMode) { %>
 <div class="form-group">
   <label for="<%- idPrefix %>-costs" class="control-label"><%- t('transportOrders', 'PROPERTY:costs') %></label>
   <textarea id="<%- idPrefix %>-costs" class="form-control" name="costs" rows="3"></textarea>
 </div>
+<% } else { %>
+<div class="row">
+  <div class="form-group col-md-6">
+    <label for="<%- idPrefix %>-costs" class="control-label"><%- t('transportOrders', 'PROPERTY:costs') %></label>
+    <textarea id="<%- idPrefix %>-costs" class="form-control tp-form-costs" name="costs" rows="3"></textarea>
+  </div>
+  <div class="col-md-3">
+    <div class="form-group">
+      <label for="<%- idPrefix %>-calc-km" class="control-label"><%- t('transportOrders', 'calc:km') %></label>
+      <input id="<%- idPrefix %>-calc-km" class="form-control" type="number">
+    </div>
+    <div class="form-group">
+      <label for="<%- idPrefix %>-calc-hours" class="control-label"><%- t('transportOrders', 'calc:hours') %></label>
+      <input id="<%- idPrefix %>-calc-hours" class="form-control" type="number">
+    </div>
+  </div>
+  <div class="col-md-3 tp-form-costs">
+    <div id="<%- idPrefix %>-calc-enter"><%- t('transportOrders', 'calc:enter') %></div>
+    <div id="<%- idPrefix %>-calc-loading" class="hidden"><i class="fa fa-spinner fa-spin"></i><span><%- t('transportOrders', 'calc:loading') %></span></div>
+    <div id="<%- idPrefix %>-calc-result" class="hidden"></div>
+  </div>
+</div>
+<% } %>
 <div class="form-group">
   <label for="<%- idPrefix %>-notes" class="control-label"><%- t('transportOrders', 'PROPERTY:notes') %></label>
   <textarea id="<%- idPrefix %>-notes" class="form-control" name="notes" rows="4"></textarea>

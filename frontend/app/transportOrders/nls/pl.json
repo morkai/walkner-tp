@@ -173,6 +173,14 @@
   "history:newValue": "Nowa wartość",
   "history:toggleComments": "Tylko komentarze",
 
+  "calc:km": "Szacunkowa długość trasy [km]",
+  "calc:hours": "Szacunkowy czas postoju [h]",
+  "calc:enter": "Podaj szacunkową długość trasy i/lub czas postoju, aby obliczyć orientacyjną wartość zamówienia.",
+  "calc:loading": "Obliczanie orientacyjnej wartości zamówienia...",
+  "calc:error": "Nie udało się obliczyć orientacyjnej wartości zamówienia :(",
+  "calc:rates": "Orientacyjna wartość zamówienia:",
+  "calc:ratesDate": "Kurs walut z dnia {date}.",
+
   "ACTION_FORM:DIALOG_TITLE:delete": "Potwierdzenie usunięcia zamówienia",
   "ACTION_FORM:BUTTON:delete": "Usuń zamówienie",
   "ACTION_FORM:MESSAGE:delete": "Czy na pewno chcesz bezpowrotnie usunąć wybrane zamówienie?",

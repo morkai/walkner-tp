@@ -8,12 +8,15 @@ var lodash = require('lodash');
 var setUpRoutes = require('./routes');
 var setUpCommands = require('./commands');
 var setUpEvents = require('./events');
+var setUpPricing = require('./pricing');
 
 exports.DEFAULT_CONFIG = {
   mongooseId: 'mongoose',
   expressId: 'express',
   userId: 'user',
-  sioId: 'sio'
+  sioId: 'sio',
+  currencyRatesId: 'currencyRates/nbp',
+  settingsId: 'settings'
 };
 
 exports.start = function startTransportOrdersModule(app, transportOrdersModule)
@@ -47,5 +50,15 @@ exports.start = function startTransportOrdersModule(app, transportOrdersModule)
       transportOrdersModule.config.mongooseId
     ],
     setUpEvents.bind(null, app, transportOrdersModule)
+  );
+
+  app.onModuleReady(
+    [
+      transportOrdersModule.config.mongooseId,
+      transportOrdersModule.config.sioId,
+      transportOrdersModule.config.currencyRatesId,
+      transportOrdersModule.config.settingsId
+    ],
+    setUpPricing.bind(null, app, transportOrdersModule)
   );
 };

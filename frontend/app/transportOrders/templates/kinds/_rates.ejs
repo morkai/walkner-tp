@@ -1,0 +1,7 @@
+<p><%- t('transportOrders', 'calc:rates') %></p>
+<ul>
+  <% prices.forEach(function(price) { %>
+  <li><code><%- price.currency %></code>: <%- price.value %> <%- price.symbol %></li>
+  <% }) %>
+</ul>
+<p><%- t('transportOrders', 'calc:ratesDate', {date: ratesDate}) %></p>

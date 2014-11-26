@@ -22,7 +22,8 @@ define([
   'app/transportOrders/templates/kinds/airportDepartureForm',
   'app/transportOrders/templates/kinds/goodsTransportForm',
   'app/transportOrders/templates/kinds/vehicleServiceForm',
-  'app/transportOrders/templates/kinds/carWashForm'
+  'app/transportOrders/templates/kinds/carWashForm',
+  'app/transportOrders/templates/kinds/_rates'
 ], function(
   _,
   $,
@@ -43,7 +44,8 @@ define([
   airportDepartureFormTemplate,
   goodsTransportFormTemplate,
   vehicleServiceFormTemplate,
-  carWashFormTemplate
+  carWashFormTemplate,
+  renderPricingRates
 ) {
   'use strict';
 
@@ -54,6 +56,11 @@ define([
     goodsTransport: goodsTransportFormTemplate,
     vehicleService: vehicleServiceFormTemplate,
     carWash: carWashFormTemplate
+  };
+
+  var CURRENCY_SYMBOLS = {
+    PLN: 'zł',
+    EUR: '€'
   };
 
   return FormView.extend({
@@ -109,10 +116,18 @@ define([
       {
         this.parsePrice();
       },
-      'change [name=symbolMode]': 'toggleSymbolMode'
-      //'change #-symbol': 'updateSymbol'
+      'change [name=symbolMode]': 'toggleSymbolMode',
+      'input #-calc-km': 'checkPricing',
+      'input #-calc-hours': 'checkPricing'
 
     }),
+
+    initialize: function()
+    {
+      FormView.prototype.initialize.call(this, arguments);
+
+      this.checkPricingId = 0;
+    },
 
     destroy: function()
     {
@@ -168,7 +183,8 @@ define([
       var kindTemplate = KIND_TO_TEMPLATE[kind];
 
       $kindFields.html(kindTemplate({
-        idPrefix: this.idPrefix
+        idPrefix: this.idPrefix,
+        editMode: !!this.options.editMode
       }));
 
       this.setUpAirportSelect2();
@@ -516,6 +532,88 @@ define([
       $symbol.val(serializeSymbol(fullSymbols, ''));
 
       return fullSymbols;
+    },
+
+    checkPricing: function()
+    {
+      var km = Math.max(parseInt(this.$id('calc-km').val(), 10) || 0, 0);
+      var hours = Math.max(parseInt(this.$id('calc-hours').val(), 10) || 0, 0);
+      var $enter = this.$id('calc-enter');
+      var $loading = this.$id('calc-loading');
+      var $result = this.$id('calc-result');
+
+      if (this.timers.checkPricing)
+      {
+        clearTimeout(this.timers.checkPricing);
+        this.timers.checkPricing = null;
+      }
+
+      if (km <= 0 && hours <= 0)
+      {
+        this.checkPricingId = 0;
+
+        $result.addClass('hidden');
+        $loading.addClass('hidden');
+        $enter.removeClass('hidden');
+
+        return;
+      }
+
+      $enter.addClass('hidden');
+      $result.addClass('hidden');
+      $loading.removeClass('hidden');
+
+      this.checkPricingId = Date.now();
+
+      this.timers.checkPricing = setTimeout(this.calcPrices.bind(this), 333, {
+        currencies: ['PLN', 'EUR'],
+        kind: this.$id('kind').val(),
+        km: km,
+        hours: hours
+      });
+    },
+
+    calcPrices: function(req)
+    {
+      this.timers.checkPricing = null;
+
+      var checkPricingId = this.checkPricingId;
+      var view = this;
+
+      this.socket.emit('transportOrders.calcPrices', req, function(err, result)
+      {
+        if (view.checkPricingId !== checkPricingId)
+        {
+          return;
+        }
+
+        var html;
+
+        if (err)
+        {
+          html = t('transportOrders', 'calc:error');
+
+          console.error(err);
+        }
+        else
+        {
+          html = renderPricingRates({
+            ratesDate: time.format(result.ratesDate, 'LL'),
+            prices: result.prices.map(function(price)
+            {
+              return {
+                currency: price.currency,
+                value: preparePrice(price.total).str,
+                symbol: CURRENCY_SYMBOLS[price.currency] || ''
+              };
+            })
+          });
+        }
+
+        view.$id('calc-enter').addClass('hidden');
+        view.$id('calc-loading').addClass('hidden');
+        view.$id('calc-result').html(html).removeClass('hidden');
+      });
     }
 
   });
