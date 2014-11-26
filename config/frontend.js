@@ -5,6 +5,7 @@ exports.id = 'frontend';
 exports.modules = [
   'updater',
   'mongoose',
+  'settings',
   'events',
   'pubsub',
   'mail/sender',
@@ -68,7 +69,8 @@ exports.pubsub = {
     'users.added', 'users.edited', 'users.deleted',
     'symbols.added', 'symbols.edited', 'symbols.deleted',
     'updater.newVersion',
-    'transportOrders.added.*.*', 'transportOrders.edited.*.*', 'transportOrders.deleted.*.*'
+    'transportOrders.added.*.*', 'transportOrders.edited.*.*', 'transportOrders.deleted.*.*',
+    'settings.updated.**'
   ]
 };
 
@@ -78,7 +80,8 @@ exports.mongoose = {
   uri: require('./mongodb').uri,
   options: {},
   models: [
-    'event', 'user', 'transportOrder', 'passwordResetRequest', 'symbol'
+    'setting', 'event', 'user', 'passwordResetRequest',
+    'symbol', 'transportOrder'
   ]
 };
 
