@@ -186,7 +186,7 @@
       navbarView.on('logIn', function()
       {
         viewport.showDialog(
-          new LogInFormView(), i18n('core', 'LOG_IN_FORM:DIALOG_TITLE')
+          new LogInFormView(), i18n('core', 'LOG_IN_FORM:TITLE:LOG_IN')
         );
       });
 
