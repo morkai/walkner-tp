@@ -1,0 +1,221 @@
+{
+  "date": "2014-11-26T00:00:00.000Z",
+  "rates": {
+    "THB": {
+      "name": "bat (Tajlandia)",
+      "multiplier": 1,
+      "code": "THB",
+      "rate": 0.1023
+    },
+    "USD": {
+      "name": "dolar amerykański",
+      "multiplier": 1,
+      "code": "USD",
+      "rate": 3.3546
+    },
+    "AUD": {
+      "name": "dolar australijski",
+      "multiplier": 1,
+      "code": "AUD",
+      "rate": 2.8504
+    },
+    "HKD": {
+      "name": "dolar Hongkongu",
+      "multiplier": 1,
+      "code": "HKD",
+      "rate": 0.4327
+    },
+    "CAD": {
+      "name": "dolar kanadyjski",
+      "multiplier": 1,
+      "code": "CAD",
+      "rate": 2.9751
+    },
+    "NZD": {
+      "name": "dolar nowozelandzki",
+      "multiplier": 1,
+      "code": "NZD",
+      "rate": 2.6221
+    },
+    "SGD": {
+      "name": "dolar singapurski",
+      "multiplier": 1,
+      "code": "SGD",
+      "rate": 2.5764
+    },
+    "EUR": {
+      "name": "euro",
+      "multiplier": 1,
+      "code": "EUR",
+      "rate": 4.18
+    },
+    "HUF": {
+      "name": "forint (Węgry)",
+      "multiplier": 100,
+      "code": "HUF",
+      "rate": 1.3659
+    },
+    "CHF": {
+      "name": "frank szwajcarski",
+      "multiplier": 1,
+      "code": "CHF",
+      "rate": 3.4761
+    },
+    "GBP": {
+      "name": "funt szterling",
+      "multiplier": 1,
+      "code": "GBP",
+      "rate": 5.2688
+    },
+    "UAH": {
+      "name": "hrywna (Ukraina)",
+      "multiplier": 1,
+      "code": "UAH",
+      "rate": 0.2222
+    },
+    "JPY": {
+      "name": "jen (Japonia)",
+      "multiplier": 100,
+      "code": "JPY",
+      "rate": 2.8478
+    },
+    "CZK": {
+      "name": "korona czeska",
+      "multiplier": 1,
+      "code": "CZK",
+      "rate": 0.1515
+    },
+    "DKK": {
+      "name": "korona duńska",
+      "multiplier": 1,
+      "code": "DKK",
+      "rate": 0.5618
+    },
+    "ISK": {
+      "name": "korona islandzka",
+      "multiplier": 100,
+      "code": "ISK",
+      "rate": 2.7134
+    },
+    "NOK": {
+      "name": "korona norweska",
+      "multiplier": 1,
+      "code": "NOK",
+      "rate": 0.4918
+    },
+    "SEK": {
+      "name": "korona szwedzka",
+      "multiplier": 1,
+      "code": "SEK",
+      "rate": 0.4514
+    },
+    "HRK": {
+      "name": "kuna chorwacka",
+      "multiplier": 1,
+      "code": "HRK",
+      "rate": 0.5445
+    },
+    "RON": {
+      "name": "lej rumuński",
+      "multiplier": 1,
+      "code": "RON",
+      "rate": 0.9452
+    },
+    "BGN": {
+      "name": "lew bułgarski",
+      "multiplier": 1,
+      "code": "BGN",
+      "rate": 2.1372
+    },
+    "TRY": {
+      "name": "lira turecka",
+      "multiplier": 1,
+      "code": "TRY",
+      "rate": 1.5076
+    },
+    "LTL": {
+      "name": "lit litewski",
+      "multiplier": 1,
+      "code": "LTL",
+      "rate": 1.2106
+    },
+    "ILS": {
+      "name": "nowy izraelski szekel",
+      "multiplier": 1,
+      "code": "ILS",
+      "rate": 0.8686
+    },
+    "CLP": {
+      "name": "peso chilijskie",
+      "multiplier": 100,
+      "code": "CLP",
+      "rate": 0.5601
+    },
+    "PHP": {
+      "name": "peso filipińskie",
+      "multiplier": 1,
+      "code": "PHP",
+      "rate": 0.0746
+    },
+    "MXN": {
+      "name": "peso meksykańskie",
+      "multiplier": 1,
+      "code": "MXN",
+      "rate": 0.2451
+    },
+    "ZAR": {
+      "name": "rand (Republika Południowej Afryki)",
+      "multiplier": 1,
+      "code": "ZAR",
+      "rate": 0.3051
+    },
+    "BRL": {
+      "name": "real brazylijski",
+      "multiplier": 1,
+      "code": "BRL",
+      "rate": 1.3259
+    },
+    "MYR": {
+      "name": "ringgit malezyjski",
+      "multiplier": 1,
+      "code": "MYR",
+      "rate": 1.0012
+    },
+    "RUB": {
+      "name": "rubel rosyjski",
+      "multiplier": 1,
+      "code": "RUB",
+      "rate": 0.0717
+    },
+    "IDR": {
+      "name": "rupia indonezyjska",
+      "multiplier": 10000,
+      "code": "IDR",
+      "rate": 2.7609
+    },
+    "INR": {
+      "name": "rupia indyjska",
+      "multiplier": 100,
+      "code": "INR",
+      "rate": 5.4262
+    },
+    "KRW": {
+      "name": "won (Korea Południowa)",
+      "multiplier": 100,
+      "code": "KRW",
+      "rate": 0.3028
+    },
+    "CNY": {
+      "name": "yuan renminbi (Chiny)",
+      "multiplier": 1,
+      "code": "CNY",
+      "rate": 0.5465
+    },
+    "XDR": {
+      "name": "SDR (MFW)",
+      "multiplier": 1,
+      "code": "XDR",
+      "rate": 4.9205
+    }
+  }
+}
