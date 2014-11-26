@@ -36,7 +36,6 @@
   "LOG_IN_FORM:LABEL:NEW_PASSWORD": "Nowe hasło",
   "LOG_IN_FORM:SUBMIT:LOG_IN": "Zaloguj się",
   "LOG_IN_FORM:SUBMIT:RESET": "Resetuj hasło",
-  "LOG_IN_FORM:PROXY_MESSAGE": "Po wpisaniu prawidłowych danych nic się nie dzieje? <a href='http://walkner.pl/projects/'>Spróbuj wejść tutaj</a>, aby wymusić autoryzację proxy, a następnie wróć do aplikacji Walkner TP!",
   "LOG_IN_FORM:LINK:LOG_IN": "Zaloguj się",
   "LOG_IN_FORM:LINK:RESET": "Zapomniałeś hasła?",
   "LOG_IN_FORM:RESET:SUBJECT": "Resetowanie hasła w aplikacji Travelka",
