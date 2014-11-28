@@ -137,6 +137,11 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
 
   function splitOrder(transportOrder)
   {
+    if (!Array.isArray(transportOrder.symbol))
+    {
+      transportOrder.symbol = [String(transportOrder.symbol)];
+    }
+
     var splitTransportOrders = {};
     var symbolCount = transportOrder.symbol.length;
 

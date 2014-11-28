@@ -13,7 +13,7 @@ define([
 
   return function serializeSymbol(symbol, defaultValue, text)
   {
-    if (symbol === null)
+    if (symbol === null || symbol === 'null')
     {
       return t('transportOrders', 'symbol:self');
     }
@@ -27,7 +27,7 @@ define([
         return text ? model.getLabel() : model.getShortId();
       }
 
-      return defaultValue === undefined ? '-' : defaultValue;
+      return defaultValue === undefined ? '-' : typeof symbol === 'string' ? symbol : defaultValue;
     }
 
     var l = symbol.length;

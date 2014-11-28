@@ -39,7 +39,9 @@ define([
 
       return {
         idPrefix: this.idPrefix,
-        collection: model.get('collection').map(this.serializeSymbol, this),
+        collection: model.get('collection')
+          .sort(function(a, b) { return a.symbol.localeCompare(b.symbol); })
+          .map(this.serializeSymbol, this),
         summary: {
           orders: model.get('orders').toLocaleString(),
           km: model.get('km').toLocaleString(),
@@ -51,7 +53,7 @@ define([
 
     serializeSymbol: function(data)
     {
-      data.symbol = serializeSymbol(data.symbol, '?');
+      data.symbol = serializeSymbol(data.symbol, '?', true);
       data.orders = data.orders.toLocaleString();
       data.km = data.km.toLocaleString();
       data.hours = data.hours.toLocaleString();
