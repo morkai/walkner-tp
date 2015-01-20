@@ -363,14 +363,35 @@ define([
 
     serializeForm: function(formData)
     {
+      if (this.$id('ownerPanel').length)
+      {
+        this.serializeOwnerFormData(formData);
+      }
+
+      if (this.$id('dispatcherPanel').length)
+      {
+        this.serializeDispatcherFormData(formData);
+      }
+
+      if (this.$id('driverPanel').length)
+      {
+        this.serializeDriverFormData(formData);
+      }
+
+      formData.comment = formData.comment || '';
+
+      delete formData.userTime;
+      delete formData.driverTime;
+      delete formData.symbolMode;
+
+      return formData;
+    },
+
+    serializeOwnerFormData: function(formData)
+    {
       if (formData.userDate && formData.userTime)
       {
         formData.userDate = time.getMoment(formData.userDate + ' ' + formData.userTime + ':00').toISOString();
-      }
-
-      if (formData.driverDate && formData.driverTime)
-      {
-        formData.driverDate = time.getMoment(formData.driverDate + ' ' + formData.driverTime + ':00').toISOString();
       }
 
       formData.tel = formData.tel || '';
@@ -378,17 +399,7 @@ define([
       formData.cargo = formData.cargo || '';
       formData.toAddress = formData.toAddress || '';
       formData.notes = formData.notes || '';
-      formData.comment = formData.comment || '';
-
-      if (formData.price)
-      {
-        formData.price = this.parsePrice();
-      }
-
-      formData.cash = formData.cash === '1';
       formData.quantity = parseInt(formData.quantity, 10) || 0;
-      formData.km = parseInt(formData.km, 10) || 0;
-      formData.hours = parseInt(formData.hours, 10) || 0;
 
       if (formData.symbolMode === 'self')
       {
@@ -406,12 +417,27 @@ define([
           }
         });
       }
+    },
 
-      delete formData.userTime;
-      delete formData.driverTime;
-      delete formData.symbolMode;
+    serializeDispatcherFormData: function(formData)
+    {
+      if (formData.price)
+      {
+        formData.price = this.parsePrice();
+      }
 
-      return formData;
+      formData.cash = formData.cash === '1';
+    },
+
+    serializeDriverFormData: function(formData)
+    {
+      if (formData.driverDate && formData.driverTime)
+      {
+        formData.driverDate = time.getMoment(formData.driverDate + ' ' + formData.driverTime + ':00').toISOString();
+      }
+
+      formData.km = parseInt(formData.km, 10) || 0;
+      formData.hours = parseInt(formData.hours, 10) || 0;
     },
 
     togglePanel: function($panel, animate)
@@ -445,6 +471,12 @@ define([
     toggleSymbolMode: function()
     {
       var $symbol = this.$id('symbol');
+
+      if (!$symbol.length)
+      {
+        return;
+      }
+
       var self = this.$('input[name=symbolMode]:checked').val() === 'self';
 
       $symbol.select2('enable', !self);

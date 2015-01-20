@@ -112,6 +112,11 @@ define([
 
   return function setUpSymbolSelect2($input, options)
   {
+    if (!$input.length)
+    {
+      return;
+    }
+
     var multiple = options && options.multiple;
     var originalValue = $input.val();
 
