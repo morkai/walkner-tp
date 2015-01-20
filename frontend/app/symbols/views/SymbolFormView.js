@@ -57,6 +57,18 @@ define([
 
         view.$id('groupChoice').select2('data', null);
       });
+    },
+
+    handleFailure: function(res)
+    {
+      if (res.responseJSON.error.code === 'DUPLICATE_KEY')
+      {
+        this.$id('_id').select();
+
+        return this.showErrorMessage(t('symbols', 'FORM:ERROR:duplicateId'));
+      }
+
+      return FormView.prototype.handleFailure.apply(this, arguments);
     }
 
   });

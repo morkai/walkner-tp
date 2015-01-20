@@ -22,8 +22,9 @@
 
   "FORM:ACTION:add": "Dodaj symbol MPK",
   "FORM:ACTION:edit": "Edytuj symbol MPK",
-  "FORM:ERROR:addFailure": "Nie udało się dodać dostawcy :-(",
-  "FORM:ERROR:editFailure": "Nie udało się zmodyfikować dostawcy :-(",
+  "FORM:ERROR:addFailure": "Nie udało się dodać symbolu MPK :-(",
+  "FORM:ERROR:editFailure": "Nie udało się zmodyfikować symbolu MPK :-(",
+  "FORM:ERROR:duplicateId": "Podany symbol MPK już istnieje!",
 
   "select2:placeholder": "Wybierz istniejącą grupę z listy...",
 
