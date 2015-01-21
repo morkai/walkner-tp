@@ -23,6 +23,11 @@ exports.start = function startTransportOrdersModule(app, transportOrdersModule)
 {
   transportOrdersModule.hasAccessTo = function hasAccessTo(user, transportOrder)
   {
+    if (!user)
+    {
+      return false;
+    }
+
     var userModule = app[transportOrdersModule.config.userId];
     var canViewAll = userModule.isAllowedTo(user, [['TRANSPORT_ORDERS:DISPATCHER'], ['TRANSPORT_ORDERS:ALL']]);
 
