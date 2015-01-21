@@ -363,7 +363,7 @@ define([
 
     serializeForm: function(formData)
     {
-      if (this.$id('ownerPanel').length)
+      if (this.$id('ownerPanel').length || !this.options.editMode)
       {
         this.serializeOwnerFormData(formData);
       }
