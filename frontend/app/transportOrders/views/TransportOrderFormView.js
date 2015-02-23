@@ -16,6 +16,7 @@ define([
   'app/users/util/setUpUserSelect2',
   '../util/preparePrice',
   '../util/serializeSymbol',
+  '../util/setDateTime',
   'app/transportOrders/templates/form',
   'app/transportOrders/templates/kinds/peopleTransportForm',
   'app/transportOrders/templates/kinds/airportArrivalForm',
@@ -38,6 +39,7 @@ define([
   setUpUserSelect2,
   preparePrice,
   serializeSymbol,
+  setDateTime,
   formTemplate,
   peopleTransportFormTemplate,
   airportArrivalFormTemplate,
@@ -96,19 +98,16 @@ define([
       },
       'change [type=date]': function(e)
       {
-        var timeEl = e.target.nextElementSibling;
+        var $date = this.$(e.target);
 
-        if (timeEl)
+        if ($date.prop('type') === 'date' && $date.val() === '')
         {
-          var matches = timeEl.value.match(/([0-9]{2}).*?([0-9]{2})/);
-
-          if (matches === null)
-          {
-            matches = [null, '00', '00'];
-          }
-
-          timeEl.value = matches[1] + ':' + matches[2];
+          return;
         }
+
+        var $time = $date.next();
+
+        setDateTime($date, $time);
 
         this.toggleDateWarning(this.$(e.target));
       },
@@ -391,7 +390,10 @@ define([
     {
       if (formData.userDate && formData.userTime)
       {
-        formData.userDate = time.getMoment(formData.userDate + ' ' + formData.userTime + ':00').toISOString();
+        formData.userDate = time.getMoment(
+          formData.userDate + ' ' + formData.userTime + ':00',
+          ['YYYY-MM-DD HH:mm:ss', 'DD-MM-YYYY HH:mm:ss']
+        ).toISOString();
       }
 
       formData.tel = formData.tel || '';
@@ -433,7 +435,10 @@ define([
     {
       if (formData.driverDate && formData.driverTime)
       {
-        formData.driverDate = time.getMoment(formData.driverDate + ' ' + formData.driverTime + ':00').toISOString();
+        formData.driverDate = time.getMoment(
+          formData.driverDate + ' ' + formData.driverTime + ':00',
+          ['YYYY-MM-DD HH:mm:ss', 'DD-MM-YYYY HH:mm:ss']
+        ).toISOString();
       }
 
       formData.km = parseInt(formData.km, 10) || 0;
@@ -505,7 +510,7 @@ define([
     toggleDateWarning: function($date)
     {
       var $group = $date.closest('.form-group');
-      var moment = time.getMoment($date.val());
+      var moment = time.getMoment($date.val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
 
       if (!moment.isValid() || Math.abs(Math.ceil(moment.diff(Date.now(), 'days', true))) <= 30)
       {
@@ -513,7 +518,7 @@ define([
 
         $warning.fadeOut('fast', function() { $warning.remove(); });
       }
-      else
+      else if (!$group.hasClass('has-warning'))
       {
         $('<span class="help-block text-warning"></span>')
           .text(t('transportOrders', 'form:help:date'))

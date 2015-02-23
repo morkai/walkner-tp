@@ -85,7 +85,10 @@
     "filter:submit": "Filter",
     "filter:limit": "Limit",
     "filter:show": "Show filter",
-    "filter:hide": "Hide filter"
+    "filter:hide": "Hide filter",
+
+    "placeholder:date": "yyyy-mm-dd",
+    "placeholder:time": "--:--"
   },
   "pl": true
 }

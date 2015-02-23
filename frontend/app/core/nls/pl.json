@@ -100,5 +100,8 @@
   "filter:submit": "Filtruj",
   "filter:limit": "Limit",
   "filter:show": "Pokaż filtr",
-  "filter:hide": "Ukryj filtr"
+  "filter:hide": "Ukryj filtr",
+
+  "placeholder:date": "rrrr-mm-dd",
+  "placeholder:time": "--:--"
 }

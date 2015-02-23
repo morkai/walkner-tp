@@ -62,8 +62,8 @@ define([
     serializeFormToQuery: function(selector)
     {
       var status = this.getButtonGroupValue('status');
-      var fromMoment = time.getMoment(this.$id('from').val());
-      var toMoment = time.getMoment(this.$id('to').val());
+      var fromMoment = time.getMoment(this.$id('from').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
+      var toMoment = time.getMoment(this.$id('to').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
       var cash = this.getButtonGroupValue('cash');
 
       if (status.length === 1)
@@ -103,8 +103,8 @@ define([
     updateSummary: function()
     {
       var status = this.getButtonGroupValue('status');
-      var fromMoment = time.getMoment(this.$id('from').val());
-      var toMoment = time.getMoment(this.$id('to').val());
+      var fromMoment = time.getMoment(this.$id('from').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
+      var toMoment = time.getMoment(this.$id('to').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
 
       var summary = t('reports', 'filter:summary:symbol', {
         status: status.length === 0 || status.length === 4

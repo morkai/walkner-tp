@@ -67,8 +67,8 @@ define([
     {
       var status = this.getButtonGroupValue('status');
       var owner = this.$id('owner').val();
-      var fromMoment = time.getMoment(this.$id('from').val());
-      var toMoment = time.getMoment(this.$id('to').val());
+      var fromMoment = time.getMoment(this.$id('from').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
+      var toMoment = time.getMoment(this.$id('to').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
       var cash = this.getButtonGroupValue('cash');
 
       if (status.length === 1)
@@ -120,8 +120,8 @@ define([
     {
       var status = this.getButtonGroupValue('status');
       var owner = this.$id('owner').select2('data');
-      var fromMoment = time.getMoment(this.$id('from').val());
-      var toMoment = time.getMoment(this.$id('to').val());
+      var fromMoment = time.getMoment(this.$id('from').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
+      var toMoment = time.getMoment(this.$id('to').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
       var cash = this.getButtonGroupValue('cash');
 
       var summary = t('reports', 'filter:summary:user', {

@@ -14,17 +14,27 @@ define([
     var dateValue = $date.val().trim();
     var timeValue = $time.val().trim();
 
-    var dateMatches = dateValue.match(/([0-9]{4}|[0-9]{2}).*?([0-9]{2}).*?([0-9]{2})/);
+    var dateFormats = ['YYYY-MM-DD', 'DD-MM-YYYY'];
+    var dateMatches = dateValue.match(/([0-9]{2}).*?[0-9]{2}.*?[0-9]{2}/);
 
-    if (dateMatches === null)
+    if (dateMatches && parseInt(dateMatches[1], 10) > 12)
     {
-      dateValue = '';
+      dateFormats.unshift('YY-MM-DD');
     }
     else
     {
-      dateValue = (dateMatches[1].length === 2 ? '20' : '') + dateMatches[1]
-        + '-' + dateMatches[2]
-        + '-' + dateMatches[3];
+      dateFormats.unshift('DD-MM-YY');
+    }
+
+    var dateMoment = time.getMoment(dateValue, dateFormats);
+
+    if (dateMoment.isValid())
+    {
+      dateValue = dateMoment.format('YYYY-MM-DD');
+    }
+    else
+    {
+      dateValue = '';
     }
 
     var timeMatches = timeValue.match(/([0-9]{2}).*?([0-9]{2})/);
@@ -41,6 +51,6 @@ define([
     $date.val(dateValue);
     $time.val(timeValue);
 
-    return dateValue === '' ? null : time.getMoment(dateValue + ' ' + timeValue).valueOf();
+    return dateValue === '' ? null : time.getMoment(dateValue + ' ' + timeValue, 'YYYY-MM-DD HH:mm').valueOf();
   };
 });

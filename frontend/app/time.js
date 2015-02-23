@@ -44,9 +44,9 @@ define([
     return moment(Date.now() + time.offset).tz(time.zone);
   };
 
-  time.getMoment = function(date)
+  time.getMoment = function(date, formats)
   {
-    return moment(date).tz(time.zone);
+    return moment(date, formats).tz(time.zone);
   };
 
   time.format = function(date, format)
