@@ -36,6 +36,7 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
     conditions.cash = false;
   }
 
+  var symbols = conditions.symbol ? (conditions.symbol.$in || conditions.symbol) : [];
   var self = !!conditions.self;
 
   delete conditions.self;
@@ -107,6 +108,11 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
 
     lodash.forEach(splitTransportOrders, function(splitTransportOrder)
     {
+      if (symbols.length && symbols.indexOf(splitTransportOrder.symbol) === -1)
+      {
+        return;
+      }
+
       ensureData(splitTransportOrder);
 
       var symbolSummary = symbolSummaries[splitTransportOrder.symbol];

@@ -192,7 +192,8 @@ define([
     setUpSymbolSelect2: function()
     {
       setUpSymbolSelect2(this.$id('symbol').removeClass('form-control'), {
-        multiple: true
+        multiple: true,
+        repeatable: true
       });
     },
 

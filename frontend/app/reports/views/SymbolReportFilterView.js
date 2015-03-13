@@ -8,6 +8,7 @@ define([
   'app/i18n',
   'app/core/views/FilterView',
   'app/core/util/prepareDateRange',
+  'app/symbols/util/setUpSymbolSelect2',
   'app/reports/templates/symbolReportFilter'
 ], function(
   _,
@@ -15,6 +16,7 @@ define([
   t,
   FilterView,
   prepareDateRange,
+  setUpSymbolSelect2,
   template
 ) {
   'use strict';
@@ -39,6 +41,7 @@ define([
       status: ['pending', 'confirmed', 'completed'],
       from: null,
       to: null,
+      symbol: null,
       cash: false,
       self: false
     },
@@ -52,6 +55,10 @@ define([
       {
         formData[term.name === 'ge' ? 'from' : 'to'] = time.format(term.args[1], 'YYYY-MM-DD');
       },
+      'symbol': function(propertyName, term, formData)
+      {
+        formData[propertyName] = term.name === 'in' ? term.args[1] : [term.args[1]];
+      },
       'cash': function(propertyName, term, formData)
       {
         formData[propertyName] = term.args[1];
@@ -64,6 +71,7 @@ define([
       var status = this.getButtonGroupValue('status');
       var fromMoment = time.getMoment(this.$id('from').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
       var toMoment = time.getMoment(this.$id('to').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
+      var symbol = this.$id('symbol').select2('val');
       var cash = this.getButtonGroupValue('cash');
 
       if (status.length === 1)
@@ -85,6 +93,15 @@ define([
         selector.push({name: 'lt', args: ['userDate', toMoment.valueOf()]});
       }
 
+      if (symbol.length === 1)
+      {
+        selector.push({name: 'eq', args: ['symbol', symbol[0]]});
+      }
+      else if (symbol.length > 1)
+      {
+        selector.push({name: 'in', args: ['symbol', symbol]});
+      }
+
       selector.push({name: 'eq', args: ['cash', cash.indexOf('cash') !== -1]});
       selector.push({name: 'eq', args: ['self', cash.indexOf('self') !== -1]});
 
@@ -94,6 +111,12 @@ define([
     afterRender: function()
     {
       FilterView.prototype.afterRender.call(this);
+
+      setUpSymbolSelect2(this.$id('symbol'), {
+        width: '100%',
+        multiple: true,
+        placeholder: t('reports', 'filter:symbols:all')
+      });
 
       this.toggleButtonGroup('status');
       this.toggleButtonGroup('cash');

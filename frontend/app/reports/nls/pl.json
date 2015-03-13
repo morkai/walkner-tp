@@ -12,6 +12,7 @@
   "orderCount": "Ilość zamówień",
 
   "filter:submit": "Filtruj raport",
+  "filter:symbols:all": "Wszystkie",
   "filter:summary:all": "Wszystkie",
   "filter:summary:symbol": "{status} zamówienia od {fromDate} do {toDate} po symbolach MPK",
   "filter:summary:drivers": "{status} zamówienia od {fromDate} do {toDate} - wszyscy kierowcy",

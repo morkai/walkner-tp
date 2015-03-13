@@ -1,11 +1,11 @@
 .filter-container {
   margin-bottom: 1em;
 }
-.filter-container > .well {
+.filter-container > .filter-form {
   padding: 1em 1em 0 0;
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: flex-start;
 }
 .filter-form .form-group {
   display: inline-block;
@@ -23,6 +23,9 @@
 .filter-form input[name="limit"] {
   width: 5em;
   text-align: right;
+}
+.filter-form .no-label {
+  padding-top: 25px;
 }
 .filter-form .filter-actions {
   margin-left: 1em;
@@ -143,6 +146,9 @@ input[type=checkbox].filter-inLabel {
     display: block;
     width: 100%;
     margin-left: 0;
+  }
+  .filter-form .no-label {
+    padding-top: 0;
   }
   .filter-actions .btn {
     display: block;

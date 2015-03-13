@@ -43,7 +43,7 @@ define([
       return item.text;
     }
 
-    if (this.multiple)
+    if (this.repeatable)
     {
       id = id.replace(/^\$?[0-9]+\$/, '');
 
@@ -72,7 +72,12 @@ define([
     return result;
   }
 
-  function matchMultiple(term, text, item)
+  function matchNonRepeatable(term, text, item)
+  {
+    return $.fn.select2.defaults.matcher(term, (item.id || '') + text, item);
+  }
+
+  function matchRepeatable(term, text, item)
   {
     var matches = term.match(/^(?:\s*([0-9]+)\s*x\s*)?(.*?)$/);
 
@@ -118,6 +123,7 @@ define([
     }
 
     var multiple = options && options.multiple;
+    var repeatable = multiple && options.repeatable;
     var originalValue = $input.val();
 
     if (multiple)
@@ -132,13 +138,13 @@ define([
       placeholder: ' ',
       formatResult: formatResult,
       formatSelection: formatSelection,
-      data: multiple
+      data: repeatable
         ? symbols.serializeToMultipleSelect2.bind(symbols)
         : symbols.serializeToSingleSelect2.bind(symbols),
-      matcher: multiple ? matchMultiple : $.fn.select2.defaults.matcher
+      matcher: repeatable ? matchRepeatable : matchNonRepeatable
     }, options));
 
-    if (multiple)
+    if (repeatable)
     {
       $input.on('change', function(e)
       {
@@ -151,7 +157,7 @@ define([
       });
     }
 
-    if (multiple && originalValue.length)
+    if (repeatable && originalValue.length)
     {
       var consolidated = {};
 

@@ -4,6 +4,9 @@
 .reports-filter-user {
   width: 225px;
 }
+.reports-filter-symbol {
+  width: 400px;
+}
 .table-bordered .reports-table-rowGroup > td {
   border-top-width: 2px!important;
   font-weight: bold;
