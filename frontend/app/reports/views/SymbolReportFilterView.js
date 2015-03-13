@@ -105,6 +105,7 @@ define([
       var status = this.getButtonGroupValue('status');
       var fromMoment = time.getMoment(this.$id('from').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
       var toMoment = time.getMoment(this.$id('to').val(), ['YYYY-MM-DD', 'DD-MM-YYYY']);
+      var cash = this.getButtonGroupValue('cash');
 
       var summary = t('reports', 'filter:summary:symbol', {
         status: status.length === 0 || status.length === 4
@@ -114,9 +115,14 @@ define([
         toDate: toMoment.isValid() ? toMoment.format('YYYY-MM-DD') : '?'
       });
 
-      if (this.getButtonGroupValue('cash'))
+      if (cash.indexOf('cash') !== -1)
       {
         summary += '<br><em>' + t('reports', 'filter:summary:cash') + '</em>';
+      }
+
+      if (cash.indexOf('self') !== -1)
+      {
+        summary += '<br><em>' + t('reports', 'filter:summary:self') + '</em>';
       }
 
       this.$id('summary').html(summary);
