@@ -137,7 +137,7 @@ module.exports = function setUpTransportOrdersPricing(app, tpModule)
         var pricePerKm = this.settings.perKm;
         var pricePerHour = this.settings.perHour;
 
-        if (Array.isArray(results) && results[0].orderCount >= this.settings.avgMinOrders)
+        if (Array.isArray(results) && results.length && results[0].orderCount >= this.settings.avgMinOrders)
         {
           pricePerKm = results[0].totalPrice / results[0].totalKm;
         }
