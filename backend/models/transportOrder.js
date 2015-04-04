@@ -30,6 +30,7 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
   var USER_PROPERTIES = [
     'owner',
     'tel',
+    'zpl',
     'symbol',
     'kind',
     'data',
@@ -226,7 +227,11 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
       type: Boolean,
       default: false
     },
-    changes: [changeSchema]
+    changes: [changeSchema],
+    zpl: {
+      type: String,
+      default: ''
+    }
   }, {
     id: false
   });

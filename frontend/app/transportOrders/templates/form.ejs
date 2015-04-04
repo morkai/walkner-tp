@@ -33,6 +33,10 @@
         </label>
         <input id="<%- idPrefix %>-symbol" class="form-control" type="text" name="symbol">
       </div>
+      <div class="form-group">
+        <label for="<%- idPrefix %>-zpl" class="control-label"><%- t('transportOrders', 'PROPERTY:zpl') %></label>
+        <input id="<%- idPrefix %>-zpl" class="form-control" name="zpl" type="text">
+      </div>
       <% if (!editMode) { %>
       <div class="form-group tp-form-kindGroup">
         <label for="<%- idPrefix %>-kind" class="control-label"><%- t('transportOrders', 'PROPERTY:kind') %></label>

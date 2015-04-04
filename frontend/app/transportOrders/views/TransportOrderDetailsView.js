@@ -57,6 +57,7 @@ define([
           tel: model.get('tel') || owner.tel || '-',
           date: time.format(model.get('userDate'), 'LLLL'),
           symbol: serializeSymbol(model.get('symbol'), '-', true),
+          zpl: model.get('zpl') || '-',
           quantity: this.serializeQuantity(),
           unit: t.has('transportOrders', 'unit:' + unit) ? t('transportOrders', 'unit:' + unit) : unit,
           cargo: model.get('cargo') || '-',

@@ -22,6 +22,10 @@
                   <div class="prop-value"><%- user.symbol %></div>
                 </div>
                 <div class="prop">
+                  <div class="prop-name <%- changed.zpl ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:zpl') %></div>
+                  <div class="prop-value"><%= user.zpl %></div>
+                </div>
+                <div class="prop">
                   <div class="prop-name <%- changed.userDate ? 'is-changed' : '' %>"><%- t('transportOrders', 'userDate:' + kind) %></div>
                   <div class="prop-value"><%= user.date %></div>
                 </div>
