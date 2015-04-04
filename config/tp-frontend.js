@@ -8,7 +8,7 @@ try
 }
 catch (err) {}
 
-exports.id = 'frontend';
+exports.id = 'tp-frontend';
 
 exports.modules = [
   'updater',
@@ -27,6 +27,10 @@ exports.modules = [
   'httpsServer',
   'sio'
 ];
+
+
+exports.mainJsFile = 'tp-main.js';
+exports.mainCssFile = 'assets/tp-main.css';
 
 exports.dashboardUrlAfterLogIn = '/transportOrders';
 
@@ -86,7 +90,7 @@ exports.pubsub = {
 exports.mongoose = {
   maxConnectTries: 10,
   connectAttemptDelay: 500,
-  uri: require('./mongodb').uri,
+  uri: require('./tp-mongodb').uri,
   options: {},
   models: [
     'setting', 'event', 'user', 'passwordResetRequest',
@@ -106,7 +110,8 @@ exports.express = {
   cookieSecret: '1ee7TeeP33',
   ejsAmdHelpers: {
     t: 'app/i18n'
-  }
+  },
+  title: 'TP'
 };
 
 exports.user = {
@@ -136,12 +141,13 @@ exports['mail/sender'] = {
 };
 
 exports.updater = {
-  manifestPath: __dirname + '/manifest.appcache',
+  manifestPath: __dirname + '/tp-manifest.appcache',
   packageJsonPath: __dirname + '/../package.json',
-  restartDelay: 10000,
+  restartDelay: 5000,
   pull: {
     exe: 'git.exe',
     cwd: __dirname + '/../',
     timeout: 30000
-  }
+  },
+  versionsKey: 'tp'
 };

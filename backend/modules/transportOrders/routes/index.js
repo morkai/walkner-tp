@@ -76,7 +76,7 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
 
     if (isNaN(rid) || rid <= 0)
     {
-      return res.send(400);
+      return res.sendStatus(400);
     }
 
     TransportOrder.findOne({rid: rid}, {_id: 1, users: 1}).lean().exec(function(err, transportOrder)
@@ -88,12 +88,12 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
 
       if (!transportOrder)
       {
-        return res.send(404);
+        return res.sendStatus(404);
       }
 
       if (!transportOrdersModule.hasAccessTo(req.session.user, transportOrder))
       {
-        return res.send(403);
+        return res.sendStatus(403);
       }
 
       return res.json(transportOrder._id);
@@ -114,7 +114,7 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
         return next(err);
       }
 
-      return res.json(201, transportOrder);
+      return res.status(201).json(transportOrder);
     });
   }
 
@@ -135,12 +135,12 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
 
       if (!transportOrder)
       {
-        return res.send(404);
+        return res.sendStatus(404);
       }
 
       if (!transportOrdersModule.hasAccessTo(req.session.user, transportOrder))
       {
-        return res.send(403);
+        return res.sendStatus(403);
       }
 
       return res.json(transportOrder);
@@ -203,14 +203,14 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
 
       if (!transportOrder)
       {
-        return res.send(404);
+        return res.sendStatus(404);
       }
 
       var user = req.session.user;
 
       if (!transportOrdersModule.hasAccessTo(user, transportOrder))
       {
-        return res.send(403);
+        return res.sendStatus(403);
       }
 
       var roles = {
@@ -222,7 +222,7 @@ module.exports = function setUpTransportOrdersRoutes(app, transportOrdersModule)
       if (!roles.dispatcher
         && (transportOrder.status === 'completed' || transportOrder.status === 'cancelled'))
       {
-        return res.send(403);
+        return res.sendStatus(403);
       }
 
       var createUserInfo = userModule.createUserInfo.bind(userModule);

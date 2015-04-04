@@ -95,6 +95,8 @@
   "highcharts:shortMonths": "Sty_Lut_Mar_Kwi_Maj_Cze_Lip_Sie_Wrz_Paź_Lis_Gru",
   "highcharts:weekdays": "Niedziela_Poniedziałek_Wtorek_Środa_Czwartek_Piątek_Sobota",
 
+  "colorPicker:label": "Kolor",
+
   "filter:date:from": "Od",
   "filter:date:to": "Do",
   "filter:submit": "Filtruj",

@@ -62,11 +62,7 @@ module.exports = function startCoreRoutes(app, express)
     var locale = sessionUser && sessionUser.locale ? sessionUser.locale : 'pl';
     var appData = {
       ENV: JSON.stringify(app.options.env),
-      VERSIONS: JSON.stringify(!updaterModule ? {} : {
-        package: updaterModule.package.version,
-        backend: updaterModule.package.backendVersion,
-        frontend: updaterModule.package.frontendVersion
-      }),
+      VERSIONS: JSON.stringify(updaterModule ? updaterModule.getVersions() : {}),
       TIME: JSON.stringify(Date.now()),
       LOCALE: JSON.stringify(locale),
       ROOT_USER: ROOT_USER,
@@ -79,12 +75,30 @@ module.exports = function startCoreRoutes(app, express)
 
     lodash.forEach(app.options.dictionaryModules, function(appDataKey, moduleName)
     {
-      appData[appDataKey] = JSON.stringify(app[moduleName].models);
+      var models = app[moduleName].models;
+
+      if (models.length === 0)
+      {
+        appData[appDataKey] = '[]';
+
+        return;
+      }
+
+      if (typeof models[0].toDictionaryObject !== 'function')
+      {
+        appData[appDataKey] = JSON.stringify(models);
+
+        return;
+      }
+
+      appData[appDataKey] = JSON.stringify(lodash.invoke(models, 'toDictionaryObject'));
     });
 
     res.render('index', {
       appCache: appCache,
-      appData: appData
+      appData: appData,
+      mainJsFile: app.options.mainJsFile || 'main.js',
+      mainCssFile: app.options.mainCssFile || 'assets/main.css'
     });
   }
 

@@ -8,8 +8,9 @@ vendor/moment/lang/pl.js
 vendor/select2-lang/pl.js
 vendor/socket.io.js
 config.js
+tp-main.js
 main.js
-assets/main.css
+assets/tp-main.css
 
 NETWORK:
 *

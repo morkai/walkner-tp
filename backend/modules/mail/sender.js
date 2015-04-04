@@ -4,20 +4,41 @@
 
 'use strict';
 
-var nodemailer = require('nodemailer');
+var _ = require('lodash');
 
 exports.DEFAULT_CONFIG = {
-  controllerId: 'controller',
-  smtp: {},
-  from: {tagName: 'mailer.from', default: 'someone@the.net'},
-  bcc: {tagName: 'mailer.bcc', default: ''},
-  replyTo: {tagName: 'mailer.replyTo', default: 'someone@the.net'}
+  smtp: null,
+  from: 'someone@the.net',
+  bcc: '',
+  replyTo: 'someone@the.net',
+  expressId: 'express',
+  secretKey: null,
+  remoteSenderUrl: null
 };
 
 exports.start = function startMailSenderModule(app, module)
 {
-  var config = module.config;
-  var transport = nodemailer.createTransport(module.config.smtp);
+  var nodemailer;
+  var request;
+
+  if (module.config.smtp && module.config.remoteSenderUrl)
+  {
+    throw new Error("`smtp` and `remoteSenderUrl` cannot be used at the same time!");
+  }
+  else if (!module.config.smtp && !module.config.remoteSenderUrl)
+  {
+    module.warn("No `smtp` or `remoteSenderUrl` specified.");
+  }
+  else if (module.config.smtp)
+  {
+    nodemailer = require('nodemailer');
+  }
+  else if (module.config.remoteSenderUrl)
+  {
+    request = require('request');
+  }
+
+  var transport = module.config.smtp ? nodemailer.createTransport(module.config.smtp) : null;
 
   /**
    * @param {string|Array.<string>} to
@@ -27,17 +48,115 @@ exports.start = function startMailSenderModule(app, module)
    */
   module.send = function(to, subject, text, done)
   {
-    var controller = app[config.controllerId];
-    var values = controller && controller.values ? controller.values : {};
-    var mailOptions = {
-      from: String(values[config.from.tagName] || config.from.default || config.from),
-      to: Array.isArray(to) ? to.join(', ') : to,
-      bcc: String(values[config.bcc.tagName] || config.bcc.default || config.bcc),
-      replyTo: String(values[config.replyTo.tagName] || config.replyTo.default || config.replyTo),
-      subject: subject,
-      text: String(text)
+    var mailOptions;
+
+    if (arguments.length > 2)
+    {
+      mailOptions = {
+        to: to,
+        subject: subject,
+        text: text
+      };
+    }
+    else
+    {
+      mailOptions = to;
+      done = subject;
+    }
+
+    if (module.config.remoteSenderUrl !== null)
+    {
+      sendThroughRemote(mailOptions, done);
+    }
+    else if (transport !== null)
+    {
+      sendThroughSmtp(mailOptions, done);
+    }
+    else
+    {
+      module.debug("Not sending e-mail: %s", JSON.stringify(mailOptions));
+    }
+  };
+
+  function sendThroughRemote(body, done)
+  {
+    var options = {
+      url: module.config.remoteSenderUrl,
+      method: 'POST',
+      json: true,
+      body: _.defaults(_.merge(body, {secretKey: module.config.secretKey}), {
+        from: module.config.from || undefined,
+        bcc: module.config.bcc || undefined,
+        replyTo: module.config.replyTo || undefined
+      })
     };
 
+    request(options, function(err, res)
+    {
+      if (err)
+      {
+        return done(err);
+      }
+
+      if (res.statusCode !== 204)
+      {
+        return done(new Error('INVALID_REMOTE_RESPONSE'));
+      }
+
+      return done();
+    });
+  }
+
+  function sendThroughSmtp(mailOptions, done)
+  {
+    _.defaults(mailOptions, {
+      from: String(module.config.from),
+      bcc: String(module.config.bcc),
+      replyTo: String(module.config.replyTo)
+    });
+
     transport.sendMail(mailOptions, done);
-  };
+  }
+
+  app.onModuleReady(module.config.expressId, function()
+  {
+    if (!transport)
+    {
+      return;
+    }
+
+    var express = app[module.config.expressId];
+
+    express.options('/mail;send', function(req, res)
+    {
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Headers', 'Content-Type');
+      res.end();
+    });
+
+    express.post('/mail;send', function(req, res, next)
+    {
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+      if (module.config.secretKey !== null && req.body.secretKey !== module.config.secretKey)
+      {
+        return next(express.createHttpError('INVALID_SECRET_KEY', 401));
+      }
+
+      module.send(req.body, function(err)
+      {
+        if (err)
+        {
+          module.error("Failed to send e-mail [%s] to [%s]: %s", req.body.subject, req.body.to, err.message);
+
+          return next(err);
+        }
+
+        module.debug("Sent e-mail to [%s]: %s", req.body.to, req.body.subject);
+
+        res.sendStatus(204);
+      });
+    });
+  });
 };

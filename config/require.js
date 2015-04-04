@@ -11,7 +11,6 @@ exports.paths = {
   'moment': 'vendor/moment/moment',
   'moment-lang': 'vendor/moment/lang',
   'moment-timezone': 'vendor/moment/moment-timezone',
-  'moment-timezone-data': 'vendor/moment/moment-timezone-data',
   'bootstrap': 'vendor/bootstrap/js/bootstrap',
   'socket.io': 'vendor/socket.io',
   'h5.pubsub': 'vendor/h5.pubsub',
@@ -20,9 +19,7 @@ exports.paths = {
   'js2form': 'vendor/js2form',
   'select2': 'vendor/select2/select2',
   'select2-lang': 'vendor/select2-lang',
-  'highcharts': 'vendor/highcharts-custom',
   'zeroclipboard': 'vendor/zeroclipboard/ZeroClipboard',
-  'jquery.stickytableheaders': 'vendor/jquery.stickytableheaders',
   'sift': 'vendor/sift'
 };
 
@@ -38,10 +35,6 @@ exports.shim = {
   'select2': {
     deps: ['jquery'],
     exports: 'Select2'
-  },
-  'highcharts': {
-    deps: ['jquery'],
-    exports: 'Highcharts'
   },
   'sift': {
     exports: 'sift'

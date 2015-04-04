@@ -51,9 +51,11 @@ module.exports = function setUpUsersRoutes(app, usersModule)
 
   function canEdit(req, res, next)
   {
-    if (req.session.user && req.params.id === req.session.user._id)
+    var user = req.session.user;
+
+    if (user && req.params.id === user._id)
     {
-      if (req.body.privileges && req.session.user.privileges.indexOf('USERS:MANAGE') === -1)
+      if (req.body.privileges && user.privileges.indexOf('USERS:MANAGE') === -1)
       {
         delete req.body.privileges;
       }
@@ -70,7 +72,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
   {
     if (req.params.id === userModule.root._id || req.params.id === userModule.guest._id)
     {
-      return res.send(400);
+      return res.sendStatus(400);
     }
 
     return next();
@@ -78,72 +80,25 @@ module.exports = function setUpUsersRoutes(app, usersModule)
 
   function loginRoute(req, res, next)
   {
-    var credentials = req.body;
-
-    if (credentials.login === userModule.root.login)
-    {
-      return authUser(
-        credentials, lodash.merge({}, userModule.root), req, res, next
-      );
-    }
-
-    var conditions = {};
-
-    if (/^.*?@.*?\.[a-zA-Z]+/.test(credentials.login))
-    {
-      conditions.email = credentials.login;
-    }
-    else
-    {
-      conditions.login = credentials.login;
-    }
-
-    User.findOne(conditions, function(err, user)
+    userModule.authenticate(req.body, function(err, user)
     {
       if (err)
       {
+        if (err.status < 500)
+        {
+          app.broker.publish('users.loginFailure', {
+            severity: 'warning',
+            user: req.session.user,
+            login: String(req.body.login)
+          });
+        }
+
         return next(err);
-      }
-
-      if (!user)
-      {
-        app.broker.publish('users.loginFailure', {
-          severity: 'warning',
-          login: credentials.login
-        });
-
-        return setTimeout(res.send.bind(res, 401), 1000);
-      }
-
-      authUser(credentials, user.toObject(), req, res, next);
-    });
-  }
-
-  function authUser(credentials, user, req, res, next)
-  {
-    var password = String(credentials.password);
-    var hash = user.password;
-
-    bcrypt.compare(password, hash, function(err, result)
-    {
-      if (err)
-      {
-        return next(err);
-      }
-
-      if (!result)
-      {
-        app.broker.publish('users.loginFailure', {
-          severity: 'warning',
-          login: credentials.login
-        });
-
-        return setTimeout(res.send.bind(res, 401), 1000);
       }
 
       var oldSessionId = req.sessionID;
 
-      req.session.regenerate(function(err)
+      req.session.regenerate(function (err)
       {
         if (err)
         {
@@ -159,11 +114,11 @@ module.exports = function setUpUsersRoutes(app, usersModule)
         req.session.user = user;
 
         res.format({
-          json: function()
+          json: function ()
           {
             res.send(req.session.user);
           },
-          default: function()
+          default: function ()
           {
             res.redirect('/');
           }
@@ -204,7 +159,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
       res.format({
         json: function()
         {
-          res.send(204);
+          res.sendStatus(204);
         },
         default: function()
         {
@@ -231,7 +186,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
 
     if (!mailSender)
     {
-      return res.send(500);
+      return res.sendStatus(500);
     }
 
     if (!lodash.isString(req.body.subject)
@@ -239,7 +194,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
       || !lodash.isString(req.body.login)
       || !lodash.isString(req.body.passwordText))
     {
-      return res.send(400);
+      return res.sendStatus(400);
     }
 
     step(
@@ -314,7 +269,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
           return next(err);
         }
 
-        return res.send(204);
+        return res.sendStatus(204);
       }
     );
   }

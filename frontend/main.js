@@ -1,21 +1,22 @@
 // Copyright (c) 2014, Łukasz Walukiewicz <lukasz@walukiewicz.eu>. Some Rights Reserved.
 // Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
-// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-wmes>
+// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
 
 (function()
 {
   'use strict';
 
   var location = window.location;
+
+  if (!location.origin)
+  {
+    location.origin = location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '');
+  }
+
   var matches = location.hash.match(/^(?:#proxy=([0-9]+))?(#.*?)?$/);
 
   if (!matches || matches[1] === undefined || matches[1] === localStorage.getItem('PROXY'))
   {
-    if (!location.origin)
-    {
-      location.origin = location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '');
-    }
-
     location.href = '/redirect?referrer=' + encodeURIComponent(
       location.origin + '/#proxy=' + Date.now() + (matches && matches[2] ? matches[2] : '#')
     );
@@ -26,13 +27,6 @@
   window.location.hash = matches && matches[2] ? matches[2] : '#';
 
   localStorage.setItem('PROXY', matches[1]);
-
-  var locale = localStorage.getItem('LOCALE') || navigator.language || 'pl';
-
-  if (locale !== 'pl')
-  {
-    locale = 'en';
-  }
 
   var domains = [];
   var i18n = null;
@@ -103,213 +97,9 @@
     }
   };
 
-  function startApp(
-    domReady,
-    $,
-    Backbone,
-    Layout,
-    moment,
-    broker,
-    i18n,
-    socket,
-    router,
-    viewport,
-    updater,
-    PageLayout,
-    NavbarView,
-    LogInFormView)
-  {
-    var startBroker = null;
-
-    monkeyPatch(Backbone, $);
-
-    socket.connect();
-
-    moment.lang(locale);
-
-    $.ajaxSetup({
-      dataType: 'json',
-      accepts: {
-        json: 'application/json',
-        text: 'text/plain'
-      },
-      contentType: 'application/json'
-    });
-
-    Layout.configure({
-      manage: true,
-      el: false,
-      keep: true
-    });
-
-    viewport.registerLayout('page', function createPageLayout()
-    {
-      return new PageLayout({
-        views: {
-          '.navbar': createNavbarView()
-        },
-        version: updater.getCurrentVersionString()
-      });
-    });
-
-    if (navigator.onLine)
-    {
-      startBroker = broker.sandbox();
-
-      startBroker.subscribe('socket.connected', function()
-      {
-        startBroker.subscribe('user.reloaded', doStartApp);
-      });
-
-      startBroker.subscribe('socket.connectFailed', doStartApp);
-
-      broker.subscribe('page.titleChanged', function(newTitle)
-      {
-        newTitle.unshift(i18n('core', 'TITLE'));
-
-        document.title = newTitle.reverse().join(' < ');
-      });
-    }
-    else
-    {
-      doStartApp();
-    }
-
-    function createNavbarView()
-    {
-      var req = router.getCurrentRequest();
-      var navbarView = new NavbarView({
-        currentPath: req === null ? '/' : req.path,
-        loadedModules: window.MODULES || []
-      });
-
-      navbarView.on('logIn', function()
-      {
-        viewport.showDialog(
-          new LogInFormView(), i18n('core', 'LOG_IN_FORM:TITLE:LOG_IN')
-        );
-      });
-
-      navbarView.on('logOut', function()
-      {
-        $.ajax({
-          type: 'GET',
-          url: '/logout'
-        }).fail(function()
-          {
-            viewport.msg.show({
-              type: 'error',
-              text: i18n('core', 'MSG:LOG_OUT:FAILURE'),
-              time: 5000
-            });
-          });
-      });
-
-      return navbarView;
-    }
-
-    function doStartApp()
-    {
-      if (startBroker !== null)
-      {
-        startBroker.destroy();
-        startBroker = null;
-      }
-
-      broker.subscribe('i18n.reloaded', function(message)
-      {
-        localStorage.setItem('LOCALE', message.newLocale);
-        viewport.render();
-      });
-
-      broker.subscribe('user.reloaded', function()
-      {
-        viewport.render();
-        router.dispatch(router.getCurrentRequest().url);
-      });
-
-      broker.subscribe('user.loggedIn', function()
-      {
-        var req = router.getCurrentRequest();
-
-        if (!req)
-        {
-          return;
-        }
-
-        var url = req.url;
-
-        if (url === '/' && typeof window.DASHBOARD_URL_AFTER_LOG_IN === 'string')
-        {
-          router.replace(window.DASHBOARD_URL_AFTER_LOG_IN);
-        }
-      });
-
-      broker.subscribe('user.loggedOut', function()
-      {
-        viewport.msg.show({
-          type: 'success',
-          text: i18n('core', 'MSG:LOG_OUT:SUCCESS'),
-          time: 2500
-        });
-
-        broker.publish('router.navigate', {
-          url: '/',
-          trigger: true
-        });
-      });
-
-      if (window.ENV === 'development')
-      {
-        broker.subscribe('socket.connected', function()
-        {
-          window.location.reload();
-        });
-      }
-
-      domReady(function()
-      {
-        $('#app-loading').fadeOut(function() { $(this).remove(); });
-
-        Backbone.history.start({
-          root: '/',
-          hashChange: true,
-          pushState: false
-        });
-      });
-    }
-  }
-
-  function requireApp()
-  {
-    require([
-      'domReady',
-      'jquery',
-      'backbone',
-      'backbone.layout',
-      'moment',
-      'app/broker',
-      'app/i18n',
-      'app/socket',
-      'app/router',
-      'app/viewport',
-      'app/updater/index',
-      'app/core/layouts/PageLayout',
-      'app/core/views/NavbarView',
-      'app/core/views/LogInFormView',
-      'app/time',
-      'app/routes',
-      'app/transportOrders/pubsub',
-      'bootstrap',
-      'moment-lang/pl',
-      'select2-lang/' + locale,
-      'i18n!app/nls/core'
-    ], startApp);
-  }
-
   if (!navigator.onLine || !document.getElementsByTagName('html')[0].hasAttribute('manifest'))
   {
-    return requireApp();
+    return window.requireApp();
   }
 
   var appCache = window.applicationCache;
@@ -327,7 +117,7 @@
     appCache.onobsolete = null;
     appCache.onupdateready = null;
 
-    requireApp();
+    window.requireApp();
   }
 
   appCache.onnoupdate = doStartApp;
@@ -335,54 +125,4 @@
   appCache.onerror = doStartApp;
   appCache.onobsolete = reload;
   appCache.onupdateready = reload;
-
-  function monkeyPatch(Backbone, $)
-  {
-    var originalSync = Backbone.sync;
-
-    Backbone.sync = function(method, model, options)
-    {
-      options.syncMethod = method;
-
-      return originalSync.call(this, method, model, options);
-    };
-
-    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-
-    $.fn.modal.Constructor.prototype.escape = function()
-    {
-      if (this.isShown && this.options.keyboard)
-      {
-        this.$element.on(
-          'keydown.dismiss.bs.modal',
-          $.proxy(function (e) { if (e.which === 27) { this.hide(); } }, this)
-        );
-      }
-      else if (!this.isShown)
-      {
-        this.$element.off('keydown.dismiss.bs.modal');
-      }
-    };
-
-    var $body = $(document.body);
-
-    $.fn.select2.defaults.dropdownContainer = function(select2)
-    {
-      var $modalBody = select2.container.closest('.modal-body');
-
-      if ($modalBody.length === 0)
-      {
-        return $body;
-      }
-
-      var $modalDialog = $modalBody.closest('.modal-dialog');
-
-      return $modalDialog.length === 0 ? $body : $modalDialog;
-    };
-
-    $body.on('focusin', '.select2-offscreen[tabindex="-1"]', function()
-    {
-      $(this).select2('focus');
-    });
-  }
 })();

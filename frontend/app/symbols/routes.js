@@ -29,7 +29,11 @@ define([
     {
       return new ListPage({
         collection: new SymbolCollection({rqlQuery: req.rql}),
-        columns: ['_id', 'group', 'name']
+        columns: [
+          {id: '_id', className: 'is-min'},
+          {id: 'group', className: 'is-min'},
+          'name'
+        ]
       });
     });
   });

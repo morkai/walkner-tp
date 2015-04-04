@@ -11,10 +11,16 @@ define([
 
   return ListView.extend({
 
-    serializeColumns: function()
-    {
-      return Object.keys(this.collection.rqlQuery.fields);
-    }
+    className: 'is-clickable',
+
+    columns: [
+      {id: 'login', className: 'is-min'},
+      {id: 'lastName', className: 'is-min'},
+      {id: 'firstName', className: 'is-min'},
+      {id: 'symbol', className: 'is-min'},
+      {id: 'email', className: 'is-min'},
+      'tel'
+    ]
 
   });
 });

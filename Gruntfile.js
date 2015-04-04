@@ -4,12 +4,12 @@
 
 /*global module:false*/
 
+'use strict';
+
 var requirejsConfig = require('./config/require');
 
 module.exports = function(grunt)
 {
-  'use strict';
-
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean: {
@@ -57,7 +57,7 @@ module.exports = function(grunt)
         dest: './build/frontend',
         ext: '.js',
         options: {
-          helpers: require('./config/frontend').express.ejsAmdHelpers
+          helpers: require('./config/tp-frontend').express.ejsAmdHelpers
         }
       }
     },
@@ -107,7 +107,9 @@ module.exports = function(grunt)
             }
           },
           optimizeCss: 'standard',
-          modules: [{name: 'main'}],
+          modules: [
+            {name: 'tp-main'}
+          ],
           paths: requirejsConfig.buildPaths,
           shim: requirejsConfig.buildShim,
           locale: 'pl'

@@ -60,7 +60,9 @@ define([
 
     createListView: function()
     {
-      return new (this.ListView || this.options.ListView || ListView)({
+      var ListViewClass = this.ListView || this.options.ListView || ListView;
+
+      return new ListViewClass({
         collection: this.collection,
         model: this.model
       });
@@ -68,7 +70,9 @@ define([
 
     createFilterView: function()
     {
-      return new (this.FilterView || this.options.FilterView)({
+      var FilterViewClass = this.FilterView || this.options.FilterView;
+
+      return new FilterViewClass({
         model: {
           rqlQuery: (this.collection || this.model).rqlQuery
         }
@@ -90,9 +94,13 @@ define([
     refreshCollection: function()
     {
       this.listView.refreshCollectionNow();
+      this.updateClientUrl();
+    },
 
+    updateClientUrl: function()
+    {
       this.broker.publish('router.navigate', {
-        url: (this.collection || this.model).genClientUrl() + '?' + (this.collection || this.model).rqlQuery,
+        url: this.collection.genClientUrl() + '?' + this.collection.rqlQuery,
         trigger: false,
         replace: true
       });
