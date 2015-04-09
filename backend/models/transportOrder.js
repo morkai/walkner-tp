@@ -689,7 +689,7 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
 
   transportOrderSchema.pre('save', function(next)
   {
-    this.wasNew = this.isNew;
+    this._wasNew = this.isNew;
 
     this.updateUsers();
 
@@ -698,7 +698,7 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
 
   transportOrderSchema.post('save', function(transportOrder)
   {
-    app.broker.publish('transportOrders.' + (this.wasNew ? 'added' : 'edited'), transportOrder);
+    app.broker.publish('transportOrders.' + (transportOrder._wasNew ? 'added' : 'edited'), transportOrder);
   });
 
   mongoose.model('TransportOrder', transportOrderSchema);
