@@ -1,11 +1,11 @@
 {
   "private": true,
   "name": "walkner-tp",
-  "version": "0.7.5",
+  "version": "0.8.0",
   "updater": {
     "tp": {
-      "backend": 18,
-      "frontend": 26
+      "backend": 19,
+      "frontend": 27
     }
   },
   "description": "Transport ordering application.",
@@ -48,6 +48,7 @@
     "moment": "~2.9.0",
     "request": "~2.54.0",
     "xml2js": "~0.4.6",
+    "blocked": "~1.1.0",
     "h5.step": "~0.1.0",
     "h5.pubsub": "git+http://github.com/morkai/h5.pubsub.git#c1a899cb7e",
     "h5.rql": "git+http://github.com/morkai/h5.rql.git#5622189665",
@@ -61,6 +62,6 @@
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-contrib-requirejs": "~0.4.4",
     "grunt-ejs-amd": "git+http://github.com/morkai/grunt-ejs-amd.git#a09723eabe",
-    "grunt-messageformat-amd": "git+http://github.com/morkai/grunt-messageformat-amd.git#925ad3d218"
+    "grunt-messageformat-amd": "git+http://github.com/morkai/grunt-messageformat-amd.git#7c47f564a5"
   }
 }
