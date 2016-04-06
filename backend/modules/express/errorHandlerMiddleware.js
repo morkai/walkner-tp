@@ -49,7 +49,7 @@ module.exports = function createErrorHandlerMiddleware(expressModule, options)
           login,
           req.ip,
           JSON.stringify(req.headers),
-          JSON.stringify(req.body)
+          JSON.stringify(_.omit(req.body, ['password']))
         );
       }
       catch (err)
