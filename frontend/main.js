@@ -18,7 +18,7 @@
   if (!matches || matches[1] === undefined || matches[1] === localStorage.getItem('PROXY'))
   {
     location.href = '/redirect?referrer=' + encodeURIComponent(
-      location.origin + '/#proxy=' + Date.now() + (matches && matches[2] ? matches[2] : '#')
+      location.origin.replace('http:', 'https:') + '/#proxy=' + Date.now() + (matches && matches[2] ? matches[2] : '#')
     );
 
     return;
