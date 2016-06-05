@@ -1,15 +1,12 @@
-// Copyright (c) 2014, Łukasz Walukiewicz <lukasz@walukiewicz.eu>. Some Rights Reserved.
-// Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
-// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
+// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
-var lodash = require('lodash');
+var _ = require('lodash');
 
 module.exports = function setUpTransportOrdersCommands(app, transportOrdersModule)
 {
   var sio = app[transportOrdersModule.config.sioId];
-  var userModule = app[transportOrdersModule.config.userId];
   var mongoose = app[transportOrdersModule.config.mongooseId];
   var TransportOrder = mongoose.model('TransportOrder');
 
@@ -17,7 +14,7 @@ module.exports = function setUpTransportOrdersCommands(app, transportOrdersModul
   {
     socket.on('transportOrders.markAsSeen', function(transportOrderId, reply)
     {
-      if (!lodash.isFunction(reply))
+      if (!_.isFunction(reply))
       {
         reply = function() {};
       }

@@ -1,10 +1,8 @@
-// Copyright (c) 2014, Łukasz Walukiewicz <lukasz@walukiewicz.eu>. Some Rights Reserved.
-// Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
-// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
+// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
-var lodash = require('lodash');
+var _ = require('lodash');
 var moment = require('moment');
 var step = require('h5.step');
 
@@ -20,12 +18,12 @@ module.exports = function setUpTransportOrdersPricing(app, tpModule)
   {
     socket.on('transportOrders.calcPrices', function(input, reply)
     {
-      if (!lodash.isFunction(reply))
+      if (!_.isFunction(reply))
       {
         return;
       }
 
-      if (!lodash.isObject(input) || !lodash.isNumber(input.km) || !lodash.isNumber(input.hours))
+      if (!_.isObject(input) || !_.isNumber(input.km) || !_.isNumber(input.hours))
       {
         return reply(new Error('INPUT'));
       }
@@ -35,7 +33,7 @@ module.exports = function setUpTransportOrdersPricing(app, tpModule)
         input.currencies = ['PLN', 'EUR'];
       }
 
-      if (!lodash.isString(input.kind))
+      if (!_.isString(input.kind))
       {
         input.kind = null;
       }
@@ -70,12 +68,12 @@ module.exports = function setUpTransportOrdersPricing(app, tpModule)
           return this.done(done, err);
         }
 
-        if (!lodash.isNumber(settings.avgDaysAgo))
+        if (!_.isNumber(settings.avgDaysAgo))
         {
           settings.avgDaysAgo = 0;
         }
 
-        if (!lodash.isNumber(settings.avgMinOrders))
+        if (!_.isNumber(settings.avgMinOrders))
         {
           settings.avgMinOrders = 10;
         }
@@ -85,12 +83,12 @@ module.exports = function setUpTransportOrdersPricing(app, tpModule)
           settings.avgPerKind = 0;
         }
 
-        if (!lodash.isNumber(settings.perKm))
+        if (!_.isNumber(settings.perKm))
         {
           settings.perKm = 1.5;
         }
 
-        if (!lodash.isNumber(settings.perHour))
+        if (!_.isNumber(settings.perHour))
         {
           settings.perHour = 30;
         }
@@ -146,7 +144,7 @@ module.exports = function setUpTransportOrdersPricing(app, tpModule)
         var kmPrice = pricePerKm * input.km;
         var hoursPrice = pricePerHour * input.hours;
 
-        lodash.forEach(input.currencies, function(currencyCode)
+        _.forEach(input.currencies, function(currencyCode)
         {
           var price = {
             currency: currencyCode,

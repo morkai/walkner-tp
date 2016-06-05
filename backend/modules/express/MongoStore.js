@@ -80,7 +80,7 @@ function MongoStore(db, options)
 }
 
 /**
- * @type {Object}
+ * @type {object}
  */
 MongoStore.Options = {
   /**

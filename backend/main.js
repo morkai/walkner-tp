@@ -1,17 +1,21 @@
-// Copyright (c) 2014, Łukasz Walukiewicz <lukasz@walukiewicz.eu>. Some Rights Reserved.
-// Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
-// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
+// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
 var startTime = Date.now();
 
+if (!process.env.NODE_ENV)
+{
+  process.env.NODE_ENV = 'development';
+}
+
 require('./extensions');
 
+var requireCache = require('./requireCache');
 var _ = require('lodash');
 var moment = require('moment');
 var main = require('h5.main');
-var blocked = process.env.NODE_ENV === 'production' ? function() {} : require('blocked');
+var blocked = process.env.NODE_ENV === 'development' ? require('blocked') : function() {};
 var config = require(process.argv[2]);
 
 moment.locale('pl');
@@ -51,7 +55,7 @@ var modules = (config.modules || []).map(function(module)
 });
 
 var app = {
-  options: _.merge({}, config, {
+  options: _.assign({}, config, {
     id: config.id,
     startTime: startTime,
     env: process.env.NODE_ENV,
@@ -60,7 +64,7 @@ var app = {
   })
 };
 
-_.merge(app, require('./helpers'));
+_.assign(app, require('./helpers'));
 
 blocked(function(ms)
 {
@@ -68,3 +72,11 @@ blocked(function(ms)
 });
 
 main(app, modules);
+
+app.broker.subscribe('app.started').setLimit(1).on('message', function()
+{
+  if (requireCache.built)
+  {
+    requireCache.save();
+  }
+});

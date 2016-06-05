@@ -1,10 +1,8 @@
-// Copyright (c) 2014, Łukasz Walukiewicz <lukasz@walukiewicz.eu>. Some Rights Reserved.
-// Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
-// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
+// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
-var lodash = require('lodash');
+var _ = require('lodash');
 var bcrypt = require('bcrypt');
 var crypto = require('crypto');
 var step = require('h5.step');
@@ -18,20 +16,16 @@ module.exports = function setUpUsersRoutes(app, usersModule)
   var PasswordResetRequest = mongoose.model('PasswordResetRequest');
 
   var canView = userModule.auth('USERS:VIEW');
+  var canBrowse = userModule.auth('LOCAL', 'USERS:VIEW');
   var canManage = userModule.auth('USERS:MANAGE');
 
-  express.get('/users', userModule.auth(), express.crud.browseRoute.bind(null, app, User));
-
+  express.get('/users', canBrowse, express.crud.browseRoute.bind(null, app, User));
   express.post('/users', canManage, hashPassword, express.crud.addRoute.bind(null, app, User));
-
   express.get('/users/:id', canViewDetails, express.crud.readRoute.bind(null, app, User));
-
   express.put('/users/:id', canEdit, restrictSpecial, hashPassword, express.crud.editRoute.bind(null, app, User));
-
   express.delete('/users/:id', canManage, restrictSpecial, express.crud.deleteRoute.bind(null, app, User));
 
   express.post('/login', loginRoute);
-
   express.get('/logout', logoutRoute);
 
   express.post('/resetPassword/request', hashPassword, requestPasswordResetRoute);
@@ -57,7 +51,10 @@ module.exports = function setUpUsersRoutes(app, usersModule)
     {
       if (req.body.privileges && user.privileges.indexOf('USERS:MANAGE') === -1)
       {
-        delete req.body.privileges;
+        req.body = _.pick(req.body, [
+          'login', 'email', 'password', 'password', 'password2',
+          'firstName', 'lastName', 'sex'
+        ]);
       }
 
       next();
@@ -98,7 +95,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
 
       var oldSessionId = req.sessionID;
 
-      req.session.regenerate(function (err)
+      req.session.regenerate(function(err)
       {
         if (err)
         {
@@ -107,6 +104,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
 
         delete user.password;
 
+        user._id = user._id.toString();
         user.loggedIn = true;
         user.ipAddress = userModule.getRealIp({}, req);
         user.local = userModule.isLocalIpAddress(user.ipAddress);
@@ -114,11 +112,11 @@ module.exports = function setUpUsersRoutes(app, usersModule)
         req.session.user = user;
 
         res.format({
-          json: function ()
+          json: function()
           {
             res.send(req.session.user);
           },
-          default: function ()
+          default: function()
           {
             res.redirect('/');
           }
@@ -136,7 +134,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
 
   function logoutRoute(req, res, next)
   {
-    var user = lodash.isObject(req.session.user)
+    var user = _.isObject(req.session.user)
       ? req.session.user
       : null;
 
@@ -149,7 +147,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
         return next(err);
       }
 
-      var guestUser = lodash.merge({}, userModule.guest);
+      var guestUser = _.assign({}, userModule.guest);
       guestUser.loggedIn = false;
       guestUser.ipAddress = userModule.getRealIp({}, req);
       guestUser.local = userModule.isLocalIpAddress(guestUser.ipAddress);
@@ -189,10 +187,12 @@ module.exports = function setUpUsersRoutes(app, usersModule)
       return res.sendStatus(500);
     }
 
-    if (!lodash.isString(req.body.subject)
-      || !lodash.isString(req.body.text)
-      || !lodash.isString(req.body.login)
-      || !lodash.isString(req.body.passwordText))
+    var body = req.body;
+
+    if (!_.isString(body.subject)
+      || !_.isString(body.text)
+      || !_.isString(body.login)
+      || !_.isString(body.passwordText))
     {
       return res.sendStatus(400);
     }
@@ -200,7 +200,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
     step(
       function findUserStep()
       {
-        User.findOne({login: req.body.login}, {login: 1, email: 1}).lean().exec(this.next());
+        User.findOne({login: body.login}, {login: 1, email: 1}).lean().exec(this.next());
       },
       function validateUserStep(err, user)
       {
@@ -243,7 +243,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
           createdAt: new Date(),
           creator: userModule.createUserInfo(req.session.user, req),
           user: this.user._id,
-          password: req.body.password
+          password: body.password
         });
         this.passwordResetRequest.save(this.next());
       },
@@ -254,11 +254,11 @@ module.exports = function setUpUsersRoutes(app, usersModule)
           return this.skip(err);
         }
 
-        var subject = req.body.subject;
-        var text = req.body.text
+        var subject = body.subject;
+        var text = body.text
           .replace(/\{REQUEST_ID\}/g, this.passwordResetRequest._id)
           .replace(/\{LOGIN\}/g, this.user.login)
-          .replace(/\{PASSWORD\}/g, req.body.passwordText);
+          .replace(/\{PASSWORD\}/g, body.passwordText);
 
         mailSender.send(this.user.email, subject, text, this.next());
       },
@@ -345,7 +345,7 @@ module.exports = function setUpUsersRoutes(app, usersModule)
         {
           var passwordResetRequest = this.passwordResetRequest;
 
-          passwordResetRequest.remove(function (err)
+          passwordResetRequest.remove(function(err)
           {
             if (err)
             {
@@ -369,14 +369,14 @@ module.exports = function setUpUsersRoutes(app, usersModule)
    */
   function hashPassword(req, res, next)
   {
-    if (!lodash.isObject(req.body))
+    if (!_.isObject(req.body))
     {
       return next();
     }
 
     var password = req.body.password;
 
-    if (!lodash.isString(password) || password.length === 0)
+    if (!_.isString(password) || password.length === 0)
     {
       return next();
     }

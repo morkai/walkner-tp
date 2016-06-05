@@ -1,36 +1,31 @@
-// Copyright (c) 2014, Łukasz Walukiewicz <lukasz@walukiewicz.eu>. Some Rights Reserved.
-// Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
-// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
+// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
-var lodash = require('lodash');
+var path = require('path');
+var _ = require('lodash');
 
 module.exports = function startCoreRoutes(app, express)
 {
-  var appCache = app.options.env === 'production';
+  var dev = app.options.env === 'development';
   var updaterModule = app[app.options.updaterId || 'updater'];
   var userModule = app[app.options.userId || 'user'];
   var mongoose = app[app.options.mongooseId || 'mongoose'];
   var requirejsPaths;
   var requirejsShim;
 
-  var ROOT_USER = JSON.stringify(lodash.omit(userModule.root, 'password'));
+  var ROOT_USER = JSON.stringify(_.omit(userModule.root, 'password'));
   var GUEST_USER = JSON.stringify(userModule.guest);
   var PRIVILEGES = JSON.stringify(userModule.config.privileges);
   var TRANSPORT_KINDS = JSON.stringify(
-    lodash.contains(mongoose.modelNames(), 'TransportOrder') ? mongoose.model('TransportOrder').KINDS : []
+    _.includes(mongoose.modelNames(), 'TransportOrder') ? mongoose.model('TransportOrder').KINDS : []
   );
-  var MODULES = JSON.stringify(app.options.modules.map(function(module)
-  {
-    return module.id || module;
-  }));
+  var MODULES = JSON.stringify(app.options.modules.map(module => module.id || module));
   var DASHBOARD_URL_AFTER_LOG_IN = JSON.stringify(app.options.dashboardUrlAfterLogIn || '/');
 
-  app.broker.subscribe('updater.newVersion', reloadRequirejsConfig).setFilter(function(message)
-  {
-    return message.service === app.options.id;
-  });
+  app.broker
+    .subscribe('updater.newVersion', reloadRequirejsConfig)
+    .setFilter(message => message.service === app.options.id);
 
   reloadRequirejsConfig();
 
@@ -56,6 +51,8 @@ module.exports = function startCoreRoutes(app, express)
 
   express.get('/config.js', sendRequireJsConfigRoute);
 
+  express.get('/favicon.ico', sendFavicon);
+
   function showIndexRoute(req, res)
   {
     var sessionUser = req.session.user;
@@ -73,7 +70,7 @@ module.exports = function startCoreRoutes(app, express)
       DASHBOARD_URL_AFTER_LOG_IN: DASHBOARD_URL_AFTER_LOG_IN
     };
 
-    lodash.forEach(app.options.dictionaryModules, function(appDataKey, moduleName)
+    _.forEach(app.options.dictionaryModules, function(appDataKey, moduleName)
     {
       var models = app[moduleName].models;
 
@@ -91,11 +88,16 @@ module.exports = function startCoreRoutes(app, express)
         return;
       }
 
-      appData[appDataKey] = JSON.stringify(lodash.invoke(models, 'toDictionaryObject'));
+      appData[appDataKey] = JSON.stringify(_.invokeMap(models, 'toDictionaryObject'));
+    });
+
+    _.forEach(app.options.frontendAppData, function(appDataValue, appDataKey)
+    {
+      appData[appDataKey] = JSON.stringify(appDataValue);
     });
 
     res.render('index', {
-      appCache: appCache,
+      appCacheManifest: !dev ? '/manifest.appcache' : '',
       appData: appData,
       mainJsFile: app.options.mainJsFile || 'main.js',
       mainCssFile: app.options.mainCssFile || 'assets/main.css'
@@ -114,6 +116,17 @@ module.exports = function startCoreRoutes(app, express)
       paths: requirejsPaths,
       shim: requirejsShim
     });
+  }
+
+  function sendFavicon(req, res)
+  {
+    var faviconPath = path.join(
+      express.config[dev ? 'staticPath' : 'staticBuildPath'],
+      app.options.faviconFile || 'favicon.ico'
+    );
+
+    res.type('image/x-icon');
+    res.sendFile(faviconPath);
   }
 
   function reloadRequirejsConfig()

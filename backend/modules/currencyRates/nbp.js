@@ -1,10 +1,8 @@
-// Copyright (c) 2014, Łukasz Walukiewicz <lukasz@walukiewicz.eu>. Some Rights Reserved.
-// Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
-// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
+// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
-var lodash = require('lodash');
+var _ = require('lodash');
 var xml2js = require('xml2js');
 var request = require('request');
 var moment = require('moment');
@@ -72,7 +70,7 @@ exports.start = function startCurrencyRatesNbpModule(app, module)
       return scheduleUpdateRates();
     }
 
-    if (!lodash.isObject(xml) || !lodash.isObject(xml.tabela_kursow))
+    if (!_.isObject(xml) || !_.isObject(xml.tabela_kursow))
     {
       module.error("Failed to parse XML: invalid structure.");
 
@@ -99,7 +97,7 @@ exports.start = function startCurrencyRatesNbpModule(app, module)
 
     module.rates = {};
 
-    lodash.forEach(table.pozycja, function(item)
+    _.forEach(table.pozycja, function(item)
     {
       if (!Array.isArray(item.nazwa_waluty) || !item.nazwa_waluty.length
         || !Array.isArray(item.przelicznik) || !item.przelicznik.length

@@ -1,10 +1,8 @@
-// Copyright (c) 2014, Łukasz Walukiewicz <lukasz@walukiewicz.eu>. Some Rights Reserved.
-// Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
-// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
+// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
-var lodash = require('lodash');
+var _ = require('lodash');
 var mongoSerializer = require('h5.rql/lib/serializers/mongoSerializer');
 
 module.exports = function symbolReportRoute(app, transportOrdersModule, req, res, next)
@@ -73,13 +71,13 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
       return;
     }
 
-    lodash.forEach(symbolSummaries, function(symbolSummary)
+    _.forEach(symbolSummaries, function(symbolSummary)
     {
       symbolSummary.orders = round(symbolSummary.orders);
       symbolSummary.km = round(symbolSummary.km);
       symbolSummary.hours = round(symbolSummary.hours);
       symbolSummary.price = round(symbolSummary.price);
-      symbolSummary.owners = lodash.map(symbolSummary.owners, function(ownerSummary)
+      symbolSummary.owners = _.map(symbolSummary.owners, function(ownerSummary)
       {
         ownerSummary.orders = round(ownerSummary.orders);
         ownerSummary.km = round(ownerSummary.km);
@@ -106,7 +104,7 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
 
     var splitTransportOrders = splitOrder(transportOrder);
 
-    lodash.forEach(splitTransportOrders, function(splitTransportOrder)
+    _.forEach(splitTransportOrders, function(splitTransportOrder)
     {
       if (symbols.length && symbols.indexOf(splitTransportOrder.symbol) === -1)
       {
@@ -151,7 +149,7 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
     var splitTransportOrders = {};
     var symbolCount = transportOrder.symbol.length;
 
-    lodash.forEach(transportOrder.symbol, function(symbol)
+    _.forEach(transportOrder.symbol, function(symbol)
     {
       if (!splitTransportOrders[symbol])
       {
@@ -171,7 +169,7 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
       splitTransportOrder.price += transportOrder.price / symbolCount;
     });
 
-    return lodash.values(splitTransportOrders);
+    return _.values(splitTransportOrders);
   }
 
   function ensureData(transportOrder)

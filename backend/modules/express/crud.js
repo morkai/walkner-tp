@@ -145,11 +145,11 @@ exports.addRoute = function(app, Model, req, res, next)
     {
       if (err.name === 'ValidationError')
       {
-        err.status = 400;
+        res.statusCode = 400;
       }
       else if (err.code === 11000)
       {
-        err.status = 400;
+        res.statusCode = 400;
         err.code = 'DUPLICATE_KEY';
 
         var matches = err.message.match(/\.\$(.*?) /);
@@ -222,7 +222,7 @@ exports.readRoute = function(app, options, req, res, next)
 
     if (typeof Model.customizeLeanObject === 'function')
     {
-      model = Model.customizeLeanObject(model, queryOptions.fields);
+      model = Model.customizeLeanObject(model);
     }
 
     if (typeof options.prepareResult === 'function')
@@ -258,8 +258,20 @@ exports.readRoute = function(app, options, req, res, next)
   }
 };
 
-exports.editRoute = function(app, Model, req, res, next)
+exports.editRoute = function(app, options, req, res, next)
 {
+  var Model;
+
+  if (options.model && options.model.model)
+  {
+    Model = options.model;
+  }
+  else
+  {
+    Model = options;
+    options = {};
+  }
+
   if (req.model === null)
   {
     edit(null, null);
@@ -287,7 +299,17 @@ exports.editRoute = function(app, Model, req, res, next)
       return res.sendStatus(404);
     }
 
+    if (typeof options.beforeSet === 'function')
+    {
+      options.beforeSet(model, req);
+    }
+
     model.set(req.body);
+
+    if (typeof options.beforeSave === 'function')
+    {
+      options.beforeSave(model, req);
+    }
 
     if (!model.isModified())
     {
@@ -300,11 +322,11 @@ exports.editRoute = function(app, Model, req, res, next)
       {
         if (err.name === 'ValidationError')
         {
-          err.status = 400;
+          res.statusCode = 400;
         }
         else if (err.code === 11000)
         {
-          err.status = 400;
+          res.statusCode = 400;
           err.code = 'DUPLICATE_KEY';
 
           var matches = err.message.match(/\.\$(.*?) /);
@@ -328,6 +350,11 @@ exports.editRoute = function(app, Model, req, res, next)
           model: model,
           user: req.session.user
         });
+      }
+
+      if (!err && typeof options.afterSave === 'function')
+      {
+        options.afterSave(model, req);
       }
     });
   }

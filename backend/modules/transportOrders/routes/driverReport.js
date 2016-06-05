@@ -1,10 +1,8 @@
-// Copyright (c) 2014, Łukasz Walukiewicz <lukasz@walukiewicz.eu>. Some Rights Reserved.
-// Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
-// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
+// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
-var lodash = require('lodash');
+var _ = require('lodash');
 var mongoSerializer = require('h5.rql/lib/serializers/mongoSerializer');
 
 module.exports = function driverReportRoute(app, transportOrdersModule, req, res, next)
@@ -72,7 +70,7 @@ module.exports = function driverReportRoute(app, transportOrdersModule, req, res
       return;
     }
 
-    lodash.forEach(driverSummaries, function(driverSummary)
+    _.forEach(driverSummaries, function(driverSummary)
     {
       driverSummary.price = Math.round(driverSummary.price * 100) / 100;
 

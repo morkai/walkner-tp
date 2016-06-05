@@ -67,15 +67,10 @@ exports.start = function startExpressModule(app, expressModule, done)
 
   expressModule.router = express.Router();
 
-  expressModule.createHttpError = function(message, statusCode, errorCode)
+  expressModule.createHttpError = function(message, statusCode)
   {
     var httpError = new Error(message);
     httpError.status = statusCode || 400;
-
-    if (errorCode)
-    {
-      httpError.code = errorCode;
-    }
 
     return httpError;
   };
@@ -114,7 +109,7 @@ exports.start = function startExpressModule(app, expressModule, done)
   if (bodyParser)
   {
     expressApp.use(bodyParser.json(config.jsonBody));
-    expressApp.use(bodyParser.urlencoded(_.extend({extended: false}, config.urlencodedBody)));
+    expressApp.use(bodyParser.urlencoded(_.assign({extended: false}, config.urlencodedBody)));
     expressApp.use(bodyParser.text(_.defaults({type: 'text/*'}, config.textBody)));
   }
 
@@ -224,7 +219,7 @@ exports.start = function startExpressModule(app, expressModule, done)
 
   /**
    * @private
-   * @param {Object} ejsAmdHelpers
+   * @param {object} ejsAmdHelpers
    * @param {string} js
    * @returns {string}
    */

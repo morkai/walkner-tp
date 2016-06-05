@@ -1,10 +1,8 @@
-// Copyright (c) 2014, Łukasz Walukiewicz <lukasz@walukiewicz.eu>. Some Rights Reserved.
-// Licensed under CC BY-NC-SA 4.0 <http://creativecommons.org/licenses/by-nc-sa/4.0/>.
-// Part of the walkner-tp project <http://lukasz.walukiewicz.eu/p/walkner-tp>
+// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
-var lodash = require('lodash');
+var _ = require('lodash');
 
 module.exports = function limitToUser(userModule, req, res, next)
 {
@@ -16,10 +14,7 @@ module.exports = function limitToUser(userModule, req, res, next)
     return next();
   }
 
-  var usersTerm = lodash.find(selectors, function(term)
-  {
-    return term.args[0] === 'users';
-  });
+  var usersTerm = _.find(selectors, term => term.args[0] === 'users');
 
   if (!usersTerm)
   {
