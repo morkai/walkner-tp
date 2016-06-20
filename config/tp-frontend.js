@@ -103,9 +103,13 @@ exports.express = {
   staticBuildPath: __dirname + '/../frontend-build',
   sessionCookieKey: 'tp.sid',
   sessionCookie: {
-    httpOnly: true,
+  httpOnly: true,
     path: '/',
-    maxAge: null
+    maxAge: 3600 * 24 * 30 * 1000
+  },
+  sessionStore: {
+    touchInterval: 3600 * 8 * 1000,
+    touchChance: 0
   },
   cookieSecret: '1ee7TeeP33',
   ejsAmdHelpers: {
