@@ -2,13 +2,15 @@
 
 'use strict';
 
-var setUpRoutes = require('./routes');
+const setUpRoutes = require('./routes');
 
 exports.DEFAULT_CONFIG = {
   mongooseId: 'mongoose',
   expressId: 'express',
   userId: 'user',
-  mailSenderId: 'mail/sender'
+  settingsId: 'settings',
+  mailSenderId: 'mail/sender',
+  browsePrivileges: ['USERS:VIEW']
 };
 
 exports.start = function startUsersModule(app, module)
@@ -17,7 +19,8 @@ exports.start = function startUsersModule(app, module)
     [
       module.config.mongooseId,
       module.config.userId,
-      module.config.expressId
+      module.config.expressId,
+      module.config.settingsId
     ],
     setUpRoutes.bind(null, app, module)
   );

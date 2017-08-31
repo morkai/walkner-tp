@@ -1,16 +1,20 @@
 'use strict';
 
 module.exports = {
-  uri: 'mongodb://127.0.0.1:27017/walkner-tp',
-  user: process.env.TP_MONGODB_USER || '',
-  pass: process.env.TP_MONGODB_PASS || '',
-  server: {
-    poolSize: 10
-  },
-  db: {
+  uri: process.env.WMES_MONGODB_URI || 'mongodb://127.0.0.1:27017/walkner-tp',
+  keepAliveQueryInterval: 15000,
+  mongoClient: {
+    poolSize: 10,
+    autoReconnect: true,
+    noDelay: true,
+    keepAlive: 1000,
+    connectTimeoutMS: 30000,
+    socketTimeoutMS: 0,
+    reconnectTries: Number.MAX_SAFE_INTEGER,
+    reconnectInterval: 1000,
+    forceServerObjectId: false,
     w: 1,
-    wtimeout: 1000,
-    nativeParser: true,
-    forceServerObjectId: false
+    wtimeout: 5000,
+    promiseLibrary: global.Promise
   }
 };

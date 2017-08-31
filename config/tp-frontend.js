@@ -118,6 +118,10 @@ exports.express = {
   title: 'TP'
 };
 
+exports.users = {
+  browsePrivileges: ['USER']
+};
+
 exports.user = {
   privileges: [
     'EVENTS:VIEW',
@@ -153,5 +157,12 @@ exports.updater = {
     cwd: __dirname + '/../',
     timeout: 30000
   },
-  versionsKey: 'tp'
+  versionsKey: 'tp',
+  manifests: [
+    {
+      path: '/manifest.appcache',
+      mainJsFile: exports.mainJsFile,
+      mainCssFile: exports.mainCssFile
+    }
+  ]
 };

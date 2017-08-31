@@ -1,9 +1,9 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
-var _ = require('lodash');
-var setUpEventsRoutes = require('./routes');
+const _ = require('lodash');
+const setUpEventsRoutes = require('./routes');
 
 exports.DEFAULT_CONFIG = {
   mongooseId: 'mongoose',
@@ -22,27 +22,46 @@ exports.start = function startEventsModule(app, module)
    * @private
    * @type {Collection}
    */
-  var eventsCollection = module.config.collection(app);
+  const eventsCollection = module.config.collection(app);
 
   /**
    * @private
    * @type {Array.<object>|null}
    */
-  var pendingEvents = null;
+  let pendingEvents = null;
 
   /**
    * @private
    * @type {number}
    */
-  var lastFetchAllTypesTime = 0;
+  let lastFetchAllTypesTime = 0;
 
   /**
    * @private
    * @type {object|null}
    */
-  var nextFetchAllTypesTimer = null;
+  let nextFetchAllTypesTimer = null;
+
+  /**
+   * @private
+   * @type {number}
+   */
+  let lastInsertDelayTime = 0;
+
+  /**
+   * @private
+   * @type {object.<string, boolean>}
+   */
+  const blacklist = {};
 
   module.types = {};
+
+  module.getPendingEvents = function()
+  {
+    return pendingEvents || [];
+  };
+
+  module.insertEvents = insertEvents;
 
   app.onModuleReady(
     [
@@ -53,13 +72,20 @@ exports.start = function startEventsModule(app, module)
     setUpEventsRoutes.bind(null, app, module)
   );
 
-  fetchAllTypes();
+  module.config.blacklist.forEach(topic => blacklist[topic] = true);
+
   subscribe();
+
+  app.broker.subscribe('app.started').setLimit(1).on('message', function()
+  {
+    fetchAllTypes();
+    setInterval(checkBlockedInsert, 5000);
+  });
 
   function fetchAllTypes()
   {
-    var now = Date.now();
-    var diff = now - lastFetchAllTypesTime;
+    const now = Date.now();
+    const diff = now - lastFetchAllTypesTime;
 
     if (diff < 60000)
     {
@@ -75,7 +101,7 @@ exports.start = function startEventsModule(app, module)
     {
       if (err)
       {
-        module.error("Failed to fetch event types: %s", err.message);
+        module.error('Failed to fetch event types: %s', err.message);
       }
       else
       {
@@ -94,7 +120,7 @@ exports.start = function startEventsModule(app, module)
   {
     if (Array.isArray(module.config.topics))
     {
-      var queueInfoEvent = queueEvent.bind(null, 'info');
+      const queueInfoEvent = queueEvent.bind(null, 'info');
 
       _.forEach(module.config.topics, function(topic)
       {
@@ -105,7 +131,7 @@ exports.start = function startEventsModule(app, module)
     {
       _.forEach(module.config.topics, function(topics, severity)
       {
-        var queueCustomSeverityEvent = queueEvent.bind(null, severity);
+        const queueCustomSeverityEvent = queueEvent.bind(null, severity);
 
         _.forEach(topics, function(topic)
         {
@@ -122,7 +148,7 @@ exports.start = function startEventsModule(app, module)
 
   function printMessage(message, topic)
   {
-    module.debug("[%s]", topic, message);
+    module.debug('[%s]', topic, message);
   }
 
   function queueEvent(severity, data, topic)
@@ -132,22 +158,23 @@ exports.start = function startEventsModule(app, module)
       return fetchAllTypes();
     }
 
-    if (module.config.blacklist.indexOf(topic) !== -1)
+    if (blacklist[topic])
     {
       return;
     }
 
-    var user = null;
+    let user = null;
+    const userData = data.user;
 
-    if (_.isObject(data.user))
+    if (_.isObject(userData))
     {
       user = {
-        _id: String(data.user._id),
-        name: data.user.lastName && data.user.firstName
-          ? (data.user.lastName + ' ' + data.user.firstName)
-          : data.user.login,
-        login: data.user.login,
-        ipAddress: data.user.ipAddress
+        _id: String(userData._id || userData.id),
+        name: userData.lastName && userData.firstName
+          ? (userData.lastName + ' ' + userData.firstName)
+          : (userData.login || userData.label),
+        login: userData.login || userData.label,
+        ipAddress: userData.ipAddress || userData.ip
       };
     }
 
@@ -160,7 +187,7 @@ exports.start = function startEventsModule(app, module)
       data = JSON.parse(JSON.stringify(data));
     }
 
-    var type = topic.replace(/^events\./, '');
+    const type = topic.replace(/^events\./, '');
 
     if (_.isString(data.severity))
     {
@@ -174,7 +201,7 @@ exports.start = function startEventsModule(app, module)
       delete data.user;
     }
 
-    var event = {
+    const event = {
       type: type,
       severity: severity,
       time: Date.now(),
@@ -187,6 +214,8 @@ exports.start = function startEventsModule(app, module)
       pendingEvents = [];
 
       setTimeout(insertEvents, module.config.insertDelay);
+
+      lastInsertDelayTime = event.time;
     }
 
     pendingEvents.push(event);
@@ -196,7 +225,12 @@ exports.start = function startEventsModule(app, module)
 
   function insertEvents()
   {
-    var eventsToSave = pendingEvents;
+    if (pendingEvents === null)
+    {
+      return;
+    }
+
+    const eventsToSave = pendingEvents;
 
     pendingEvents = null;
 
@@ -205,7 +239,7 @@ exports.start = function startEventsModule(app, module)
       if (err)
       {
         module.error(
-          "Failed to save %d events: %s", eventsToSave.length, err.message
+          'Failed to save %d events: %s', eventsToSave.length, err.message
         );
       }
       else
@@ -213,5 +247,20 @@ exports.start = function startEventsModule(app, module)
         app.broker.publish('events.saved', eventsToSave);
       }
     });
+  }
+
+  function checkBlockedInsert()
+  {
+    if (pendingEvents === null)
+    {
+      return;
+    }
+
+    if (Date.now() - lastInsertDelayTime > 3333)
+    {
+      module.warn('Blocked! Forcing insert of %d pending events!', pendingEvents.length);
+
+      insertEvents();
+    }
   }
 };

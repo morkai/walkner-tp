@@ -1,35 +1,38 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
-var _ = require('lodash');
-var socketIo = require('socket.io');
-var SocketIoMultiServer = require('./SocketIoMultiServer');
-var pmx = null;
+const _ = require('lodash');
+const socketIo = require('socket.io');
+const SocketIoMultiServer = require('./SocketIoMultiServer');
+const setUpRoutes = require('./routes');
+let pmx = null;
 
-try
-{
-  pmx = require('pmx');
-}
-catch (err) {}
+try { pmx = require('pmx'); }
+catch (err) {} // eslint-disable-line no-empty
 
 exports.DEFAULT_CONFIG = {
-  httpServerId: 'httpServer',
-  httpsServerId: 'httpsServer',
-  path: '/sio'
+  httpServerIds: ['httpServer'],
+  expressId: 'express',
+  userId: 'user',
+  pingsId: 'pings',
+  path: '/sio',
+  socketIo: {
+    pathInterval: 30000,
+    pingTimeout: 10000
+  }
 };
 
-exports.start = function startIoModule(app, sioModule)
+exports.start = function startSioModule(app, sioModule, done)
 {
-  var httpServer = app[sioModule.config.httpServerId];
-  var httpsServer = app[sioModule.config.httpsServerId];
+  sioModule.config.socketIo = _.assign({}, sioModule.config.socketIo, {
+    path: sioModule.config.path,
+    transports: ['websocket', 'xhr-polling'],
+    serveClient: false
+  });
 
-  if (!httpServer && !httpsServer)
-  {
-    throw new Error("sio module requires the httpServer(s) module");
-  }
-
-  var probes = {
+  let socketCount = 0;
+  const probes = {
     currentUsersCounter: null,
     totalConnectionTime: null,
     totalConnectionCount: null
@@ -37,60 +40,96 @@ exports.start = function startIoModule(app, sioModule)
 
   if (pmx)
   {
-    var pmxProbe = pmx.probe();
+    const pmxProbe = pmx.probe();
 
     probes.currentUsersCounter = pmxProbe.counter({name: 'sio:currentUsers'});
     probes.totalConnectionTime = pmxProbe.histogram({name: 'sio:totalConnectionTime', measurement: 'sum'});
     probes.totalConnectionCount = pmxProbe.histogram({name: 'sio:totalConnectionCount', measurement: 'sum'});
   }
 
-  var multiServer = new SocketIoMultiServer();
+  const multiServer = new SocketIoMultiServer();
 
-  if (httpServer)
+  app.onModuleReady(sioModule.config.httpServerIds, function()
   {
-    multiServer.addServer(httpServer.server);
-  }
+    _.forEach(sioModule.config.httpServerIds, function(httpServerId)
+    {
+      multiServer.addServer(app[httpServerId].server);
+    });
 
-  if (httpsServer)
-  {
-    multiServer.addServer(httpsServer.server);
-  }
-
-  var sio = socketIo(multiServer, {
-    path: sioModule.config.path,
-    transports: ['websocket', 'xhr-polling'],
-    serveClient: true
+    startSocketIo();
+    done();
   });
 
-  sioModule = app[sioModule.name] = _.merge(sio, sioModule);
-
-  sioModule.on('connection', function(socket)
+  function startSocketIo()
   {
-    socket.handshake.connectedAt = Date.now();
+    const sio = socketIo(multiServer, sioModule.config.socketIo);
 
-    if (pmx)
+    sioModule = app[sioModule.name] = _.assign(sio, sioModule);
+
+    sio.sockets.setMaxListeners(25);
+
+    app.onModuleReady(
+      [
+        sioModule.config.expressId,
+        sioModule.config.userId
+      ],
+      setUpRoutes.bind(null, app, sioModule)
+    );
+
+    sioModule.on('connection', function(socket)
     {
-      probes.currentUsersCounter.inc();
+      ++socketCount;
+
+      socket.handshake.connectedAt = Date.now();
+
+      if (pmx)
+      {
+        probes.currentUsersCounter.inc();
+      }
+
+      if (app[sioModule.config.pingsId])
+      {
+        app[sioModule.config.pingsId].recordHttpRequest(socket.conn.request);
+      }
+
+      app.broker.publish('sockets.connected', {
+        socket: {
+          _id: socket.id,
+          headers: socket.handshake.headers || {},
+          user: socket.handshake.user || {}
+        },
+        socketCount: socketCount
+      });
 
       socket.on('disconnect', function()
       {
-        probes.totalConnectionCount.update(1);
-        probes.totalConnectionTime.update((Date.now() - socket.handshake.connectedAt) / 1000);
-        probes.currentUsersCounter.dec();
+        --socketCount;
+
+        if (pmx)
+        {
+          probes.totalConnectionCount.update(1);
+          probes.totalConnectionTime.update((Date.now() - socket.handshake.connectedAt) / 1000);
+          probes.currentUsersCounter.dec();
+        }
+
+        app.broker.publish('sockets.disconnected', {
+          socketId: socket.id,
+          socketCount: socketCount
+        });
       });
-    }
 
-    socket.on('echo', function()
-    {
-      socket.emit.apply(socket, ['echo'].concat(Array.prototype.slice.call(arguments)));
-    });
-
-    socket.on('time', function(reply)
-    {
-      if (typeof reply === 'function')
+      socket.on('echo', function()
       {
-        reply(Date.now(), 'Europe/Warsaw');
-      }
+        socket.emit.apply(socket, ['echo'].concat(Array.prototype.slice.call(arguments)));
+      });
+
+      socket.on('time', function(reply)
+      {
+        if (_.isFunction(reply))
+        {
+          reply(Date.now(), 'Europe/Warsaw');
+        }
+      });
     });
-  });
+  }
 };
