@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  uri: process.env.WMES_MONGODB_URI || 'mongodb://127.0.0.1:27017/walkner-tp',
+  uri: process.env.TP_MONGODB_URI || 'mongodb://127.0.0.1:27017/walkner-tp',
   keepAliveQueryInterval: 15000,
   mongoClient: {
     poolSize: 10,
