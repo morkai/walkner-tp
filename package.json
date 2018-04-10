@@ -5,7 +5,7 @@
   "updater": {
     "tp": {
       "backend": 25,
-      "frontend": 35
+      "frontend": 36
     }
   },
   "description": "Transport ordering application.",
