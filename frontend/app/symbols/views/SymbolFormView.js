@@ -59,7 +59,7 @@ define([
 
     handleFailure: function(res)
     {
-      if (res.responseJSON.error.code === 'DUPLICATE_KEY')
+      if (res.responseJSON.error.code === 11000)
       {
         this.$id('_id').select();
 
