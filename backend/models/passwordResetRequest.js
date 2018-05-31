@@ -1,23 +1,20 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 'use strict';
 
-var userInfoSchema = require('./userInfoSchema');
-
 module.exports = function setUpPasswordResetRequestModel(app, mongoose)
 {
-  var passwordResetRequest = mongoose.Schema({
+  const passwordResetRequest = new mongoose.Schema({
     _id: {
       type: String,
       required: true,
-      unique: true,
       trim: true
     },
     createdAt: {
       type: Date,
       required: true
     },
-    creator: userInfoSchema,
+    creator: {},
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

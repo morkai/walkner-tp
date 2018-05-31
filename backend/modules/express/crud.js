@@ -51,6 +51,9 @@ const CSV_FORMATTERS = {
   'datetime': function(value) { return helpers.formatDateTime(value); },
   'date': function(value) { return helpers.formatDate(value); },
   'time': function(value) { return helpers.formatTime(value); },
+  'datetime+utc': function(value) { return helpers.formatDateTimeUtc(value); },
+  'date+utc': function(value) { return helpers.formatDateUtc(value); },
+  'time+utc': function(value) { return helpers.formatTimeUtc(value); },
   'boolean': function(value) { return value ? 1 : 0; }
 };
 const EXPORT_SHORT_TYPES = {
@@ -71,6 +74,9 @@ const EXPORT_TYPE_WIDTHS = {
   'datetime': 18,
   'date': 10,
   'time': 10,
+  'datetime+utc': 18,
+  'date+utc': 10,
+  'time+utc': 10,
   'boolean': 10
 };
 
@@ -149,6 +155,11 @@ exports.browseRoute = function(app, options, req, res, next)
 
       const totalCount = this.totalCount;
 
+      if (!Array.isArray(models))
+      {
+        models = [];
+      }
+
       if (totalCount > 0 && typeof Model.customizeLeanObject === 'function')
       {
         models = models.map(leanModel => Model.customizeLeanObject(leanModel, queryOptions.fields));
@@ -186,6 +197,11 @@ exports.browseRoute = function(app, options, req, res, next)
 
 exports.addRoute = function(app, Model, req, res, next)
 {
+  if (req.body.__v)
+  {
+    delete req.body.__v;
+  }
+
   const model = req.model || new Model(req.body);
 
   model.save(function(err)
@@ -247,11 +263,19 @@ exports.readRoute = function(app, options, req, res, next)
     options = {};
   }
 
+  if (req.model)
+  {
+    return handleModel(null, req.model);
+  }
+
   const idProperty = options.idProperty
     ? (typeof options.idProperty === 'function' ? options.idProperty(req) : options.idProperty)
     : '_id';
+  const conditions = typeof idProperty === 'string'
+    ? {[idProperty]: req.params.id}
+    : idProperty;
   const queryOptions = mongoSerializer.fromQuery(req.rql);
-  const query = Model.findOne({[idProperty]: req.params.id}, queryOptions.fields).lean();
+  const query = Model.findOne(conditions, queryOptions.fields).lean();
 
   try
   {
@@ -262,7 +286,9 @@ exports.readRoute = function(app, options, req, res, next)
     return next(err);
   }
 
-  query.exec(function(err, model)
+  query.exec(handleModel);
+
+  function handleModel(err, model)
   {
     if (err)
     {
@@ -287,7 +313,7 @@ exports.readRoute = function(app, options, req, res, next)
     {
       formatResult(null, model);
     }
-  });
+  }
 
   function formatResult(err, result)
   {
@@ -314,6 +340,11 @@ exports.readRoute = function(app, options, req, res, next)
 
 exports.editRoute = function(app, options, req, res, next)
 {
+  if (req.body.__v)
+  {
+    delete req.body.__v;
+  }
+
   let Model;
 
   if (options.model && options.model.model)
@@ -480,11 +511,17 @@ exports.deleteRoute = function(app, Model, req, res, next)
 
 exports.exportRoute = function(app, options, req, res, next)
 {
+  app.debug('[express] Exporting: %s', JSON.stringify({
+    url: req.url,
+    user: app.user.createUserInfo(req.session.user, req)
+  }, null, 2));
+
   const format = req.params.format === 'xlsx' && app.express.config.jsonToXlsxExe ? 'xlsx' : 'csv';
-  const queryOptions = mongoSerializer.fromQuery(req.rql);
+  let cursorClosed = false;
   let headerWritten = false;
   let columns = null;
   let jsonToXlsx = null;
+  let rowIndex = 0;
 
   if (format === 'xlsx')
   {
@@ -497,39 +534,48 @@ exports.exportRoute = function(app, options, req, res, next)
 
   function stream()
   {
-    const query = options.model
-      .find(queryOptions.selector, queryOptions.fields)
-      .sort(queryOptions.sort)
-      .lean();
+    let cursor = options.cursor;
 
-    try
+    if (cursor === undefined)
     {
-      populateQuery(query, req.rql);
+      const queryOptions = mongoSerializer.fromQuery(req.rql);
+      const query = options.model
+        .find(queryOptions.selector, queryOptions.fields)
+        .sort(queryOptions.sort)
+        .lean();
+
+      try
+      {
+        populateQuery(query, req.rql);
+      }
+      catch (err)
+      {
+        return next(err);
+      }
+
+      cursor = query.cursor({batchSize: options.batchSize || 10});
     }
-    catch (err)
+
+    if (cursor && cursor.close)
     {
-      return next(err);
+      req.once('aborted', () => cursor.close());
     }
-
-    const cursor = query.cursor();
-
-    req.once('aborted', () => cursor.close());
 
     if (options.serializeStream)
     {
       const emitter = new EventEmitter();
 
-      handleExportStream(emitter, false, req, options.cleanUp);
+      handleExportStream(emitter, cursor, false, req, options.cleanUp);
 
       options.serializeStream(cursor, emitter);
     }
     else
     {
-      handleExportStream(cursor, true, req, options.cleanUp);
+      handleExportStream(cursor, cursor, true, req, options.cleanUp);
     }
   }
 
-  function handleExportStream(queryStream, serializeRow, req, cleanUp)
+  function handleExportStream(queryStream, cursor, serializeRow, req, cleanUp)
   {
     queryStream.on('error', function(err)
     {
@@ -543,15 +589,23 @@ exports.exportRoute = function(app, options, req, res, next)
 
     queryStream.on('end', function()
     {
-      writeHeader();
+      if (!cursorClosed)
+      {
+        writeHeader();
 
-      if (format === 'xlsx')
-      {
-        finalizeXlsx();
-      }
-      else if (format === 'csv')
-      {
-        finalizeCsv();
+        if (!columns || columns.length === 0)
+        {
+          return;
+        }
+
+        if (format === 'xlsx')
+        {
+          finalizeXlsx();
+        }
+        else if (format === 'csv')
+        {
+          finalizeCsv();
+        }
       }
 
       if (cleanUp)
@@ -562,6 +616,11 @@ exports.exportRoute = function(app, options, req, res, next)
 
     queryStream.on('data', function(doc)
     {
+      if (cursorClosed)
+      {
+        return;
+      }
+
       const row = serializeRow ? options.serializeRow(doc, req) : doc;
       const multiple = Array.isArray(row);
 
@@ -575,7 +634,12 @@ exports.exportRoute = function(app, options, req, res, next)
         columns = prepareExportColumns(format, options, Object.keys(multiple ? row[0] : row));
       }
 
-      writeHeader();
+      writeHeader(cursor);
+
+      if (cursorClosed)
+      {
+        return;
+      }
 
       if (multiple)
       {
@@ -588,7 +652,7 @@ exports.exportRoute = function(app, options, req, res, next)
     });
   }
 
-  function writeHeader()
+  function writeHeader(cursor)
   {
     if (headerWritten)
     {
@@ -597,9 +661,27 @@ exports.exportRoute = function(app, options, req, res, next)
 
     headerWritten = true;
 
-    if (columns === null)
+    if (!columns || columns.length === 0)
     {
-      return res.sendStatus(204);
+      res.attachment(options.filename + '.txt');
+      res.end('NO DATA\r\n');
+
+      return;
+    }
+
+    if (columns.length > 1100)
+    {
+      cursor.close();
+
+      cursorClosed = true;
+
+      app.debug('[express] Export killed: %s', JSON.stringify({
+        url: req.url,
+        user: app.user.createUserInfo(req.session.user, req),
+        columns: columns.length
+      }, null, 2));
+
+      return;
     }
 
     res.attachment(options.filename + '.' + format);
@@ -668,6 +750,8 @@ exports.exportRoute = function(app, options, req, res, next)
       sheetName: options.sheetName || options.filename,
       freezeRows: options.freezeRows || 0,
       freezeColumns: options.freezeColumns || 0,
+      headerHeight: options.headerHeight || 0,
+      subHeader: !!options.subHeader,
       columns: columns
     };
 
@@ -707,15 +791,19 @@ exports.exportRoute = function(app, options, req, res, next)
 
     res.write(new Buffer([0xEF, 0xBB, 0xBF]));
     res.write(line + CSV_ROW_SEPARATOR);
+
+    ++rowIndex;
   }
 
   function writeCsvRow(row)
   {
+    ++rowIndex;
+
     const line = columns
       .map(function(column)
       {
         const rawValue = row[column.name];
-        const formatter = CSV_FORMATTERS[column.type];
+        const formatter = CSV_FORMATTERS[options.subHeader && rowIndex === 2 ? 'string' : column.type];
 
         return formatter ? formatter(rawValue) : rawValue;
       })
@@ -783,6 +871,10 @@ function prepareExportColumns(format, options, columnNames)
     else if (option)
     {
       Object.assign(column, option);
+    }
+    else if (typeof options.prepareColumn === 'function')
+    {
+      options.prepareColumn(column);
     }
 
     if (!column.width)

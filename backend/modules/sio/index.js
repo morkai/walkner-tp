@@ -2,7 +2,9 @@
 
 'use strict';
 
+const {exec} = require('child_process');
 const _ = require('lodash');
+const engineIo = require('engine.io');
 const socketIo = require('socket.io');
 const SocketIoMultiServer = require('./SocketIoMultiServer');
 const setUpRoutes = require('./routes');
@@ -11,6 +13,9 @@ let pmx = null;
 try { pmx = require('pmx'); }
 catch (err) {} // eslint-disable-line no-empty
 
+engineIo.Server.errors.SERVER_UNAVAILABLE = 503;
+engineIo.Server.errorMessages[503] = 'Server unavailable';
+
 exports.DEFAULT_CONFIG = {
   httpServerIds: ['httpServer'],
   expressId: 'express',
@@ -18,9 +23,10 @@ exports.DEFAULT_CONFIG = {
   pingsId: 'pings',
   path: '/sio',
   socketIo: {
-    pathInterval: 30000,
+    pingInterval: 30000,
     pingTimeout: 10000
-  }
+  },
+  netstatCmd: ''
 };
 
 exports.start = function startSioModule(app, sioModule, done)
@@ -28,7 +34,8 @@ exports.start = function startSioModule(app, sioModule, done)
   sioModule.config.socketIo = _.assign({}, sioModule.config.socketIo, {
     path: sioModule.config.path,
     transports: ['websocket', 'xhr-polling'],
-    serveClient: false
+    serveClient: false,
+    allowRequest: checkRequest
   });
 
   let socketCount = 0;
@@ -57,8 +64,21 @@ exports.start = function startSioModule(app, sioModule, done)
     });
 
     startSocketIo();
+
     done();
   });
+
+  function checkRequest(req, done)
+  {
+    const allServersAvailable = sioModule.config.httpServerIds.every(httpServerId => app[httpServerId].isAvailable());
+
+    if (!allServersAvailable)
+    {
+      return done(engineIo.Server.errors.SERVER_UNAVAILABLE, false);
+    }
+
+    return sioModule.checkRequest(req, done);
+  }
 
   function startSocketIo()
   {
@@ -130,6 +150,70 @@ exports.start = function startSioModule(app, sioModule, done)
           reply(Date.now(), 'Europe/Warsaw');
         }
       });
+
+      socket.on('killZombies', function()
+      {
+        if (socket.handshake && socket.handshake.user && socket.handshake.user.super)
+        {
+          killZombies();
+        }
+      });
+    });
+  }
+
+  function killZombies()
+  {
+    netstat((err, established) => // eslint-disable-line handle-callback-err
+    {
+      const oldSocketIds = Object.keys(sioModule.sockets.connected);
+
+      oldSocketIds.forEach(socketId =>
+      {
+        const ioSocket = sioModule.sockets.connected[socketId];
+        const nodeSocket = ioSocket.request.socket;
+        const foreignAddress = `${nodeSocket.remoteAddress}:${nodeSocket.remotePort}`;
+
+        if (!established.has(foreignAddress)
+          || !nodeSocket.readable
+          || !nodeSocket.writable
+          || nodeSocket.destroyed)
+        {
+          ioSocket.disconnect(true);
+        }
+      });
+
+      const newSocketIds = Object.keys(sioModule.sockets.connected);
+
+      if (newSocketIds.length < oldSocketIds.length)
+      {
+        sioModule.debug(`Killed ${oldSocketIds.length - newSocketIds.length} zombies!`);
+      }
+    });
+  }
+
+  function netstat(done)
+  {
+    const win32 = process.platform === 'win32';
+    const cmd = sioModule.config.netstatCmd || (win32 ? 'netstat -p tcp -n' : 'netstat -ant | grep ESTABLISHED');
+
+    exec(cmd, (err, stdout) =>
+    {
+      const established = new Set();
+      const partIndex = win32 ? 2 : 4;
+
+      (stdout || '').trim().split('\n').forEach(line =>
+      {
+        const parts = line.replace(/\s+/g, ' ').trim().split(' ');
+        const foreignAddress = parts[partIndex];
+        const state = parts[partIndex + 1];
+
+        if (state === 'ESTABLISHED')
+        {
+          established.add(foreignAddress);
+        }
+      });
+
+      done(err, established);
     });
   }
 };

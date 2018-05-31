@@ -4,7 +4,7 @@
 
 var lodash = require('lodash');
 var deepEqual = require('deep-equal');
-var autoIncrement = require('mongoose-auto-increment');
+var autoIncrement = require('mongoose-plugin-autoinc');
 var userInfoSchema = require('./userInfoSchema');
 
 module.exports = function setUpTransportOrderModel(app, mongoose)
