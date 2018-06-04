@@ -115,13 +115,15 @@ module.exports = function setUpTransportOrdersPricing(app, tpModule)
         }
 
         TransportOrder.aggregate(
-          {$match: conditions},
-          {$group: {
-            _id: null,
-            orderCount: {$sum: 1},
-            totalKm: {$sum: '$km'},
-            totalPrice: {$sum: '$price'}
-          }},
+          [
+            {$match: conditions},
+            {$group: {
+              _id: null,
+              orderCount: {$sum: 1},
+              totalKm: {$sum: '$km'},
+              totalPrice: {$sum: '$price'}
+            }}
+          ],
           this.next()
         );
       },
