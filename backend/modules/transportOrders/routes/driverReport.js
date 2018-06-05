@@ -51,7 +51,7 @@ module.exports = function driverReportRoute(app, transportOrdersModule, req, res
     .sort({userDate: 1})
     .populate('driver', TransportOrder.USER_FIELDS)
     .lean()
-    .stream();
+    .cursor();
 
   var driverSummaries = {};
 
@@ -63,7 +63,7 @@ module.exports = function driverReportRoute(app, transportOrdersModule, req, res
     }
   });
 
-  stream.on('close', function()
+  stream.on('end', function()
   {
     if (res.headersSent)
     {

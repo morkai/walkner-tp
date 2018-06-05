@@ -49,7 +49,7 @@ module.exports = function driverReportRoute(app, transportOrdersModule, req, res
     .find(conditions, fields)
     .sort({userDate: 1})
     .lean()
-    .stream();
+    .cursor();
 
   var kindSummaries = {};
 
@@ -61,7 +61,7 @@ module.exports = function driverReportRoute(app, transportOrdersModule, req, res
     }
   });
 
-  stream.on('close', function()
+  stream.on('end', function()
   {
     if (res.headersSent)
     {

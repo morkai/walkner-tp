@@ -60,7 +60,7 @@ module.exports = function userReportRoute(app, transportOrdersModule, req, res, 
     .populate('owner', TransportOrder.USER_FIELDS)
     .populate('driver', TransportOrder.USER_FIELDS)
     .lean()
-    .stream();
+    .cursor();
 
   stream.on('error', function(err)
   {
@@ -70,7 +70,7 @@ module.exports = function userReportRoute(app, transportOrdersModule, req, res, 
     }
   });
 
-  stream.on('close', function()
+  stream.on('end', function()
   {
     if (res.headersSent)
     {

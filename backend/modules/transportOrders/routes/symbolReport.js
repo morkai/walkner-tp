@@ -52,7 +52,7 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
     .sort({userDate: 1})
     .populate('owner', TransportOrder.USER_FIELDS)
     .lean()
-    .stream();
+    .cursor();
 
   var symbolSummaries = {};
 
@@ -64,7 +64,7 @@ module.exports = function symbolReportRoute(app, transportOrdersModule, req, res
     }
   });
 
-  stream.on('close', function()
+  stream.on('end', function()
   {
     if (res.headersSent)
     {
