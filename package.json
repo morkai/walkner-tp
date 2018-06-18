@@ -4,8 +4,8 @@
   "version": "0.11.0",
   "updater": {
     "tp": {
-      "backend": 27,
-      "frontend": 38
+      "backend": 29,
+      "frontend": 45
     }
   },
   "description": "Transport ordering application.",
