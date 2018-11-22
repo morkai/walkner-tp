@@ -258,7 +258,7 @@ module.exports = function setUpTransportOrderModel(app, mongoose)
     input.creatorLastSeenAt = input.createdAt;
     input.creatorChanges = null;
 
-    input.ownerLastSeenAt = input.owner === input.creator ? input.createdAt : null;
+    input.ownerLastSeenAt = input.owner === input.creator._id.toString() ? input.createdAt : null;
     input.ownerChanges = null;
 
     input.dispatcher = null;
