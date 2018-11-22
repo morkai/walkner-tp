@@ -187,7 +187,7 @@ define([
 
     handleFailure: function(res)
     {
-      if (res.responseJSON.error.code === 11000)
+      if (res.responseJSON.error.code === 'DUPLICATE_KEY')
       {
         this.$id('login').select();
 
