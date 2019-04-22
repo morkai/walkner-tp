@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'underscore',
@@ -53,9 +53,9 @@ define([
   };
 
   /**
-   * @param {function|object|string|Array.<object|string>} breadcrumbs
+   * @param {function|Object|string|Array.<Object|string>} breadcrumbs
    * @param {string|function} breadcrumbs.label
-   * @param {object} [context]
+   * @param {Object} [context]
    * @returns {BlankLayout}
    */
   BlankLayout.prototype.setBreadcrumbs = function(breadcrumbs, context)

@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'underscore',
@@ -23,13 +23,15 @@ define([
 
     $errorMessage: null,
 
+    updateOnChange: true,
+
     initialize: function()
     {
       this.$errorMessage = null;
 
       this.listenTo(this.model, 'change', function()
       {
-        if (this.isRendered())
+        if (this.isRendered() && this.updateOnChange)
         {
           js2form(this.el, this.serializeToForm(true), '.', null, false, false);
         }
@@ -43,15 +45,16 @@ define([
 
     serialize: function()
     {
-      return {
-        editMode: !!this.options.editMode,
-        idPrefix: this.idPrefix,
-        formMethod: this.options.formMethod,
-        formAction: this.options.formAction,
-        formActionText: this.options.formActionText,
-        panelTitleText: this.options.panelTitleText,
+      var options = this.options;
+
+      return _.assign(View.prototype.serialize.apply(this, arguments), {
+        editMode: !!options.editMode,
+        formMethod: options.formMethod,
+        formAction: options.formAction,
+        formActionText: options.formActionText,
+        panelTitleText: options.panelTitleText,
         model: this.model.toJSON()
-      };
+      });
     },
 
     afterRender: function()
@@ -59,14 +62,19 @@ define([
       js2form(this.el, this.serializeToForm(false));
     },
 
-    serializeToForm: function(partial)
+    serializeToForm: function(partial) // eslint-disable-line no-unused-vars
     {
-      return this.model.toJSON();
+      return this.model.serializeForm ? this.model.serializeForm() : this.model.toJSON();
     },
 
     serializeForm: function(formData)
     {
       return formData;
+    },
+
+    getFormData: function()
+    {
+      return this.serializeForm(form2js(this.el));
     },
 
     submitForm: function()
@@ -78,42 +86,34 @@ define([
         return false;
       }
 
-      var formData = this.serializeForm(form2js(this.el));
+      var formData = this.getFormData();
 
       if (!this.checkValidity(formData))
       {
+        this.handleInvalidity(formData);
+
         return false;
       }
 
       var $submitEl = this.$('[type="submit"]').attr('disabled', true);
 
-      var req = this.promised(this.model.save(formData, this.getSaveOptions()));
-
-      var view = this;
-
-      req.done(function()
-      {
-        if (typeof view.options.done === 'function')
-        {
-          view.options.done(true);
-        }
-        else
-        {
-          view.broker.publish('router.navigate', {
-            url: view.model.genClientUrl(),
-            trigger: true
-          });
-        }
-      });
-
-      req.fail(this.handleFailure.bind(this));
-
-      req.always(function()
-      {
-        $submitEl.attr('disabled', false);
-      });
+      this.submitRequest($submitEl, formData);
 
       return false;
+    },
+
+    submitRequest: function($submitEl, formData)
+    {
+      var req = this.request(formData);
+
+      req.done(this.handleSuccess.bind(this));
+      req.fail(this.handleFailure.bind(this));
+      req.always(function() { $submitEl.attr('disabled', false); });
+    },
+
+    request: function(formData)
+    {
+      return this.promised(this.model.save(formData, this.getSaveOptions()));
     },
 
     checkValidity: function(formData)
@@ -121,9 +121,34 @@ define([
       return !!formData;
     },
 
+    handleInvalidity: function()
+    {
+
+    },
+
+    handleSuccess: function()
+    {
+      if (typeof this.options.done === 'function')
+      {
+        this.options.done(true);
+      }
+      else
+      {
+        this.broker.publish('router.navigate', {
+          url: this.model.genClientUrl(),
+          trigger: true
+        });
+      }
+    },
+
     handleFailure: function()
     {
-      this.showErrorMessage(this.options.failureText);
+      this.showErrorMessage(this.getFailureText());
+    },
+
+    getFailureText: function()
+    {
+      return this.options.failureText;
     },
 
     showErrorMessage: function(text)

@@ -1,15 +1,17 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'app/i18n',
   '../util/bindLoadingMessage',
   '../View',
-  '../views/FormView'
+  '../views/FormView',
+  './createPageBreadcrumbs'
 ], function(
   t,
   bindLoadingMessage,
   View,
-  FormView
+  FormView,
+  createPageBreadcrumbs
 ) {
   'use strict';
 
@@ -19,19 +21,17 @@ define([
 
     pageId: 'editForm',
 
+    baseBreadcrumb: false,
+
     breadcrumbs: function()
     {
-      return [
+      return createPageBreadcrumbs(this, [
         {
-          label: t.bound(this.model.getNlsDomain(), 'BREADCRUMBS:browse'),
-          href: this.model.genClientUrl('base')
-        },
-        {
-          label: this.model.getLabel(),
+          label: this.model.getLabel() || t.bound(this.model.getNlsDomain(), 'BREADCRUMBS:details'),
           href: this.model.genClientUrl()
         },
-        t.bound(this.model.getNlsDomain(), 'BREADCRUMBS:editForm')
-      ];
+        ':editForm'
+      ]);
     },
 
     initialize: function()
@@ -52,22 +52,28 @@ define([
 
     defineViews: function()
     {
-      var FormViewClass = this.options.FormView || this.FormView || FormView;
+      var FormViewClass = this.getFormViewClass();
 
       this.view = new FormViewClass(this.getFormViewOptions());
+    },
+
+    getFormViewClass: function()
+    {
+      return this.options.FormView || this.FormView || FormView;
     },
 
     getFormViewOptions: function()
     {
       var model = this.model;
+      var nlsDomain = model.getNlsDomain();
       var options = {
         editMode: true,
         model: model,
         formMethod: 'PUT',
         formAction: model.url(),
-        formActionText: t(model.getNlsDomain(), 'FORM:ACTION:edit'),
-        failureText: t(model.getNlsDomain(), 'FORM:ERROR:editFailure'),
-        panelTitleText: t(model.getNlsDomain(), 'PANEL:TITLE:editForm')
+        formActionText: t(t.has(nlsDomain, 'FORM:ACTION:edit') ? nlsDomain : 'core', 'FORM:ACTION:edit'),
+        failureText: t(t.has(nlsDomain, 'FORM:ACTION:editFailure') ? nlsDomain : 'core', 'FORM:ERROR:editFailure'),
+        panelTitleText: t(t.has(nlsDomain, 'FORM:ACTION:editForm') ? nlsDomain : 'core', 'PANEL:TITLE:editForm')
       };
 
       if (typeof this.options.formTemplate === 'function')

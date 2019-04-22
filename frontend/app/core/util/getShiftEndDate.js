@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'app/time'
@@ -24,7 +24,7 @@ define([
       shiftEndMoment.hours(22);
     }
 
-    shiftEndMoment.add('hours', 8).subtract(1, 'seconds');
+    shiftEndMoment.add(8, 'hours').subtract(1, 'seconds');
 
     return shiftEndMoment.toDate();
   };

@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'underscore',
@@ -16,6 +16,11 @@ define([
   actionFormTemplate
 ) {
   'use strict';
+
+  function i18n(options, key, data)
+  {
+    return t.bound(t.has(options.nlsDomain, key) ? options.nlsDomain : 'core', key, data || {});
+  }
 
   var DEFAULT_OPTIONS = {
     /**
@@ -147,12 +152,18 @@ define([
       {
         view.trigger('failure', jqXhr);
 
-        if (options.failureText)
+        var errorCode = jqXhr.responseJSON && jqXhr.responseJSON.error && jqXhr.responseJSON.error.code || '?';
+        var errorKey = 'ACTION_FORM:' + options.actionKey + ':' + errorCode;
+        var errorMessage = t.has(view.options.nlsDomain, errorKey)
+          ? t(view.options.nlsDomain, errorKey)
+          : options.failureText;
+
+        if (errorMessage)
         {
           view.$errorMessage = viewport.msg.show({
             type: 'error',
-            time: 5000,
-            text: options.failureText
+            time: 3000,
+            text: errorMessage
           });
         }
       });
@@ -188,31 +199,37 @@ define([
 
       if (options.nlsDomain)
       {
-        dialogTitle = t.bound(options.nlsDomain, 'ACTION_FORM:DIALOG_TITLE:' + options.actionKey);
+        dialogTitle = i18n(options, 'ACTION_FORM:DIALOG_TITLE:' + options.actionKey);
 
         var modelLabel = options.labelAttribute
           ? options.model.get(options.labelAttribute)
           : options.model.getLabel();
 
-        if (modelLabel)
+        if (!options.messageText)
         {
-          options.messageText = t.bound(
-            options.nlsDomain,
-            'ACTION_FORM:MESSAGE_SPECIFIC:' + options.actionKey,
-            {label: modelLabel}
-          );
-        }
-        else
-        {
-          options.messageText =
-            t.bound(options.nlsDomain, 'ACTION_FORM:MESSAGE:' + options.actionKey);
+          if (modelLabel)
+          {
+            options.messageText = i18n(
+              options,
+              'ACTION_FORM:MESSAGE_SPECIFIC:' + options.actionKey,
+              {label: modelLabel}
+            );
+          }
+          else
+          {
+            options.messageText = i18n(options, 'ACTION_FORM:MESSAGE:' + options.actionKey);
+          }
         }
 
-        options.formActionText =
-          t.bound(options.nlsDomain, 'ACTION_FORM:BUTTON:' + options.actionKey);
+        if (!options.formActionText)
+        {
+          options.formActionText = i18n(options, 'ACTION_FORM:BUTTON:' + options.actionKey);
+        }
 
-        options.failureText =
-          t.bound(options.nlsDomain, 'ACTION_FORM:MESSAGE_FAILURE:' + options.actionKey);
+        if (!options.failureText)
+        {
+          options.failureText = i18n(options, 'ACTION_FORM:MESSAGE_FAILURE:' + options.actionKey);
+        }
       }
 
       if (!options.formAction && _.isFunction(options.model.url))

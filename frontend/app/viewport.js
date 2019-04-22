@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'app/broker',
@@ -20,6 +20,23 @@ define([
   });
 
   window.viewport = viewport;
+
+  Object.defineProperty(window, 'page', {
+    get: function() { return viewport.currentPage; }
+  });
+
+  Object.defineProperty(window, 'dialog', {
+    get: function() { return viewport.currentDialog; }
+  });
+
+  Object.defineProperty(window, 'model', {
+    get: function()
+    {
+      var view = viewport.currentDialog || viewport.currentPage;
+
+      return view && view.model || view.collection;
+    }
+  });
 
   return viewport;
 });

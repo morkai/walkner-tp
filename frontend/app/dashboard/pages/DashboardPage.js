@@ -1,10 +1,10 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'app/i18n',
   'app/user',
   'app/core/View',
-  'app/core/views/LogInFormView',
+  'app/users/views/LogInFormView',
   '../views/DashboardView'
 ], function(
   t,
@@ -21,15 +21,6 @@ define([
 
     pageId: 'dashboard',
 
-    localTopics: {
-      'user.reloaded': function()
-      {
-        this.view.remove();
-        this.view = user.isLoggedIn() ? new DashboardView() : new LogInFormView();
-        this.view.render();
-      }
-    },
-
     breadcrumbs: function()
     {
       return user.isLoggedIn() ? [] : [t.bound('dashboard', 'breadcrumbs:logIn')];
@@ -42,7 +33,10 @@ define([
 
     afterRender: function()
     {
-      this.$('input[name="login"]').focus();
+      if (!user.isLoggedIn())
+      {
+        this.$('input[name="login"]').focus();
+      }
     }
 
   });

@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'app/time'
@@ -7,39 +7,41 @@ define([
 ) {
   'use strict';
 
-  return function getShiftStartInfo(date)
+  return function getShiftStartInfo(date, options)
   {
-    var moment = time.getMoment(date);
-    var hour = moment.hour();
-    var shift = -1;
+    var shiftLength = options && options.shiftLength || 8;
+    var startHour = options && typeof options.startHour === 'number' ? options.startHour : 6;
+    var moment = (options && options.utc ? time.utc : time).getMoment(date);
+    var now = moment.valueOf();
+    var shift = 1;
+    var shiftCount = 24 / shiftLength;
 
-    if (hour >= 6 && hour < 14)
+    if (moment.hours() < startHour)
     {
-      moment.hours(6);
-
-      shift = 1;
+      moment.subtract(24, 'hours');
     }
-    else if (hour >= 14 && hour < 22)
-    {
-      moment.hours(14);
 
-      shift = 2;
-    }
-    else
-    {
-      moment.hours(22);
+    moment.hours(startHour).startOf('hours');
 
-      if (hour < 6)
+    for (; shift <= shiftCount; ++shift)
+    {
+      var shiftStartTime = moment.valueOf();
+      var shiftEndTime = moment.add(shiftLength, 'hours').valueOf();
+
+      if (now >= shiftStartTime && now < shiftEndTime)
       {
-        moment.subtract(1, 'days');
+        return {
+          moment: moment.subtract(shiftLength, 'hours').startOf('hour'),
+          no: shift,
+          startTime: shiftStartTime,
+          endTime: shiftEndTime,
+          startHour: startHour,
+          length: shiftLength,
+          count: shiftCount
+        };
       }
-
-      shift = 3;
     }
 
-    return {
-      moment: moment.minutes(0).seconds(0).milliseconds(0),
-      shift: shift
-    };
+    throw new Error('Could resolve the shift start info!');
   };
 });

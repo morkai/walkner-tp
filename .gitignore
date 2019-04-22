@@ -1,7 +1,8 @@
 .idea
-node_modules
-build
-config/development
-config/vps
-config/license.ed.private.pem
-frontend/files
+/node_modules
+/build
+/config/development
+/config/vps
+/config/license.ed.private.pem
+/frontend/files
+/frontend-build/files

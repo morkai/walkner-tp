@@ -100,12 +100,7 @@ module.exports = function(grunt)
         options: {
           baseUrl: './build/frontend',
           dir: './frontend-build',
-          optimize: 'uglify2',
-          uglify2: {
-            compress: {
-              drop_console: true
-            }
-          },
+          optimize: 'none',
           optimizeCss: 'standard',
           modules: [
             {name: 'tp-main'}
@@ -115,12 +110,29 @@ module.exports = function(grunt)
           locale: 'pl'
         }
       }
+    },
+    uglify: {
+      options: {
+        ecma: 5,
+        compress: {
+          drop_console: false // eslint-disable-line camelcase
+        }
+      },
+      frontend: {
+        files: [{
+          expand: true,
+          cwd: './frontend-build',
+          src: '**/*.js',
+          dest: './frontend-build'
+        }]
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-uglify-es-multicore');
   grunt.loadNpmTasks('grunt-ejs-amd');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-messageformat-amd');
@@ -138,6 +150,12 @@ module.exports = function(grunt)
     'messageformatAmdLocale:frontend',
     'messageformatAmd:frontend',
     'requirejs:frontend',
+    'uglify:frontend',
     'clean:frontendBuilt'
+  ]);
+
+  grunt.registerTask('build-all', [
+    'clean:build',
+    'build-frontend'
   ]);
 };

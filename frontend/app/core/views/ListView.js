@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'underscore',
@@ -25,6 +25,12 @@ define([
 
     template: listTemplate,
 
+    tableClassName: 'table-bordered table-hover table-condensed',
+
+    paginationOptions: {},
+
+    refreshDelay: 5000,
+
     remoteTopics: function()
     {
       var topics = {};
@@ -43,13 +49,12 @@ define([
     events: {
       'click .list-item[data-id]': function(e)
       {
-        if (!this.el.classList.contains('is-clickable')
-          || e.target.tagName === 'A'
-          || e.target.tagName === 'INPUT'
-          || e.target.tagName === 'BUTTON'
-          || e.target.classList.contains('actions')
-          || window.getSelection().toString() !== ''
-          || (e.target.tagName !== 'TD' && this.$(e.target).closest('a, input, button').length))
+        if (e.target.classList.contains('actions-group'))
+        {
+          return false;
+        }
+
+        if (this.isNotClickable(e))
         {
           return;
         }
@@ -69,6 +74,24 @@ define([
           });
         }
       },
+      'mousedown .list-item[data-id]': function(e)
+      {
+        if (!this.isNotClickable(e) && e.button === 1)
+        {
+          e.preventDefault();
+        }
+      },
+      'mouseup .list-item[data-id]': function(e)
+      {
+        if (this.isNotClickable(e) || e.button !== 1)
+        {
+          return;
+        }
+
+        window.open(this.collection.get(e.currentTarget.dataset.id).genClientUrl());
+
+        return false;
+      },
       'click .action-delete': function(e)
       {
         e.preventDefault();
@@ -79,6 +102,7 @@ define([
 
     initialize: function()
     {
+      this.refreshReq = null;
       this.lastRefreshAt = 0;
 
       this.listenTo(this.collection, 'sync', function()
@@ -88,9 +112,12 @@ define([
 
       if (this.collection.paginationData)
       {
-        this.paginationView = new PaginationView({
-          model: this.collection.paginationData
-        });
+        this.paginationView = new PaginationView(_.assign(
+          {replaceUrl: !!this.options.replaceUrl},
+          this.paginationOptions,
+          this.options.pagination,
+          {model: this.collection.paginationData}
+        ));
 
         this.setView('.pagination-container', this.paginationView);
 
@@ -109,7 +136,9 @@ define([
         columns: this.decorateColumns(this.serializeColumns()),
         actions: this.serializeActions(),
         rows: this.serializeRows(),
-        className: this.className
+        className: _.result(this, 'className'),
+        tableClassName: _.result(this, 'tableClassName'),
+        noData: this.options.noData || t('core', 'LIST:NO_DATA')
       };
     },
 
@@ -139,14 +168,23 @@ define([
 
       return columns.map(function(column)
       {
-        if (typeof column === 'string')
+        if (!column)
         {
-          column = {id: column, label: t(nlsDomain, 'PROPERTY:' + column)};
+          return null;
         }
 
-        if (!column.label)
+        if (column === '-')
         {
-          column.label = t(nlsDomain, 'PROPERTY:' + column.id);
+          column = {id: 'filler', label: ''};
+        }
+        else if (typeof column === 'string')
+        {
+          column = {id: column, label: t.bound(nlsDomain, 'PROPERTY:' + column)};
+        }
+
+        if (!column.label && column.label !== '')
+        {
+          column.label = t.bound(nlsDomain, 'PROPERTY:' + column.id);
         }
 
         if (!column.thAttrs)
@@ -166,7 +204,7 @@ define([
         }
 
         return column;
-      });
+      }).filter(function(column) { return column !== null; });
     },
 
     serializeActions: function()
@@ -223,20 +261,33 @@ define([
       this.refreshCollection(model);
     },
 
-    refreshCollection: function(message, options)
+    $row: function(rowId)
+    {
+      return this.$('tr[data-id="' + rowId + '"]');
+    },
+
+    $cell: function(rowId, columnId)
+    {
+      return this.$('tr[data-id="' + rowId + '"] > td[data-id="' + columnId + '"]');
+    },
+
+    refreshCollection: function(message)
     {
       if (message && this.timers.refreshCollection)
       {
         return;
       }
 
-      if (Date.now() - this.lastRefreshAt > 3000)
+      var now = Date.now();
+
+      if (now - this.lastRefreshAt > this.refreshDelay)
       {
-        this.refreshCollectionNow(options);
+        this.lastRefreshAt = now;
+        this.refreshCollectionNow();
       }
       else
       {
-        this.timers.refreshCollection = setTimeout(this.refreshCollectionNow.bind(this, options), 3000);
+        this.timers.refreshCollection = setTimeout(this.refreshCollectionNow.bind(this), this.refreshDelay);
       }
     },
 
@@ -254,7 +305,24 @@ define([
 
       delete this.timers.refreshCollection;
 
-      this.promised(this.collection.fetch(_.isObject(options) ? options : {reset: true}));
+      if (this.refreshReq)
+      {
+        this.refreshReq.abort();
+      }
+
+      var view = this;
+      var req = this.promised(this.collection.fetch(_.isObject(options) ? options : {reset: true}));
+
+      req.always(function()
+      {
+        if (view.refreshReq === req)
+        {
+          view.refreshReq.abort();
+          view.refreshReq = null;
+        }
+      });
+
+      this.refreshReq = req;
     },
 
     scrollTop: function()
@@ -276,6 +344,17 @@ define([
     getModelFromEvent: function(e)
     {
       return this.collection.get(this.$(e.target).closest('.list-item').attr('data-id'));
+    },
+
+    isNotClickable: function(e)
+    {
+      return !this.el.classList.contains('is-clickable')
+        || e.target.tagName === 'A'
+        || e.target.tagName === 'INPUT'
+        || e.target.tagName === 'BUTTON'
+        || e.target.classList.contains('actions')
+        || window.getSelection().toString() !== ''
+        || (e.target.tagName !== 'TD' && this.$(e.target).closest('a, input, button').length);
     }
 
   });
@@ -330,11 +409,7 @@ define([
         var model = collection.get(row._id);
         var actions = [ListView.actions.viewDetails(model, nlsDomain)];
 
-        var canManage = typeof privilegePrefix === 'function'
-          ? privilegePrefix(model)
-          : user.isAllowedTo((privilegePrefix || model.getPrivilegePrefix()) + ':MANAGE');
-
-        if (canManage)
+        if (user.isAllowedTo((privilegePrefix || model.getPrivilegePrefix()) + ':MANAGE'))
         {
           actions.push(
             ListView.actions.edit(model, nlsDomain),

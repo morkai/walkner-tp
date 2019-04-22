@@ -32,8 +32,10 @@
     <span class="<%- row.changed.dispatcher ? 'is-changed' : '' %>"><%- row.dispatcher %></span>
   </td>
   <td class="actions">
-    <% row.actions.forEach(function(action) { %>
-    <a href="<%- action.href %>" class="btn btn-<%- action.type || 'default' %> action-<%- action.id %>" title="<%= action.label %>"><i class="fa fa-<%- action.icon %>"></i></a>
-    <% }) %>
+    <div class="actions-group">
+      <% row.actions.forEach(function(action) { %>
+      <a href="<%- action.href %>" class="btn btn-<%- action.type || 'default' %> action-<%- action.id %>" title="<%= action.label %>"><i class="fa fa-<%- action.icon %>"></i></a>
+      <% }) %>
+    </div>
   </td>
 </tr>

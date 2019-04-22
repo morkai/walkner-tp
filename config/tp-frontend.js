@@ -1,64 +1,50 @@
 'use strict';
 
+const fs = require('fs-extra');
+const mongodb = require('./tp-mongodb');
+
 try
 {
   require('pmx').init({
-    ignore_routes: [/socket\.io/]
+    ignore_routes: [/socket\.io/] // eslint-disable-line camelcase
   });
 }
-catch (err) {}
+catch (err) {} // eslint-disable-line no-empty
 
 exports.id = 'tp-frontend';
 
+Object.assign(exports, require('./tp-common'));
+
 exports.modules = [
   'updater',
-  'mongoose',
+  {id: 'h5-mongoose', name: 'mongoose'},
   'settings',
   'events',
   'pubsub',
   'mail/sender',
   'user',
-  'express',
+  {id: 'h5-express', name: 'express'},
   'users',
   'symbols',
   'currencyRates/nbp',
   'transportOrders',
   'httpServer',
-  'httpsServer',
   'sio'
 ];
-
-
-exports.mainJsFile = 'tp-main.js';
-exports.mainCssFile = 'assets/tp-main.css';
-
-exports.dashboardUrlAfterLogIn = '/transportOrders';
-
-exports.dictionaryModules = {
-  symbols: 'SYMBOLS'
-};
 
 exports.events = {
   collection: function(app) { return app.mongoose.model('Event').collection; },
   insertDelay: 1000,
   topics: {
     debug: [
-      'app.started',
-      'users.login', 'users.logout',
-      'users.added', 'users.edited',
-      'symbols.added', 'symbols.edited'
+      '*.added', '*.edited',
     ],
-    info: [
-      'events.**'
-    ],
+    info: [],
     warning: [
-      'users.loginFailure',
-      'users.deleted',
-      'symbols.deleted',
-      'transportOrders.deleted'
+      '*.deleted'
     ],
     error: [
-
+      'app.started'
     ]
   }
 };
@@ -75,47 +61,59 @@ exports.httpsServer = {
   cert: __dirname + '/certificate.pem'
 };
 
+exports.sio = {
+  httpServerIds: ['httpServer'],
+  socketIo: {
+    pingInterval: 10000,
+    pingTimeout: 5000
+  }
+};
+
 exports.pubsub = {
   statsPublishInterval: 60000,
   republishTopics: [
-    'events.saved',
-    'users.added', 'users.edited', 'users.deleted',
-    'symbols.added', 'symbols.edited', 'symbols.deleted',
-    'updater.newVersion',
-    'transportOrders.added.*.*', 'transportOrders.edited.*.*', 'transportOrders.deleted.*.*',
-    'settings.updated.**'
+    'dictionaries.updated',
+    '*.added', '*.edited', '*.deleted', '*.synced',
   ]
 };
 
 exports.mongoose = {
+  uri: mongodb.uri,
+  mongoClient: Object.assign(mongodb.mongoClient, {
+    poolSize: 10
+  }),
   maxConnectTries: 10,
-  connectAttemptDelay: 500,
-  uri: require('./tp-mongodb').uri,
-  options: {},
-  models: [
-    'setting', 'event', 'user', 'passwordResetRequest',
-    'symbol', 'transportOrder'
-  ]
+  connectAttemptDelay: 500
 };
 
 exports.express = {
-  staticPath: __dirname + '/../frontend',
-  staticBuildPath: __dirname + '/../frontend-build',
+  staticPath: `${__dirname}/../frontend`,
+  staticBuildPath: `${__dirname}/../frontend-build`,
   sessionCookieKey: 'tp.sid',
   sessionCookie: {
-  httpOnly: true,
+    httpOnly: true,
     path: '/',
     maxAge: 3600 * 24 * 30 * 1000
   },
   sessionStore: {
-    touchInterval: 3600 * 8 * 1000,
-    touchChance: 0
+    touchInterval: 10 * 60 * 1000,
+    touchChance: 0,
+    gcInterval: 8 * 3600,
+    cacheInMemory: false
   },
   cookieSecret: '1ee7TeeP33',
   ejsAmdHelpers: {
-    t: 'app/i18n'
+    _: 'underscore',
+    $: 'jquery',
+    t: 'app/i18n',
+    time: 'app/time',
+    user: 'app/user',
+    forms: 'app/core/util/forms'
   },
-  title: 'TP'
+  title: 'TP',
+  routes: [
+    require('../backend/routes/core')
+  ]
 };
 
 exports.users = {
@@ -124,8 +122,6 @@ exports.users = {
 
 exports.user = {
   privileges: [
-    'EVENTS:VIEW',
-    'USERS:VIEW', 'USERS:MANAGE',
     'TRANSPORT_ORDERS:DISPATCHER', 'TRANSPORT_ORDERS:DRIVER', 'TRANSPORT_ORDERS:USER',
     'TRANSPORT_ORDERS:ALL', 'TRANSPORT_ORDERS:DELETE',
     'REPORTS:VIEW',
@@ -149,20 +145,30 @@ exports['mail/sender'] = {
 };
 
 exports.updater = {
-  manifestPath: __dirname + '/tp-manifest.appcache',
-  packageJsonPath: __dirname + '/../package.json',
+  manifestPath: `${__dirname}/tp-manifest.appcache`,
+  packageJsonPath: `${__dirname}/../package.json`,
   restartDelay: 5000,
   pull: {
     exe: 'git.exe',
-    cwd: __dirname + '/../',
+    cwd: `${__dirname}/../`,
     timeout: 30000
   },
   versionsKey: 'tp',
   manifests: [
     {
+      frontendVersionKey: 'frontend',
       path: '/manifest.appcache',
-      mainJsFile: exports.mainJsFile,
-      mainCssFile: exports.mainCssFile
+      mainJsFile: '/tp-main.js',
+      mainCssFile: '/assets/tp-main.css',
+      template: fs.readFileSync(`${__dirname}/tp-manifest.appcache`, 'utf8'),
+      frontendAppData: {
+        XLSX_EXPORT: process.platform === 'win32',
+        CORS_PING_URL: 'https://test.wmes.pl/ping',
+        DASHBOARD_URL_AFTER_LOG_IN: '/transportOrders'
+      },
+      dictionaryModules: {
+        symbols: 'SYMBOLS'
+      }
     }
   ]
 };

@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'underscore',
@@ -11,6 +11,7 @@ define([
  * @param {function(new:h5.pubsub.MessageBroker)} MessageBroker
  * @param {h5.pubsub.Broker} broker
  * @param {Socket} socket
+ * @returns {h5.pubsub.Broker}
  */
 function(
   _,

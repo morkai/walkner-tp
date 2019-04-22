@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'underscore'
@@ -17,7 +17,7 @@ define([
 
     /**
      * @private
-     * @type {object}
+     * @type {Object}
      */
     this.listeners = {
       destroy: []

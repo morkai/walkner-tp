@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
 
@@ -17,6 +17,11 @@ define([
     getValue: function($group)
     {
       var $inputs = $group.find('input');
+
+      if (!$inputs.length)
+      {
+        return null;
+      }
 
       if ($inputs[0].type === 'radio' || $inputs.length === 1)
       {

@@ -6,6 +6,8 @@
 {
   'use strict';
 
+  window.WMES_APP_ID = 'main';
+
   window.requireApp = requireApp;
 
   function requireApp()
@@ -22,17 +24,21 @@
       'app/socket',
       'app/router',
       'app/viewport',
+      'app/user',
       'app/updater/index',
+      'app/data/loadedModules',
       'app/core/layouts/PageLayout',
       'app/core/views/NavbarView',
-      'app/core/views/LogInFormView',
+      'app/core/views/FormView',
+      'app/users/views/LogInFormView',
       'app/time',
       'app/tp-routes',
       'app/transportOrders/pubsub',
       'bootstrap',
       'moment-lang/' + window.appLocale,
       'select2-lang/' + window.appLocale,
-      'i18n!app/nls/core'
+      'i18n!app/nls/core',
+      'i18n!app/nls/users'
     ], startApp);
   }
 
@@ -48,12 +54,15 @@
     socket,
     router,
     viewport,
+    user,
     updater,
+    loadedModules,
     PageLayout,
     NavbarView,
+    FormView,
     LogInFormView)
   {
-    var startBroker = null;
+    var startBroker = broker.sandbox();
 
     socket.connect();
 
@@ -63,7 +72,8 @@
       dataType: 'json',
       accepts: {
         json: 'application/json',
-        text: 'text/plain'
+        text: 'text/plain',
+        html: 'text/html'
       },
       contentType: 'application/json'
     });
@@ -84,23 +94,23 @@
       });
     });
 
+    viewport.setDefaultLayout('page');
+
+    broker.subscribe('page.titleChanged', function(newTitle)
+    {
+      newTitle.unshift(i18n('core', 'TITLE'));
+
+      document.title = newTitle.reverse().join(' < ');
+    });
+
     if (navigator.onLine)
     {
-      startBroker = broker.sandbox();
-
       startBroker.subscribe('socket.connected', function()
       {
         startBroker.subscribe('user.reloaded', doStartApp);
       });
 
       startBroker.subscribe('socket.connectFailed', doStartApp);
-
-      broker.subscribe('page.titleChanged', function(newTitle)
-      {
-        newTitle.unshift(i18n('core', 'TITLE'));
-
-        document.title = newTitle.reverse().join(' < ');
-      });
     }
     else
     {
@@ -112,7 +122,7 @@
       var req = router.getCurrentRequest();
       var navbarView = new NavbarView({
         currentPath: req === null ? '/' : req.path,
-        loadedModules: window.MODULES || []
+        loadedModules: loadedModules.map
       });
 
       navbarView.on('logIn', function()
@@ -142,28 +152,47 @@
 
     function doStartApp()
     {
-      if (startBroker !== null)
-      {
-        startBroker.destroy();
-        startBroker = null;
-      }
+      var userReloadTimer = null;
 
       broker.subscribe('i18n.reloaded', function(message)
       {
         localStorage.setItem('LOCALE', message.newLocale);
-        viewport.render();
+
+        window.location.reload();
       });
 
       broker.subscribe('user.reloaded', function()
       {
-        var currentRequest = router.getCurrentRequest();
+        if (userReloadTimer)
+        {
+          clearTimeout(userReloadTimer);
+        }
 
-        viewport.render();
-        router.dispatch(currentRequest.url);
+        userReloadTimer = setTimeout(function()
+        {
+          userReloadTimer = null;
+
+          if (user.isReloadLocked()
+            || (viewport.currentPage && viewport.currentPage.view instanceof FormView))
+          {
+            return;
+          }
+
+          var url = window.location.hash.replace(/^#/, '/');
+
+          viewport.render();
+          router.dispatch(url);
+        }, 1);
       });
 
       broker.subscribe('user.loggedIn', function()
       {
+        if (userReloadTimer)
+        {
+          clearTimeout(userReloadTimer);
+          userReloadTimer = null;
+        }
+
         var req = router.getCurrentRequest();
 
         if (!req)
@@ -171,11 +200,17 @@
           return;
         }
 
+        viewport.render();
+
         var url = req.url;
 
-        if (url === '/' && typeof window.DASHBOARD_URL_AFTER_LOG_IN === 'string')
+        if (url === '/' || url === '/login')
         {
-          router.replace(window.DASHBOARD_URL_AFTER_LOG_IN);
+          router.dispatch(window.DASHBOARD_URL_AFTER_LOG_IN || '/');
+        }
+        else
+        {
+          router.dispatch(url);
         }
       });
 
@@ -187,23 +222,28 @@
           time: 2500
         });
 
-        broker.publish('router.navigate', {
-          url: '/',
-          trigger: true
-        });
+        setTimeout(function()
+        {
+          broker.publish('router.navigate', {
+            url: '/',
+            trigger: true
+          });
+        }, 1);
       });
 
-      if (window.ENV === 'development')
+      if (typeof window.onPageShown === 'function')
       {
-        broker.subscribe('socket.connected', function()
-        {
-          window.location.reload();
-        });
+        broker.subscribe('viewport.page.shown', window.onPageShown);
       }
 
       domReady(function()
       {
-        $('#app-loading').fadeOut(function() { $(this).remove(); });
+        startBroker.subscribe('viewport.page.shown', reveal);
+
+        if (window.ENV)
+        {
+          document.body.classList.add('is-' + window.ENV + '-env');
+        }
 
         Backbone.history.start({
           root: '/',
@@ -211,6 +251,18 @@
           pushState: false
         });
       });
+
+      function reveal()
+      {
+        if (startBroker !== null)
+        {
+          startBroker.destroy();
+          startBroker = null;
+        }
+
+        $('#app-loading').remove();
+        $('body').removeClass('is-loading');
+      }
     }
   }
 })();

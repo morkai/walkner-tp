@@ -17,11 +17,11 @@
       <div class="row">
         <div class="col-md-9 form-group has-required-select2">
           <label for="<%- idPrefix %>-owner" class="control-label is-required"><%- t('transportOrders', 'PROPERTY:owner') %></label>
-          <input id="<%- idPrefix %>-owner" type="text" name="owner" required>
+          <input id="<%- idPrefix %>-owner" type="text" name="owner" required autocomplete="new-password">
         </div>
         <div class="col-md-3 form-group">
           <label for="<%- idPrefix %>-tel" class="control-label"><%- t('transportOrders', 'PROPERTY:tel') %></label>
-          <input id="<%- idPrefix %>-tel" class="form-control" type="text" name="tel" maxlength="20">
+          <input id="<%- idPrefix %>-tel" class="form-control" type="text" name="tel" maxlength="20" autocomplete="new-password">
         </div>
       </div>
       <div class="form-group">
@@ -31,11 +31,11 @@
         <label class="radio-inline control-label">
           <input type="radio" name="symbolMode" value="self"> <%- t('transportOrders', 'symbol:self') %>
         </label>
-        <input id="<%- idPrefix %>-symbol" class="form-control" type="text" name="symbol">
+        <input id="<%- idPrefix %>-symbol" class="form-control" type="text" name="symbol" autocomplete="new-password">
       </div>
       <div class="form-group">
         <label for="<%- idPrefix %>-zpl" class="control-label"><%- t('transportOrders', 'PROPERTY:zpl') %></label>
-        <input id="<%- idPrefix %>-zpl" class="form-control" name="zpl" type="text">
+        <input id="<%- idPrefix %>-zpl" class="form-control" name="zpl" type="text" autocomplete="new-password">
       </div>
       <% if (!editMode) { %>
       <div class="form-group tp-form-kindGroup">
@@ -66,11 +66,11 @@
         <div class="panel-body">
           <div class="form-group">
             <label for="<%- idPrefix %>-driver" class="control-label"><%- t('transportOrders', 'PROPERTY:driver') %></label>
-            <input id="<%- idPrefix %>-driver" name="driver" type="text">
+            <input id="<%- idPrefix %>-driver" name="driver" type="text" autocomplete="new-password">
           </div>
           <div class="form-group">
             <label for="<%- idPrefix %>-price" class="control-label"><%- t('transportOrders', 'PROPERTY:price') %></label>
-            <input id="<%- idPrefix %>-price" class="form-control tp-form-number" name="price" type="text">
+            <input id="<%- idPrefix %>-price" class="form-control tp-form-number" name="price" type="text" autocomplete="new-password">
           </div>
           <div class="form-group tp-form-cashGroup">
             <div class="checkbox">
@@ -106,17 +106,17 @@
             <div class="form-group">
               <label for="<%- idPrefix %>-driverDate" class="control-label"><%- t('transportOrders', 'PROPERTY:driverDateTime') %></label>
               <div class="form-group-datetime">
-                <input id="<%- idPrefix %>-driverDate" class="form-control" type="date" name="driverDate" placeholder="<%- t('core', 'placeholder:date') %>">
-                <input id="<%- idPrefix %>-driverTime" class="form-control" type="text" name="driverTime" placeholder="<%- t('core', 'placeholder:time') %>" pattern="^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$">
+                <input id="<%- idPrefix %>-driverDate" class="form-control" type="date" name="driverDate" placeholder="<%- t('core', 'placeholder:date') %>" autocomplete="new-password">
+                <input id="<%- idPrefix %>-driverTime" class="form-control" type="text" name="driverTime" placeholder="<%- t('core', 'placeholder:time') %>" pattern="^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$" autocomplete="new-password">
               </div>
             </div>
             <div class="form-group">
               <label for="<%- idPrefix %>-km" class="control-label"><%- t('transportOrders', 'PROPERTY:km') %></label>
-              <input id="<%- idPrefix %>-km" class="form-control tp-form-number" name="km" type="number" min="0" step="1">
+              <input id="<%- idPrefix %>-km" class="form-control tp-form-number" name="km" type="number" min="0" step="1" autocomplete="new-password">
             </div>
             <div class="form-group">
               <label for="<%- idPrefix %>-hours" class="control-label"><%- t('transportOrders', 'PROPERTY:hours') %></label>
-              <input id="<%- idPrefix %>-hours" class="form-control tp-form-number" name="hours" type="number" min="0" step="1">
+              <input id="<%- idPrefix %>-hours" class="form-control tp-form-number" name="hours" type="number" min="0" step="1" autocomplete="new-password">
             </div>
           </div>
           <div class="tp-form-driver-help">
@@ -150,7 +150,7 @@
       </div>
       <div class="form-group">
         <label for="<%- idPrefix %>-comment" class="control-label"><%- t('transportOrders', 'PROPERTY:comment') %></label>
-        <textarea id="<%- idPrefix %>-comment" class="form-control" name="comment" rows="3"></textarea>
+        <textarea id="<%- idPrefix %>-comment" class="form-control" name="comment" rows="3" autocomplete="new-password"></textarea>
       </div>
       <% } %>
     </div>
