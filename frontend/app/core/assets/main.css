@@ -183,7 +183,7 @@ code.multiline {
   border-color: #f0ad4e;
 }
 .panel-warning > .panel-heading {
-  color: #fff;
+  text-shadow: none;
   background-color: #f0ad4e;
   border-color: #f0ad4e;
 }
@@ -191,7 +191,7 @@ code.multiline {
   border-color: #5cb85c;
 }
 .panel-success > .panel-heading {
-  color: #fff;
+  text-shadow: none;
   background-color: #5cb85c;
   border-color: #5cb85c;
 }
@@ -199,7 +199,7 @@ code.multiline {
   border-color: #d9534f;
 }
 .panel-danger > .panel-heading {
-  color: #fff;
+  text-shadow: none;
   background-color: #d9534f;
   border-color: #d9534f;
 }
