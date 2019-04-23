@@ -25,14 +25,10 @@ define([
 
     actions: function()
     {
-      var actions = [pageActions.jump(this, this.collection)];
-
-      if (user.isAllowedTo('TRANSPORT_ORDERS:USER'))
-      {
-        actions.push(pageActions.add(this.collection, null));
-      }
-
-      return actions;
+      return [
+        pageActions.jump(this, this.collection),
+        pageActions.add(this.collection, 'TRANSPORT_ORDERS:USER')
+      ];
     },
 
     initialize: function()
