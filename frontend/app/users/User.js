@@ -23,8 +23,11 @@ define([
 
     labelAttribute: 'login',
 
-    defaults: {
-      privileges: []
+    defaults: function()
+    {
+      return {
+        privileges: []
+      };
     },
 
     getLabel: function()
