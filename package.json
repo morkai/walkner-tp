@@ -26,7 +26,7 @@
   },
   "main": "./backend/main",
   "dependencies": {
-    "bcrypt": "~3.0.2",
+    "bcrypt": "~5.0.0",
     "body-parser": "~1.18.3",
     "cookie": "~0.3.1",
     "cookie-parser": "~1.4.3",
