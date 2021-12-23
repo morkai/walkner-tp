@@ -1,28 +1,48 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'app/time',
   'app/broker',
-  'app/pubsub'
+  'app/pubsub',
+  './localStorage'
 ], function(
   time,
   broker,
-  pubsub
+  pubsub,
+  localStorage
 ) {
   'use strict';
+
+  pubsub.subscribe('dictionaries.updated', function(message)
+  {
+    var topic = message.topic;
+    var payload = message.message;
+    var meta = message.meta;
+
+    meta.remote = true;
+
+    if (meta.json && typeof payload === 'string')
+    {
+      payload = JSON.parse(payload);
+    }
+
+    broker.publish(topic, payload, meta);
+  });
 
   return function(storageKey, topicPrefix, Collection)
   {
     var remoteData = {
       time: time.appData,
-      data: window[storageKey] || []
+      data: window[storageKey] || null
     };
-    var localData = JSON.parse(localStorage.getItem(storageKey) || 'null');
+    var localData = JSON.parse(localStorage.getItem(storageKey) || '{"time":0,"data":null}');
 
-    var freshestData = localData && localData.time > remoteData.time ? localData : remoteData;
+    var freshestData = (localData && localData.time > remoteData.time) || !remoteData.data ? localData : remoteData;
     var collection = new Collection(freshestData.data);
 
-    if (freshestData === remoteData)
+    collection.updatedAt = freshestData.time;
+
+    if (freshestData === remoteData || !localData.data)
     {
       storeLocally();
     }
@@ -32,13 +52,14 @@ define([
     collection.on('destroy', storeLocally);
     collection.on('change', storeLocally);
     collection.on('sync', storeLocally);
+    collection.on('reset', storeLocally);
 
-    pubsub.subscribe(topicPrefix + '.added', function(message)
+    broker.subscribe(topicPrefix + '.added', function(message)
     {
       collection.add(message.model);
     });
 
-    pubsub.subscribe(topicPrefix + '.edited', function(message)
+    broker.subscribe(topicPrefix + '.edited', function(message)
     {
       var model = collection.get(message.model._id);
 
@@ -52,15 +73,17 @@ define([
       }
     });
 
-    pubsub.subscribe(topicPrefix + '.deleted', function(message)
+    broker.subscribe(topicPrefix + '.deleted', function(message)
     {
       collection.remove(message.model._id);
     });
 
     function storeLocally()
     {
+      collection.updatedAt = Date.now();
+
       localStorage.setItem(storageKey, JSON.stringify({
-        time: Date.now(),
+        time: collection.updatedAt,
         data: collection.models
       }));
 

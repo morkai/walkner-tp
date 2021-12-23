@@ -2,9 +2,13 @@
 
 define([
   'app/core/views/FilterView',
+  'app/symbols/util/setUpSymbolSelect2',
+  'app/users/util/setUpUserSelect2',
   'app/users/templates/filter'
 ], function(
   FilterView,
+  setUpSymbolSelect2,
+  setUpUserSelect2,
   filterTemplate
 ) {
   'use strict';
@@ -19,30 +23,40 @@ define([
     },
 
     termToForm: {
-      'lastName': function(propertyName, term, formData)
+      'searchName': function(propertyName, term, formData)
       {
-        if (term.name === 'regex')
-        {
-          formData[propertyName] = term.args[1].replace('^', '');
-        }
+        formData[propertyName] = this.unescapeRegExp(term.args[1]).replace(/^\^/, '');
       },
-      'symbol': 'lastName'
+      'symbol': function(propertyName, term, formData)
+      {
+        formData[propertyName] = term.args[1];
+      }
     },
 
     serializeFormToQuery: function(selector)
     {
-      var lastName = this.$id('lastName').val().trim();
-      var symbol = this.$id('symbol').val().trim();
+      const searchName = setUpUserSelect2.transliterate(this.$id('searchName').val());
 
-      if (lastName.length)
+      if (searchName.length)
       {
-        selector.push({name: 'regex', args: ['lastName', '^' + lastName, 'i']});
+        selector.push({name: 'regex', args: ['searchName', `^${searchName}`]});
       }
+
+      const symbol = this.$id('symbol').val();
 
       if (symbol.length)
       {
-        selector.push({name: 'regex', args: ['symbol', '^' + symbol, 'i']});
+        selector.push({name: 'eq', args: ['symbol', symbol]});
       }
+    },
+
+    afterRender: function()
+    {
+      FilterView.prototype.afterRender.apply(this, arguments);
+
+      setUpSymbolSelect2(this.$id('symbol'), {
+        width: '250px'
+      });
     }
 
   });

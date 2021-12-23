@@ -37,7 +37,7 @@
                 <% } %>
                 <div class="prop">
                   <div class="prop-name <%- changed.cargo ? 'is-changed' : '' %>"><%- t('transportOrders', 'cargo:' + kind) %></div>
-                  <div class="prop-value text-mono"><%= user.cargo %></div>
+                  <div class="prop-value text-lines"><%= user.cargo %></div>
                 </div>
                 <% if (/airport/.test(kind)) { %>
                 <div class="prop">
@@ -67,11 +67,11 @@
                 </div>
                 <div class="prop">
                   <div class="prop-name <%- changed.fromAddress ? 'is-changed' : '' %>"><%- t('transportOrders', 'fromAddress:' + kind) %></div>
-                  <div class="prop-value text-mono"><%= user.fromAddress %></div>
+                  <div class="prop-value text-lines"><%= user.fromAddress %></div>
                 </div>
                 <div class="prop">
                   <div class="prop-name <%- changed.toAddress ? 'is-changed' : '' %>"><%- t('transportOrders', 'toAddress:' + kind) %></div>
-                  <div class="prop-value text-mono"><%= user.toAddress %></div>
+                  <div class="prop-value text-lines"><%= user.toAddress %></div>
                 </div>
               </div>
             </div>
@@ -80,7 +80,7 @@
           <div class="props">
             <div class="prop tp-details-costs">
               <div class="prop-name <%- changed.costs ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:costs') %></div>
-              <div class="prop-value text-mono"><%= user.costs %></div>
+              <div class="prop-value text-lines"><%= user.costs %></div>
             </div>
           </div>
           <% } %>

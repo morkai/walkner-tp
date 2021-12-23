@@ -1,8 +1,14 @@
 .idea
 /node_modules
+/node_modules_tmp
+/node_modules_min
+/node_modules_dev
+/node_modules_prod
+/frontend/files
+/frontend-build/files
 /build
+/config/production
 /config/development
 /config/vps
 /config/license.ed.private.pem
-/frontend/files
-/frontend-build/files
+/data

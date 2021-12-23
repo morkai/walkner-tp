@@ -1,0 +1,13 @@
+.barcodeScanner-modal .modal-body {
+  padding: 0;
+}
+.barcodeScanner-scanner {
+  width: 598px;
+  height: 598px;
+}
+.barcodeScanner-scanner > p {
+  padding: 15px;
+}
+.barcodeScanner-error {
+  color: #E00;
+}

@@ -58,7 +58,7 @@
   top: 9px;
   font-family: FontAwesome;
   font-size: 12px;
-  background: none;
+  background: none!important;
   color: #777;
 }
 .select2-container .select2-choice abbr:hover {
@@ -83,7 +83,8 @@
   background: #fff;
 }
 .select2-results .select2-highlighted {
-  background-color: #428BCA;
+  background-color: #ffffd6;
+  color: #333;
 }
 .select2-drop-active {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
@@ -113,4 +114,7 @@
 }
 .select2-results .select2-result-selectable .select2-result-label {
   cursor: pointer;
+}
+.select2-container.select2-container-disabled .select2-choice {
+  cursor: not-allowed;
 }

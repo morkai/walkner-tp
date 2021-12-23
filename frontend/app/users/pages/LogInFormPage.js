@@ -1,11 +1,9 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
-  'app/i18n',
   'app/core/View',
   '../views/LogInFormView'
 ], function(
-  t,
   View,
   LogInFormView
 ) {
@@ -17,7 +15,10 @@ define([
 
     layoutName: 'page',
 
-    breadcrumbs: [t.bound('users', 'breadcrumbs:logIn')],
+    breadcrumbs: function()
+    {
+      return [this.t('users', 'BREADCRUMB:logIn')];
+    },
 
     initialize: function()
     {
@@ -38,10 +39,6 @@ define([
       if (location.protocol === 'http:')
       {
         location.protocol = 'https:';
-      }
-      else if (location.hostname === 'ket.wmes.walkner.pl')
-      {
-        location.hostname = 'ket.wmes.pl';
       }
     }
 

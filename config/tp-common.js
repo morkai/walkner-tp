@@ -1,6 +1,9 @@
 'use strict';
 
+const BASE_URL = 'http://localhost';
+
 module.exports = {
-  emailUrlPrefix: 'http://localhost/',
+  baseUrl: BASE_URL,
+  emailUrlPrefix: `${BASE_URL}/`,
   serverTimezone: 'Europe/Warsaw'
 };

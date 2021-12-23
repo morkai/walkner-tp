@@ -34,8 +34,8 @@ define([
     },
 
     breadcrumbs: [
-      t.bound('reports', 'BREADCRUMBS:reports'),
-      t.bound('reports', 'BREADCRUMBS:driver')
+      t.bound('reports', 'BREADCRUMB:reports'),
+      t.bound('reports', 'BREADCRUMB:driver')
     ]
 
   });

@@ -15,13 +15,13 @@
         <% if (details.cargo) { %>
         <div class="prop">
           <div class="prop-name <%- details.changed.all || details.changed.cargo ? 'is-changed' : '' %>"><%- t('transportOrders', 'cargo:' + details.kind) %></div>
-          <div class="prop-value text-mono"><%= details.cargo %></div>
+          <div class="prop-value text-lines"><%= details.cargo %></div>
         </div>
         <% } %>
         <% if (details.costs) { %>
         <div class="prop">
           <div class="prop-name <%- details.changed.all || details.changed.costs ? 'is-changed' : '' %>"><%- t('transportOrders', 'PROPERTY:costs') %></div>
-          <div class="prop-value text-mono"><%= details.costs %></div>
+          <div class="prop-value text-lines"><%= details.costs %></div>
         </div>
         <% } %>
         <div class="prop">
@@ -31,7 +31,7 @@
           </div>
           <div class="prop-value">
             <% if (details.notes) { %>
-            <span class="text-mono"><%= details.notes %></span>
+            <span class="text-lines"><%= details.notes %></span>
             <% } else { %>
             <%- t('transportOrders', 'noNotes') %>
             <% } %>
@@ -44,7 +44,7 @@
             <time datetime="<%- comment.createdAt.datetime %>" title="<%- comment.createdAt.title %>"><%- comment.createdAt.label %></time>
           </div>
           <div class="prop-value">
-            <span class="text-mono"><%= comment.text %></span>
+            <span class="text-lines"><%= comment.text %></span>
           </div>
         </div>
         <% }) %>

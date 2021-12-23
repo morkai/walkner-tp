@@ -4,20 +4,22 @@ module.exports = {
   uri: process.env.TP_MONGODB_URI || 'mongodb://127.0.0.1:27017/walkner-tp',
   keepAliveQueryInterval: 15000,
   mongoClient: {
-    poolSize: 10,
-    autoReconnect: true,
+    minPoolSize: 1,
+    maxPoolSize: 10,
     noDelay: true,
-    keepAlive: 1000,
+    keepAlive: true,
     connectTimeoutMS: 30000,
     socketTimeoutMS: 0,
-    reconnectTries: Number.MAX_SAFE_INTEGER,
-    reconnectInterval: 1000,
     forceServerObjectId: false,
-    w: 1,
-    wtimeout: 5000,
-    promiseLibrary: global.Promise,
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false
+    writeConcern: {
+      w: 1,
+      wtimeoutMS: 15000
+    },
+    autoIndex: process.env.NODE_ENV !== 'production'
   }
 };
+
+if (process.env.TP_MONGODB_REPLICA_SET)
+{
+  module.exports.mongoClient.replicaSet = process.env.TP_MONGODB_REPLICA_SET;
+}

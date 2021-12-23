@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'app/i18n',
@@ -30,6 +30,7 @@ define([
     {
       this.defineModels();
       this.defineViews();
+      this.defineBindings();
     },
 
     load: function(when)
@@ -47,6 +48,11 @@ define([
       var FormViewClass = this.getFormViewClass();
 
       this.view = new FormViewClass(this.getFormViewOptions());
+    },
+
+    defineBindings: function()
+    {
+
     },
 
     getFormViewClass: function()

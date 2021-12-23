@@ -5,6 +5,7 @@ define([
   'app/time',
   'app/data/airports',
   'app/core/views/DetailsView',
+  'app/users/User',
   'app/transportOrders/templates/details',
   '../util/preparePrice',
   '../util/serializeSymbol'
@@ -13,6 +14,7 @@ define([
   time,
   airports,
   DetailsView,
+  User,
   detailsTemplate,
   preparePrice,
   serializeSymbol
@@ -48,11 +50,11 @@ define([
           panelType: resolvedPanelType || (model.get('ownerConfirmed') ? 'info' : 'warning'),
           creator: {
             name: this.serializeUserName(creator),
-            tel: creator.tel || '-'
+            tel: User.resolveMobile(creator.mobile) || '-'
           },
           createdAt: time.format(model.get('createdAt'), 'LLLL'),
           name: this.serializeUserName(owner),
-          tel: model.get('tel') || owner.tel || '-',
+          tel: model.get('tel') || User.resolveMobile(owner.mobile) || '-',
           date: time.format(model.get('userDate'), 'LLLL'),
           symbol: serializeSymbol(model.get('symbol'), '-', true),
           zpl: model.get('zpl') || '-',
@@ -68,7 +70,7 @@ define([
         driver: {
           panelType: resolvedPanelType || (model.get('driverConfirmed') ? 'info' : 'warning'),
           name: this.serializeUserName(driver),
-          tel: driver && driver.tel ? driver.tel : '-',
+          tel: driver ? User.resolveMobile(driver.mobile) : '-',
           date: driverDate ? time.format(driverDate, 'LLLL') : '-',
           km: model.get('km').toLocaleString(),
           hours: model.get('hours').toLocaleString()
@@ -76,7 +78,7 @@ define([
         dispatcher: {
           panelType: resolvedPanelType || (model.get('dispatcherConfirmed') ? 'info' : 'warning'),
           name: this.serializeUserName(dispatcher),
-          tel: dispatcher && dispatcher.tel ? dispatcher.tel : '-',
+          tel: dispatcher ? User.resolveMobile(dispatcher.mobile) : '-',
           status: t('transportOrders', 'status:' + model.get('status')),
           price: preparePrice(model.get('price')).str,
           cash: t('core', 'BOOL:' + !!model.get('cash'))

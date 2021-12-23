@@ -26,26 +26,32 @@ define([
         return DetailsPage.prototype.breadcrumbs.call(this);
       }
 
-      return [
-        t.bound('users', 'BREADCRUMBS:account')
-      ];
+      return [this.t('BREADCRUMB:myAccount')];
     },
 
-    actions: function ()
+    actions: function()
     {
       var model = this.model;
+      var actions = [];
       var canManage = user.isAllowedTo('USERS:MANAGE');
-      var accountMode = !canManage && user.data._id === model.id;
 
-      return [
-        {
-          label: t.bound('users', accountMode ? 'PAGE_ACTION:editAccount' : 'PAGE_ACTION:edit'),
+      if (canManage)
+      {
+        actions.push(
+          pageActions.edit(model, false),
+          pageActions.delete(model, false)
+        );
+      }
+      else if (user.data._id === model.id)
+      {
+        actions.push({
+          label: this.t('PAGE_ACTION:editAccount'),
           icon: 'edit',
-          href: model.genClientUrl('edit'),
-          privileges: function () { return canManage || accountMode; }
-        },
-        pageActions.delete(model, 'USERS:MANAGE')
-      ];
+          href: model.genClientUrl('edit')
+        });
+      }
+
+      return actions;
     }
 
   });

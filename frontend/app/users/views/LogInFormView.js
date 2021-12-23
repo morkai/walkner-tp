@@ -1,30 +1,29 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'app/user',
-  'app/i18n',
   'app/viewport',
   'app/core/View',
-  'app/users/templates/logInForm'
+  'app/users/templates/logInForm',
+  'i18n!app/nls/users'
 ], function(
-  user,
-  t,
+  currentUser,
   viewport,
   View,
-  logInFormTemplate
+  template
 ) {
   'use strict';
 
   return View.extend({
 
-    template: logInFormTemplate,
+    template: template,
 
     events: {
       'submit': 'submitForm',
       'keypress input': function()
       {
         this.$id('login')[0].setCustomValidity('');
-        this.$submit.removeClass('btn-danger').addClass('btn-primary');
+        this.$id('submit').removeClass('btn-danger').addClass('btn-primary');
       },
       'input input[type="password"]': function()
       {
@@ -44,21 +43,13 @@ define([
       }
     },
 
+    nlsDomain: 'users',
+
     initialize: function()
     {
       this.resetting = false;
       this.originalTitle = null;
-      this.$title = null;
-      this.$submit = null;
-      this.model = {
-        nlsDomain: 'users'
-      };
-    },
-
-    destroy: function()
-    {
-      this.$title = null;
-      this.$submit = null;
+      this.model = {};
     },
 
     getTemplateData: function()
@@ -72,22 +63,19 @@ define([
     {
       var view = this;
 
-      view.$title = view.getTitleEl();
-      view.$submit = view.$('.logInForm-submit');
-
       view.$id('loginLink').hide();
 
-      if (this.model && this.model.unknown)
+      if (view.model && view.model.unknown)
       {
-        view.$id('login').val(this.model.unknown)[0].setCustomValidity(t('users', 'LOG_IN_FORM:UNKNOWN'));
-        view.$submit.removeClass('btn-primary').addClass('btn-danger').click();
+        view.$id('login').val(this.model.unknown)[0].setCustomValidity(view.t('LOG_IN_FORM:UNKNOWN'));
+        view.$id('submit').removeClass('btn-primary').addClass('btn-danger').click();
       }
       else
       {
         view.$id('login').focus();
       }
 
-      view.originalTitle = view.$title.text();
+      view.originalTitle = view.getTitleEl().text();
 
       if (window.CORS_PING_URL && window.OFFICE365_TENANT)
       {
@@ -100,15 +88,17 @@ define([
 
     submitForm: function()
     {
-      if (!this.$submit.hasClass('btn-primary'))
+      var view = this;
+
+      if (!view.$id('submit').hasClass('btn-primary'))
       {
         return false;
       }
 
       var data = {
-        login: this.$id('login').val(),
-        password: this.$id('password').val(),
-        socketId: this.socket.getId()
+        login: view.$id('login').val(),
+        password: view.$id('password').val(),
+        socketId: view.socket.getId()
       };
 
       if (!data.login.length || !data.password.length)
@@ -118,31 +108,33 @@ define([
 
       if (this.resetting)
       {
-        data.subject = t('users', 'LOG_IN_FORM:RESET:SUBJECT', {
-          APP_NAME: t('core', 'APP_NAME')
+        var appName = view.t.has('core', 'APP_NAME:' + window.location.hostname)
+          ? view.t('core', 'APP_NAME:' + window.location.hostname)
+          : view.t.has('core', 'APP_NAME');
+
+        data.subject = view.t('LOG_IN_FORM:RESET:SUBJECT', {
+          APP_NAME: appName
         });
-        data.text = t('users', 'LOG_IN_FORM:RESET:TEXT', {
-          APP_NAME: t('core', 'APP_NAME'),
+        data.text = view.t('LOG_IN_FORM:RESET:TEXT', {
+          APP_NAME: appName,
           appUrl: window.location.origin,
           resetUrl: window.location.origin + '/resetPassword/{REQUEST_ID}'
         });
       }
 
-      this.$el.addClass('logInForm-loading');
-      this.$submit.prop('disabled', true);
-      this.$('.btn-link').prop('disabled', true);
+      view.$el.addClass('logInForm-loading');
+      view.$id('submit').prop('disabled', true);
+      view.$('.btn-link').prop('disabled', true);
 
-      var req = this.ajax({
+      var req = view.ajax({
         type: 'POST',
-        url: this.el.action,
+        url: view.el.action,
         data: JSON.stringify(data)
       });
 
-      var view = this;
-
       req.done(function()
       {
-        if (!view.$submit)
+        if (!view.$id('submit').length)
         {
           return;
         }
@@ -152,12 +144,12 @@ define([
           viewport.msg.show({
             type: 'info',
             time: 5000,
-            text: t('users', 'LOG_IN_FORM:RESET:MSG:SUCCESS')
+            text: view.t('LOG_IN_FORM:RESET:MSG:SUCCESS')
           });
         }
         else
         {
-          view.$submit.removeClass('btn-primary').addClass('btn-success');
+          view.$id('submit').removeClass('btn-primary').addClass('btn-success');
         }
       });
 
@@ -167,22 +159,22 @@ define([
 
         if (error.code === 'UNSAFE_PASSWORD')
         {
-          view.switchToReset(t('users', 'LOG_IN_FORM:UNSAFE_PASSWORD'));
+          view.switchToReset(view.t('LOG_IN_FORM:UNSAFE_PASSWORD'));
 
           return;
         }
 
-        if (view.$submit)
+        if (view.$id('submit').length)
         {
-          view.$submit.removeClass('btn-primary').addClass('btn-danger');
+          view.$id('submit').removeClass('btn-primary').addClass('btn-danger');
         }
 
-        if (t.has('users', 'LOG_IN_FORM:MSG:' + error.code))
+        if (view.t.has('LOG_IN_FORM:MSG:' + error.code))
         {
           viewport.msg.show({
             type: 'error',
             time: 3000,
-            text: t('users', 'LOG_IN_FORM:MSG:' + error.code)
+            text: view.t('LOG_IN_FORM:MSG:' + error.code)
           });
         }
         else if (view.resetting)
@@ -190,16 +182,16 @@ define([
           viewport.msg.show({
             type: 'error',
             time: 3000,
-            text: t('users', 'LOG_IN_FORM:RESET:MSG:FAILURE')
+            text: view.t('LOG_IN_FORM:RESET:MSG:FAILURE')
           });
         }
       });
 
       req.always(function(res)
       {
-        if (view.$submit)
+        if (view.$id('submit').length)
         {
-          view.$submit.attr('disabled', false);
+          view.$id('submit').attr('disabled', false);
           view.$('.btn-link').prop('disabled', false);
           view.$el.removeClass('logInForm-loading');
           view.$('[autofocus]').focus();
@@ -232,7 +224,7 @@ define([
 
       if (this.resetting && this.$id('password').val() !== this.$id('password2').val())
       {
-        error = t('users', 'LOG_IN_FORM:PASSWORD_MISMATCH');
+        error = this.t('LOG_IN_FORM:PASSWORD_MISMATCH');
       }
 
       this.$id('password2')[0].setCustomValidity(error);
@@ -244,10 +236,10 @@ define([
       this.$id('loginLink').hide();
       this.$id('resetLink').show();
       this.$id('login').select();
-      this.$id('password').val('').attr('placeholder', t('users', 'LOG_IN_FORM:LABEL:PASSWORD'));
+      this.$id('password').val('').attr('placeholder', this.t('LOG_IN_FORM:LABEL:PASSWORD'));
       this.$id('password2').val('').prop('required', false);
       this.$id('password2-container').addClass('hidden');
-      this.$('.logInForm-submit-label').text(t('users', 'LOG_IN_FORM:SUBMIT:LOG_IN'));
+      this.$('.logInForm-submit-label').text(this.t('LOG_IN_FORM:SUBMIT:LOG_IN'));
 
       this.resetting = false;
 
@@ -260,10 +252,10 @@ define([
       this.$id('resetLink').hide();
       this.$id('loginLink').show();
       this.$id('login').select();
-      this.$id('password').val('').attr('placeholder', t('users', 'LOG_IN_FORM:LABEL:NEW_PASSWORD'));
+      this.$id('password').val('').attr('placeholder', this.t('LOG_IN_FORM:LABEL:NEW_PASSWORD'));
       this.$id('password2').val('').prop('required', true);
       this.$id('password2-container').removeClass('hidden');
-      this.$('.logInForm-submit-label').text(t('users', 'LOG_IN_FORM:SUBMIT:RESET'));
+      this.$('.logInForm-submit-label').text(this.t('LOG_IN_FORM:SUBMIT:RESET'));
 
       this.resetting = true;
 
@@ -272,8 +264,8 @@ define([
 
     onModeSwitch: function(message)
     {
-      this.$title.text(this.resetting ? t('users', 'LOG_IN_FORM:TITLE:RESET') : this.originalTitle);
-      this.$submit.removeClass('btn-danger').addClass('btn-primary');
+      this.getTitleEl().text(this.resetting ? this.t('LOG_IN_FORM:TITLE:RESET') : this.originalTitle);
+      this.$id('submit').removeClass('btn-danger').addClass('btn-primary');
 
       if (message)
       {

@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'require',
@@ -19,9 +19,9 @@ define([
 ) {
   'use strict';
 
-  var DEFAULT_PAGE_FACTORY = function(Page)
+  var DEFAULT_PAGE_FACTORY = function(pageOptions, Page)
   {
-    return new Page();
+    return new Page(pageOptions);
   };
 
   function Viewport(options)
@@ -102,7 +102,10 @@ define([
       show: false,
       backdrop: true
     });
+    this.$dialog.on('show.bs.modal', this.onDialogShowing.bind(this));
+    this.$dialog.on('in.bs.modal', this.onDialogIn.bind(this));
     this.$dialog.on('shown.bs.modal', this.onDialogShown.bind(this));
+    this.$dialog.on('hide.bs.modal', this.onDialogHiding.bind(this));
     this.$dialog.on('hidden.bs.modal', this.onDialogHidden.bind(this));
   };
 
@@ -125,24 +128,23 @@ define([
     return this;
   };
 
-  Viewport.prototype.loadPage = function(dependencies, createPage)
+  Viewport.prototype.loadPage = function(dependencies, createPageOrOptions)
   {
-    this.msg.loading();
-
-    if (!_.isFunction(createPage))
-    {
-      createPage = DEFAULT_PAGE_FACTORY;
-    }
-
     var viewport = this;
-    var pageCounter = ++this.pageCounter;
+    var pageCounter = ++viewport.pageCounter;
+
+    viewport.msg.loading();
 
     require(
-      [].concat(dependencies),
+      _.flatten([].concat(dependencies), true),
       function()
       {
         if (pageCounter === viewport.pageCounter)
         {
+          var createPage = _.isFunction(createPageOrOptions)
+            ? createPageOrOptions
+            : DEFAULT_PAGE_FACTORY.bind(null, createPageOrOptions || {});
+
           viewport.showPage(createPage.apply(null, arguments));
         }
 
@@ -189,36 +191,114 @@ define([
 
     viewport.broker.publish('viewport.page.loading', {page: page});
 
-    if (_.isFunction(page.load))
+    var requests = [];
+    var priorityRequests = [];
+    var normalRequests = [];
+    var moduleRequests = _.result(page, 'requiredModules') || [];
+
+    page.trigger('beforeLoad', page, requests);
+
+    requests.forEach(function(request)
     {
-      page.load(when).then(onPageLoadSuccess, onPageLoadFailure);
+      if (!request)
+      {
+        return;
+      }
+
+      if (typeof request === 'string')
+      {
+        moduleRequests.push(request);
+      }
+      else if (request.priority && request.promise && request.promise.then)
+      {
+        priorityRequests.push(page.promised(request.promise));
+      }
+      else if (request.priority && request.then)
+      {
+        priorityRequests.push(page.promised(request));
+      }
+      else if (request.then)
+      {
+        normalRequests.push(page.promised(request));
+      }
+    });
+
+    if (moduleRequests.length)
+    {
+      priorityRequests.unshift(loadModules(moduleRequests));
+    }
+
+    if (priorityRequests.length)
+    {
+      when.apply(null, priorityRequests).then(loadPage, onPageLoadFailure);
     }
     else
     {
-      when().then(onPageLoadSuccess, onPageLoadFailure);
+      loadPage();
+    }
+
+    function loadPage()
+    {
+      if (_.isFunction(page.load))
+      {
+        page.load(when).then(onPageLoadSuccess, onPageLoadFailure);
+      }
+      else
+      {
+        when().then(onPageLoadSuccess, onPageLoadFailure);
+      }
     }
 
     function when()
     {
       var requests = [];
+      var priorityRequests = [];
+      var moduleRequests = [];
 
       for (var i = 0; i < arguments.length; ++i)
       {
-        var request = arguments[i];
-
-        if (Array.isArray(request))
-        {
-          requests.push.apply(requests, request);
-        }
-        else
-        {
-          requests.push(request);
-        }
+        requests = requests.concat(arguments[i]);
       }
 
-      page.trigger('beforeLoad', page, requests);
+      requests.forEach(function(request)
+      {
+        if (!request)
+        {
+          return;
+        }
 
-      return $.when.apply($, _.map(requests, page.promised, page));
+        if (typeof request === 'string')
+        {
+          moduleRequests.push(request);
+        }
+        else if (request.priority && request.promise && request.promise.then)
+        {
+          priorityRequests.push(page.promised(request.promise));
+        }
+        else if (request.priority && request.then)
+        {
+          priorityRequests.push(page.promised(request));
+        }
+        else if (request.then)
+        {
+          normalRequests.push(page.promised(request));
+        }
+      });
+
+      if (moduleRequests.length)
+      {
+        priorityRequests.push(loadModules(moduleRequests));
+      }
+
+      if (priorityRequests.length)
+      {
+        return $.when.apply($, priorityRequests).then(function()
+        {
+          return $.when.apply($, normalRequests);
+        });
+      }
+
+      return $.when.apply($, normalRequests);
     }
 
     function onPageLoadSuccess()
@@ -246,7 +326,7 @@ define([
         page.setUpLayout(layout);
       }
 
-      if (_.isObject(page.view))
+      if (_.isObject(page.view) && _.isEmpty(page.views))
       {
         page.setView(page.view);
       }
@@ -274,6 +354,25 @@ define([
       page.remove();
 
       viewport.broker.publish('viewport.page.loadingFailed', {page: page, xhr: jqXhr});
+    }
+
+    function loadModules(modulesToLoad)
+    {
+      var deferred = $.Deferred();
+
+      require(
+        modulesToLoad,
+        function()
+        {
+          deferred.resolve();
+        },
+        function(err)
+        {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise();
     }
   };
 
@@ -318,7 +417,7 @@ define([
 
     if (title)
     {
-      $header.find('.modal-title').text(title);
+      $header.find('.modal-title').html(title);
       $header.show();
     }
     else
@@ -330,6 +429,10 @@ define([
     {
       this.$dialog.addClass(_.result(dialogView, 'dialogClassName'));
     }
+
+    var backdrop = _.result(dialogView, 'dialogBackdrop');
+
+    this.$dialog.data('bs.modal').options.backdrop = backdrop == null ? true : backdrop;
 
     dialogView.render();
 
@@ -370,6 +473,14 @@ define([
     this.closeDialog();
   };
 
+  Viewport.prototype.adjustDialogBackdrop = function()
+  {
+    if (this.currentDialog)
+    {
+      this.$dialog.modal('adjustBackdrop');
+    }
+  };
+
   Viewport.prototype.setLayout = function(layoutName)
   {
     if (layoutName === this.currentLayoutName)
@@ -399,6 +510,40 @@ define([
     return this.currentLayout;
   };
 
+  Viewport.prototype.onDialogShowing = function()
+  {
+    if (!this.currentDialog)
+    {
+      return;
+    }
+
+    if (_.isFunction(this.currentDialog.onDialogShowing))
+    {
+      this.currentDialog.onDialogShowing(this);
+    }
+
+    this.broker.publish('viewport.dialog.showing', this.currentDialog);
+
+    this.currentDialog.trigger('dialog:showing');
+  };
+
+  Viewport.prototype.onDialogIn = function()
+  {
+    if (!this.currentDialog)
+    {
+      return;
+    }
+
+    if (_.isFunction(this.currentDialog.onDialogIn))
+    {
+      this.currentDialog.onDialogIn(this);
+    }
+
+    this.broker.publish('viewport.dialog.in', this.currentDialog);
+
+    this.currentDialog.trigger('dialog:in');
+  };
+
   Viewport.prototype.onDialogShown = function()
   {
     if (!this.currentDialog)
@@ -418,27 +563,56 @@ define([
     this.currentDialog.trigger('dialog:shown');
   };
 
-  Viewport.prototype.onDialogHidden = function()
+  Viewport.prototype.onDialogHiding = function()
   {
-    if (!this.currentDialog)
+    var dialog = this.currentDialog;
+
+    if (!dialog)
     {
       return;
     }
 
-    if (this.currentDialog.dialogClassName)
+    if (_.isFunction(dialog.remove))
     {
-      this.$dialog.removeClass(_.result(this.currentDialog, 'dialogClassName'));
+      if (_.isFunction(dialog.onDialogHiding))
+      {
+        dialog.onDialogHiding(this);
+      }
+
+      dialog.trigger('dialog:hiding');
+
+      this.broker.publish('viewport.dialog.hiding', dialog);
     }
+  };
 
-    if (_.isFunction(this.currentDialog.remove))
+  Viewport.prototype.onDialogHidden = function()
+  {
+    var dialog = this.currentDialog;
+
+    if (!dialog)
     {
-      this.currentDialog.trigger('dialog:hidden');
-      this.currentDialog.remove();
-
-      this.broker.publish('viewport.dialog.hidden', this.currentDialog);
+      return;
     }
 
     this.currentDialog = null;
+
+    if (dialog.dialogClassName)
+    {
+      this.$dialog.removeClass(_.result(dialog, 'dialogClassName'));
+    }
+
+    if (_.isFunction(dialog.remove))
+    {
+      if (_.isFunction(dialog.onDialogHidden))
+      {
+        dialog.onDialogHidden(this);
+      }
+
+      dialog.trigger('dialog:hidden');
+      dialog.remove();
+
+      this.broker.publish('viewport.dialog.hidden', dialog);
+    }
 
     if (this.dialogQueue.length)
     {

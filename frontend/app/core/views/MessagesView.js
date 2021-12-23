@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'underscore',
@@ -142,6 +142,7 @@ define([
   MessagesView.prototype.show = function(options)
   {
     var $message = $(messageTemplate({
+      className: options.className || '',
       type: options.type || 'info',
       text: options.text,
       sticky: !!options.sticky
@@ -315,7 +316,7 @@ define([
 
     this.show({
       type: 'error',
-      time: 10000,
+      time: 5000,
       text: _.isString(text) ? text : t('core', 'MSG:SAVING_FAILURE')
     });
   };

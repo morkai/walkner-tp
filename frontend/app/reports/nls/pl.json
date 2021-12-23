@@ -1,9 +1,9 @@
 {
-  "BREADCRUMBS:reports": "Raporty",
-  "BREADCRUMBS:symbol": "Symbol MPK",
-  "BREADCRUMBS:driver": "Kierowca",
-  "BREADCRUMBS:user": "Użytkownik",
-  "BREADCRUMBS:kind": "Rodzaj usługi",
+  "BREADCRUMB:reports": "Raporty",
+  "BREADCRUMB:symbol": "Symbol MPK",
+  "BREADCRUMB:driver": "Kierowca",
+  "BREADCRUMB:user": "Użytkownik",
+  "BREADCRUMB:kind": "Rodzaj usługi",
 
   "MSG:LOADING_SINGLE_FAILURE": "Ładowanie raportu nie powiodło się :(",
 

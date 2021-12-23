@@ -1,9 +1,13 @@
 'use strict';
 
+exports.packages = [];
+
 exports.paths = {
   'text': 'vendor/require/text',
   'i18n': 'vendor/require/i18n',
   'domReady': 'vendor/require/domReady',
+  'css': 'vendor/require-css/css',
+  'require-css': 'vendor/require-css',
   'underscore': 'vendor/underscore',
   'jquery': 'vendor/jquery',
   'backbone': 'vendor/backbone',
@@ -20,7 +24,7 @@ exports.paths = {
   'select2': 'vendor/select2/select2',
   'select2-lang': 'vendor/select2-lang',
   'zeroclipboard': 'vendor/zeroclipboard/ZeroClipboard',
-  'sift': 'vendor/sift'
+  'utf8': 'vendor/utf8'
 };
 
 exports.shim = {
@@ -36,8 +40,8 @@ exports.shim = {
     deps: ['jquery'],
     exports: 'Select2'
   },
-  'sift': {
-    exports: 'sift'
+  'utf8': {
+    exports: 'utf8'
   }
 };
 

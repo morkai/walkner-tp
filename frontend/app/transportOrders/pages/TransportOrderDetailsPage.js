@@ -47,7 +47,7 @@ define([
     {
       return [
         {
-          label: t.bound('transportOrders', 'BREADCRUMBS:browse'),
+          label: t.bound('transportOrders', 'BREADCRUMB:browse'),
           href: this.model.genClientUrl('base')
         },
         this.model.getLabel()

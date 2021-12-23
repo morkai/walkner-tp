@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'app/i18n',
@@ -27,7 +27,7 @@ define([
     {
       return createPageBreadcrumbs(this, [
         {
-          label: this.model.getLabel() || t.bound(this.model.getNlsDomain(), 'BREADCRUMBS:details'),
+          label: this.model.getLabel() || t.bound(this.model.getNlsDomain(), 'BREADCRUMB:details'),
           href: this.model.genClientUrl()
         },
         ':editForm'
@@ -42,7 +42,14 @@ define([
 
     load: function(when)
     {
-      return when(this.model.fetch(this.options.fetchOptions));
+      var model = this.model;
+
+      if (model.isSynced && model.isSynced())
+      {
+        return when();
+      }
+
+      return when(model.fetch(this.options.fetchOptions));
     },
 
     defineModels: function()
@@ -73,7 +80,7 @@ define([
         formAction: model.url(),
         formActionText: t(t.has(nlsDomain, 'FORM:ACTION:edit') ? nlsDomain : 'core', 'FORM:ACTION:edit'),
         failureText: t(t.has(nlsDomain, 'FORM:ACTION:editFailure') ? nlsDomain : 'core', 'FORM:ERROR:editFailure'),
-        panelTitleText: t(t.has(nlsDomain, 'FORM:ACTION:editForm') ? nlsDomain : 'core', 'PANEL:TITLE:editForm')
+        panelTitleText: t(t.has(nlsDomain, 'PANEL:TITLE:editForm') ? nlsDomain : 'core', 'PANEL:TITLE:editForm')
       };
 
       if (typeof this.options.formTemplate === 'function')

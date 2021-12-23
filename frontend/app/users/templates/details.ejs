@@ -1,37 +1,62 @@
-<div class="panel panel-primary users-details">
-  <div class="panel-heading">
-    <%- t('users', 'PANEL:TITLE:details') %>
-  </div>
-  <div class="panel-details">
-    <div class="props first">
-      <div class="prop">
-        <div class="prop-name"><%- t('users', 'PROPERTY:name') %></div>
-        <div class="prop-value"><%= model.firstName || '' %> <%= model.lastName || '' %></div>
+<div class="users-details">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="panel panel-primary">
+        <div class="panel-heading"><%- t('PANEL:TITLE:details:basic') %></div>
+        <div class="panel-details">
+          <%- helpers.props(model, [
+            'active',
+            'login'
+          ]) %>
+        </div>
       </div>
-      <div class="prop">
-        <div class="prop-name"><%- t('users', 'PROPERTY:symbol') %></div>
-        <div class="prop-value"><%= model.symbol || '-' %></div>
+    </div>
+    <div class="col-lg-4">
+      <div class="panel panel-default">
+        <div class="panel-heading"><%- t('PANEL:TITLE:details:contact') %></div>
+        <div class="panel-details">
+          <%- helpers.props(model, [
+            'name',
+            'email',
+            {id: '!mobile', value: function(mobiles)
+            {
+              if (_.isEmpty(mobiles))
+              {
+                return '';
+              }
+
+              if (mobiles.length === 1)
+              {
+                return t('DETAILS:mobile:item', mobiles[0]);
+              }
+
+              return '<ul>'
+                + mobiles.map(function(mobile) { return '<li>' + t('DETAILS:mobile:item', mobile); })
+                + '</ul>';
+            }}
+          ]) %>
+        </div>
       </div>
-      <div class="prop">
-        <div class="prop-name"><%- t('users', 'PROPERTY:email') %></div>
-        <div class="prop-value"><%= model.email || '-' %></div>
-      </div>
-      <div class="prop">
-        <div class="prop-name"><%- t('users', 'PROPERTY:tel') %></div>
-        <div class="prop-value"><%- model.tel || '-' %></div>
-      </div>
-      <div class="prop">
-        <div class="prop-name"><%- t('users', 'PROPERTY:login') %></div>
-        <div class="prop-value"><%= model.login %></div>
-      </div>
-      <div class="prop">
-        <div class="prop-name"><%- t('users', 'PROPERTY:privileges') %></div>
-        <div class="prop-value">
-          <% model.privileges.forEach(function(privilege) { %>
-          <span class="label label-<%- /VIEW/.test(privilege) ? 'info' : 'warning' %>"><%- t('users', 'PRIVILEGE:' + privilege) %></span>
-          <% }) %>
+    </div>
+    <div class="col-lg-4">
+      <div class="panel panel-default">
+        <div class="panel-heading"><%- t('PANEL:TITLE:details:extra') %></div>
+        <div class="panel-details">
+          <%- helpers.props(model, [
+            {id: 'symbol', visible: loadedModules.isLoaded('symbols')}
+          ]) %>
         </div>
       </div>
     </div>
   </div>
+  <% if (!_.isEmpty(model.privileges)) { %>
+  <div class="panel panel-default users-details-privileges">
+    <div class="panel-heading"><%- t('PANEL:TITLE:details:privileges') %></div>
+    <div class="panel-body">
+      <% model.privileges.forEach(function(privilege) { %>
+      <span class="label label-<%- /VIEW/.test(privilege) ? 'info' : 'warning' %>"><%- t('PRIVILEGE:' + privilege) %></span>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
 </div>

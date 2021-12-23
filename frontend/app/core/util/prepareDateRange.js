@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'app/time'
@@ -7,10 +7,9 @@ define([
 ) {
   'use strict';
 
-  return function prepareDateRange(dateRange, setTime)
+  return function prepareDateRange(elOrDateRange, setTime)
   {
-    /*jshint -W015*/
-
+    var dateRange = typeof elOrDateRange === 'string' ? elOrDateRange : elOrDateRange.getAttribute('data-range');
     var fromMoment = time.getMoment().minutes(0).seconds(0).milliseconds(0);
     var toMoment;
     var interval = 'day';
@@ -41,6 +40,21 @@ define([
         interval = 'year';
         break;
 
+      case 'currentQuarter':
+        fromMoment.startOf('quarter');
+        toMoment = fromMoment.clone().add(1, 'quarter');
+        interval = 'month';
+        break;
+
+      case 'q1':
+      case 'q2':
+      case 'q3':
+      case 'q4':
+        fromMoment.quarter(+dateRange.substr(1)).startOf('quarter');
+        toMoment = fromMoment.clone().add(3, 'months');
+        interval = 'month';
+        break;
+
       case 'currentMonth':
         fromMoment.date(1);
         toMoment = fromMoment.clone().add(1, 'months');
@@ -69,6 +83,11 @@ define([
       case 'prevWeek':
         fromMoment.weekday(0).subtract(7, 'days');
         toMoment = fromMoment.clone().add(7, 'days');
+        break;
+
+      case 'lastTwoWeeks':
+        fromMoment.weekday(0).subtract(14, 'days');
+        toMoment = fromMoment.clone().add(14, 'days');
         break;
 
       case 'today':
@@ -138,6 +157,16 @@ define([
 
       default:
         throw new Error('Unknown dateRange: ' + dateRange);
+    }
+
+    if (elOrDateRange.getAttribute)
+    {
+      var customInterval = elOrDateRange.getAttribute('data-interval');
+
+      if (customInterval)
+      {
+        interval = customInterval;
+      }
     }
 
     return {

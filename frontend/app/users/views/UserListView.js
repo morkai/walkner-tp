@@ -17,7 +17,9 @@ define([
       {id: 'firstName', className: 'is-min'},
       {id: 'symbol', className: 'is-min'},
       {id: 'email', className: 'is-min'},
-      'tel'
+      {id: 'mobile', className: 'is-min'},
+      {id: 'active', className: 'is-min'},
+      '-'
     ]
 
   });

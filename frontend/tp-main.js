@@ -27,8 +27,10 @@
       'app/user',
       'app/updater/index',
       'app/data/loadedModules',
+      'app/core/util/embedded',
       'app/core/layouts/PageLayout',
       'app/core/views/NavbarView',
+      'app/core/templates/navbar',
       'app/core/views/FormView',
       'app/users/views/LogInFormView',
       'app/time',
@@ -57,8 +59,10 @@
     user,
     updater,
     loadedModules,
+    embedded,
     PageLayout,
     NavbarView,
+    navbarTemplate,
     FormView,
     LogInFormView)
   {
@@ -86,11 +90,18 @@
 
     viewport.registerLayout('page', function createPageLayout()
     {
+      var views = {};
+
+      if (!embedded.isEnabled() || window.WMES_APP_ID === 'main')
+      {
+        views['.navbar'] = createNavbarView();
+      }
+
       return new PageLayout({
-        views: {
-          '.navbar': createNavbarView()
-        },
-        version: updater.getCurrentVersionString()
+        views: views,
+        version: updater.getCurrentVersionString(),
+        hdHidden: !!window.toolbar && !window.toolbar.visible && !window.IS_MOBILE,
+        navbarClassName: 'navbar-default'
       });
     });
 
@@ -98,7 +109,11 @@
 
     broker.subscribe('page.titleChanged', function(newTitle)
     {
-      newTitle.unshift(i18n('core', 'TITLE'));
+      var title = i18n.has('core', 'TITLE:' + window.location.hostname)
+        ? i18n('core', 'TITLE:' + window.location.hostname)
+        : i18n('core', 'TITLE');
+
+      newTitle.unshift(title);
 
       document.title = newTitle.reverse().join(' < ');
     });
@@ -121,6 +136,7 @@
     {
       var req = router.getCurrentRequest();
       var navbarView = new NavbarView({
+        template: navbarTemplate,
         currentPath: req === null ? '/' : req.path,
         loadedModules: loadedModules.map
       });
@@ -128,7 +144,7 @@
       navbarView.on('logIn', function()
       {
         viewport.showDialog(
-          new LogInFormView(), i18n('core', 'LOG_IN_FORM:DIALOG_TITLE')
+          new LogInFormView(), i18n('users', 'LOG_IN_FORM:TITLE:LOG_IN')
         );
       });
 
@@ -147,11 +163,16 @@
         });
       });
 
+      window.navbar = navbarView;
+
       return navbarView;
     }
 
     function doStartApp()
     {
+      startBroker.destroy();
+      startBroker = broker.sandbox();
+
       var userReloadTimer = null;
 
       broker.subscribe('i18n.reloaded', function(message)
@@ -233,12 +254,12 @@
 
       if (typeof window.onPageShown === 'function')
       {
-        broker.subscribe('viewport.page.shown', window.onPageShown);
+        broker.subscribe('viewport.page.shown', window.onPageShown).setLimit(1);
       }
 
       domReady(function()
       {
-        startBroker.subscribe('viewport.page.shown', reveal);
+        startBroker.subscribe('viewport.page.shown', reveal).setLimit(1);
 
         if (window.ENV)
         {
@@ -251,18 +272,26 @@
           pushState: false
         });
       });
+    }
 
-      function reveal()
+    function reveal()
+    {
+      if (startBroker !== null)
       {
-        if (startBroker !== null)
-        {
-          startBroker.destroy();
-          startBroker = null;
-        }
-
-        $('#app-loading').remove();
-        $('body').removeClass('is-loading');
+        startBroker.destroy();
+        startBroker = null;
       }
+
+      $('#app-loading').remove();
+      $('body').removeClass('is-loading');
+
+      embedded.ready('remote');
+      embedded.render(viewport.currentPage);
+
+      broker.subscribe('viewport.page.shown', function()
+      {
+        embedded.render(viewport.currentPage);
+      });
     }
   }
 })();

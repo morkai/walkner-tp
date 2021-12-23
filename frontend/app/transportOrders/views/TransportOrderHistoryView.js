@@ -143,7 +143,7 @@ define([
 
       if (property === 'cargo' || property === 'fromAddress' || property === 'toAddress' || property === 'notes')
       {
-        return '<span class="text-mono">' + value + '</span>';
+        return '<span class="text-lines">' + value + '</span>';
       }
 
       return value;

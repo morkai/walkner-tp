@@ -11,6 +11,7 @@ define([
   'app/data/airports',
   'app/data/symbols',
   'app/symbols/util/setUpSymbolSelect2',
+  'app/users/User',
   'app/users/util/setUpUserSelect2',
   '../util/preparePrice',
   '../util/serializeSymbol',
@@ -34,6 +35,7 @@ define([
   airports,
   symbols,
   setUpSymbolSelect2,
+  User,
   setUpUserSelect2,
   preparePrice,
   serializeSymbol,
@@ -210,14 +212,16 @@ define([
         allowClear: false,
         onDataLoaded: function()
         {
+          var owner = $owner.select2('data').user;
+
           if (view.$id('tel').val() === '')
           {
-            view.$id('tel').val($owner.select2('data').user.tel);
+            view.$id('tel').val(User.resolveMobile(owner.mobile));
           }
 
           if (view.$id('symbol').val() === '')
           {
-            updateSymbol($owner.select2('data').user.symbol);
+            updateSymbol(owner.symbol);
           }
 
           view.toggleSymbolMode();
@@ -228,7 +232,7 @@ define([
       {
         if (e.added)
         {
-          view.$id('tel').val(e.added.user.tel);
+          view.$id('tel').val(User.resolveMobile(e.added.user.mobile));
           updateSymbol(e.added.user.symbol);
         }
       });

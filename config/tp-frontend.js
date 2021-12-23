@@ -33,7 +33,7 @@ exports.modules = [
 ];
 
 exports.events = {
-  collection: function(app) { return app.mongoose.model('Event').collection; },
+  collection: app => app.mongoose.model('Event').collection,
   insertDelay: 1000,
   topics: {
     debug: [
@@ -64,8 +64,8 @@ exports.httpsServer = {
 exports.sio = {
   httpServerIds: ['httpServer'],
   socketIo: {
-    pingInterval: 10000,
-    pingTimeout: 5000
+    pingInterval: 20000,
+    pingTimeout: 7500
   }
 };
 
@@ -80,7 +80,7 @@ exports.pubsub = {
 exports.mongoose = {
   uri: mongodb.uri,
   mongoClient: Object.assign(mongodb.mongoClient, {
-    poolSize: 10
+    maxPoolSize: 10
   }),
   maxConnectTries: 10,
   connectAttemptDelay: 500
@@ -93,7 +93,9 @@ exports.express = {
   sessionCookie: {
     httpOnly: true,
     path: '/',
-    maxAge: 3600 * 24 * 30 * 1000
+    maxAge: 3600 * 24 * 90 * 1000,
+    sameSite: 'lax',
+    secure: false
   },
   sessionStore: {
     touchInterval: 10 * 60 * 1000,
@@ -111,6 +113,8 @@ exports.express = {
     forms: 'app/core/util/forms'
   },
   title: 'TP',
+  textBody: {limit: '1mb'},
+  jsonBody: {limit: '1mb'},
   routes: [
     require('../backend/routes/core')
   ]
@@ -122,8 +126,6 @@ exports.users = {
 
 exports.user = {
   privileges: [
-    'TRANSPORT_ORDERS:DISPATCHER', 'TRANSPORT_ORDERS:DRIVER', 'TRANSPORT_ORDERS:USER',
-    'TRANSPORT_ORDERS:ALL', 'TRANSPORT_ORDERS:DELETE',
     'REPORTS:VIEW',
     'DICTIONARIES:VIEW', 'DICTIONARIES:MANAGE'
   ]

@@ -1,4 +1,4 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
   'underscore',
@@ -41,7 +41,9 @@ define([
       return;
     }
 
-    $(document).on('click', '.dateTimeRange-is-input > .dropdown-toggle', toggleInput);
+    $(document)
+      .on('click', '.dateTimeRange-is-input > .dropdown-toggle', toggleInput)
+      .on('keyup', '.dateTimeRange-field > .form-control', handleKeyDown);
 
     eventsBound = true;
   }
@@ -63,6 +65,16 @@ define([
         $(inputEl).prop('checked', true).trigger('change');
       }
     });
+  }
+
+  function handleKeyDown(e)
+  {
+    if (e.key === 'Escape')
+    {
+      e.currentTarget.value = '';
+
+      return false;
+    }
   }
 
   function prepareDropdown(label)
@@ -203,11 +215,13 @@ define([
       maxDate: options.maxDate === ''
         ? ''
         : (options.maxDate || time.getMoment().add(1, 'years').format(DATE_FORMATS[type])),
+      labelProperty: options.labelProperty || 'dateFilter',
       labels: [],
+      maxLabels: 2,
       separator: options.separator || '–',
       required: {
-        date: false,
-        time: false
+        date: [false, false],
+        time: [false, false]
       }
     };
 
@@ -217,13 +231,33 @@ define([
 
       if (typeof options.required === 'boolean')
       {
-        req.date = true;
-        req.time = true;
+        req.date = [options.required, options.required];
+        req.time = [options.required, options.required];
+      }
+      else if (Array.isArray(options.required))
+      {
+        req.date = [!!options.required[0], !!options.required[1]];
+        req.time = [!!options.required[0], !!options.required[1]];
       }
       else
       {
-        req.date = !!options.required.date;
-        req.time = !!options.required.time;
+        if (Array.isArray(options.required.date))
+        {
+          req.date = [!!options.required.date[0], !!options.required.date[1]];
+        }
+        else
+        {
+          req.date = [!!options.required.date, !!options.required.date];
+        }
+
+        if (Array.isArray(options.required.time))
+        {
+          req.time = [!!options.required.time[0], !!options.required.time[1]];
+        }
+        else
+        {
+          req.time = [!!options.required.time, !!options.required.time];
+        }
       }
     }
 
@@ -245,10 +279,23 @@ define([
       return {
         text: label.text || t('core', 'dateTimeRange:label:' + templateData.type),
         dropdown: prepareDropdown(label),
-        input: label.input || null,
-        ranges: prepareRanges(label)
+        value: label.value || null,
+        ranges: prepareRanges(label),
+        utc: label.utc == null ? options.utc : (label.utc ? 1 : 0)
       };
     });
+
+    if (templateData.labels.length > templateData.maxLabels)
+    {
+      var id = templateData.idPrefix + '-dateTimeRange-' + templateData.property;
+
+      requestAnimationFrame(function()
+      {
+        $('#' + id).on('click', 'a[data-label-value]', handleLabelValueClick);
+
+        render.toggleLabel(id);
+      });
+    }
 
     return template(templateData);
   }
@@ -331,10 +378,10 @@ define([
 
     var dateFormat = DATE_FORMATS[type];
 
-    $container.find('input[name="from-date"]').val(fromMoment.format(dateFormat));
-    $container.find('input[name="from-time"]').val(fromMoment.format('HH:mm:ss'));
-    $container.find('input[name="to-date"]').val(toMoment.format(dateFormat));
-    $container.find('input[name="to-time"]').val(toMoment.format('HH:mm:ss'));
+    $container.find('input[name="from-date"]').val(fromMoment.format(dateFormat)).trigger('change');
+    $container.find('input[name="from-time"]').val(fromMoment.format('HH:mm:ss')).trigger('change');
+    $container.find('input[name="to-date"]').val(toMoment.format(dateFormat)).trigger('change');
+    $container.find('input[name="to-time"]').val(toMoment.format('HH:mm:ss')).trigger('change');
 
     var $intervals = view.$('[name="interval"]');
 
@@ -376,11 +423,14 @@ define([
   render.serialize = function(view)
   {
     var $container = view.$('.dateTimeRange');
-    var type = $container[0].dataset.type;
+    var $input = $container.find('.dateTimeRange-label-input:checked');
+    var property = $input.length ? $input.val() : $container[0].dataset.property;
+    var dataset = Object.assign({}, $container[0].dataset, $input.prop('dataset'));
+    var type = dataset.type;
     var dateFormat = DATE_FORMATS[type];
-    var utc = $container[0].dataset.utc === '1';
-    var setTime = $container[0].dataset.setTime === '1';
-    var startHour = $container[0].dataset.startHour;
+    var utc = dataset.utc === '1';
+    var setTime = dataset.setTime === '1';
+    var startHour = dataset.startHour;
     var $fromDate = $container.find('input[name="from-date"]');
     var $fromTime = $container.find('input[name="from-time"]');
     var $toDate = $container.find('input[name="to-date"]');
@@ -463,8 +513,9 @@ define([
       $toTime.val(toMoment.format('HH:mm:ss'));
     }
 
+
     return {
-      property: $container[0].dataset.property,
+      property: property,
       from: fromMoment,
       to: toMoment
     };
@@ -488,17 +539,27 @@ define([
   render.formToRql = function(view, rqlSelector)
   {
     var dateTimeRange = render.serialize(view);
+    var from = 0;
 
     if (dateTimeRange.from)
     {
+      from = dateTimeRange.from.valueOf();
+
       rqlSelector.push({
         name: 'ge',
-        args: [dateTimeRange.property, dateTimeRange.from.valueOf()]
+        args: [dateTimeRange.property, from]
       });
     }
 
     if (dateTimeRange.to)
     {
+      var to = dateTimeRange.to.valueOf();
+
+      if (to === from)
+      {
+        to = dateTimeRange.to.add(1, 'days').valueOf();
+      }
+
       rqlSelector.push({
         name: 'lt',
         args: [dateTimeRange.property, dateTimeRange.to.valueOf()]
@@ -509,9 +570,12 @@ define([
   render.rqlToForm = function(propertyName, term, formData)
   {
     var view = this;
-    var dataset = view.$('.dateTimeRange')[0].dataset;
-    var dateFormat = DATE_FORMATS[dataset.type];
-    var utc = dataset.utc === '1';
+    var $dtr = view.$('.dateTimeRange');
+    var labelProperty = $dtr.find('.dateTimeRange-label-input').first().prop('name');
+    var dtrDataset = $dtr[0].dataset;
+    var lblDataset = view.$id(labelProperty + '-' + propertyName).prop('dataset') || {};
+    var dateFormat = DATE_FORMATS[lblDataset.type || dtrDataset.type];
+    var utc = lblDataset.utc == null ? (dtrDataset.utc === '1') : (lblDataset.utc === '1');
     var moment = (utc ? time.utc : time).getMoment(term.args[1]);
     var dir;
 
@@ -529,9 +593,45 @@ define([
       return;
     }
 
+    if (labelProperty)
+    {
+      formData[labelProperty] = propertyName;
+    }
+
     formData[dir + '-date'] = moment.format(dateFormat);
     formData[dir + '-time'] = moment.format('HH:mm:ss');
   };
+
+  render.toggleLabel = function(viewOrId)
+  {
+    var $dtr = typeof viewOrId === 'string' ? $('#' + viewOrId) : viewOrId.$('.dateTimeRange').first();
+    var $labels = $dtr.find('.dateTimeRange-labels');
+
+    if (!$labels.hasClass('dateTimeRange-labels-overflow'))
+    {
+      return;
+    }
+
+    $labels.find('.dateTimeRange-label').each(function()
+    {
+      this.classList.toggle('hidden', !$(this).find('.dateTimeRange-label-input').prop('checked'));
+    });
+  };
+
+  function handleLabelValueClick(e)
+  {
+    var $labels = $(e.currentTarget).closest('.dateTimeRange-labels');
+    var labelValue = e.currentTarget.dataset.labelValue;
+    var $input = $labels.find('.dateTimeRange-label-input[value="' + labelValue + '"]');
+
+    $input.prop('checked', true);
+
+    render.toggleLabel($labels.closest('.dateTimeRange').prop('id'));
+
+    $input.closest('.dropdown-toggle').click();
+
+    return false;
+  }
 
   return render;
 });

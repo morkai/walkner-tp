@@ -1,20 +1,24 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
+  'require',
   'underscore',
   'jquery',
   'app/pubsub',
   'app/time',
   'app/data/prodFunctions',
   'app/data/companies',
+  'app/data/loadedModules',
   'app/users/templates/userInfoPopover'
 ], function(
+  require,
   _,
   $,
   pubsub,
   time,
   prodFunctions,
   companies,
+  loadedModules,
   contentTemplate
 ) {
   'use strict';
@@ -23,13 +27,15 @@ define([
     'firstName',
     'lastName',
     'login',
-    'personellId',
+    'personnelId',
     'email',
     'mobile',
     'prodFunction',
     'company',
-    'kdPosition',
-    'presence'
+    'syncData',
+    'presence',
+    'oshWorkplace',
+    'oshDepartment'
   ];
 
   var users = {};
@@ -135,6 +141,17 @@ define([
       containerTemplate = $($.fn.popover.Constructor.DEFAULTS.template).addClass('userInfoPopover')[0].outerHTML;
     }
 
+    var oshWorkplace = '';
+    var oshDepartment = '';
+
+    if (loadedModules.isLoaded('wmes-osh'))
+    {
+      var oshDictionaries = require('app/wmes-osh-common/dictionaries');
+
+      oshWorkplace = oshDictionaries.workplaces.getLabel(user.oshWorkplace);
+      oshDepartment = oshDictionaries.departments.getLabel(user.oshDepartment);
+    }
+
     $popover = $(userInfoEl).popover({
       placement: 'top',
       container: userInfoEl.parentNode,
@@ -144,12 +161,14 @@ define([
         linkToDetails: linkToDetails,
         userInfo: {
           _id: user._id,
-          name: user.firstName && user.lastName ? (user.firstName + ' ' + user.lastName) : user.login,
-          personnelId: user.personellId,
-          position: user.kdPosition || (prodFunction ? prodFunction.getLabel() : null),
-          company: company ? company.getLabel() : user.company,
+          name: user.firstName || user.lastName ? (user.firstName + ' ' + user.lastName).trim() : user.login,
+          personnelId: user.personnelId,
+          position: user.syncData.jobTitle || (prodFunction ? prodFunction.getLabel() : ''),
+          company: company ? company.getLabel() : (user.syncData.company || user.company || ''),
           email: user.email,
-          mobile: mobile
+          mobile: mobile,
+          oshWorkplace: oshWorkplace,
+          oshDepartment: oshDepartment
         }
       }),
       template: containerTemplate
@@ -159,7 +178,7 @@ define([
 
     $popover.on('click.userInfoPopover', function(e)
     {
-      if (e.currentTarget.dataset.clickable === '0')
+      if (e.currentTarget.dataset.clickable === '0' && !e.ctrlKey)
       {
         return;
       }

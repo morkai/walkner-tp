@@ -9,7 +9,7 @@
     <p class="tp-history-entry-info <%- isNew ? 'is-changed' : '' %>">
       <%- t('transportOrders', 'history:info', {user: creator, time: createdAt}) %>
     </p>
-    <p class="tp-history-entry-text text-mono"><%- notes || t('transportOrders', 'noNotes') %></p>
+    <p class="tp-history-entry-text text-lines"><%- notes || t('transportOrders', 'noNotes') %></p>
   </div>
   <% entries.forEach(function(entry) { %>
   <div class="tp-history-entry <%- entry.comment ? 'is-with-comment' : 'is-without-comment' %>">
@@ -37,7 +37,7 @@
     </table>
     <% } %>
     <% if (entry.comment) { %>
-    <p class="tp-history-entry-text text-mono"><%- entry.comment %></p>
+    <p class="tp-history-entry-text text-lines"><%- entry.comment %></p>
     <% } %>
   </div>
   <% }) %>

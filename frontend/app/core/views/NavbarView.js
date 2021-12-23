@@ -1,21 +1,25 @@
-// Part of <https://miracle.systems/p/walkner-tp> licensed under <CC BY-NC-SA 4.0>
+// Part of <https://miracle.systems/p/walkner-wmes> licensed under <CC BY-NC-SA 4.0>
 
 define([
+  'require',
   'underscore',
   'app/i18n',
   'app/user',
   'app/time',
   'app/viewport',
-  '../View',
-  'app/core/templates/navbar'
+  'app/data/localStorage',
+  'app/data/loadedModules',
+  'app/core/View'
 ], function(
+  require,
   _,
   t,
   user,
   time,
   viewport,
-  View,
-  navbarTemplate
+  localStorage,
+  loadedModules,
+  View
 ) {
   'use strict';
 
@@ -26,12 +30,12 @@ define([
    */
   var NavbarView = View.extend({
 
-    template: navbarTemplate,
+    nlsDomain: 'core',
 
     localTopics: {
       'router.executing': function onRouterExecuting(message)
       {
-        this.activateNavItem(this.getModuleNameFromPath(message.req.path));
+        this.activateNavItem(message.req.path);
       },
       'socket.connected': function onSocketConnected()
       {
@@ -84,6 +88,17 @@ define([
 
         this.trigger('logOut');
       },
+      'click .navbar-feedback': function onFeedbackClick(e)
+      {
+        e.preventDefault();
+
+        e.target.disabled = true;
+
+        this.trigger('feedback', function()
+        {
+          e.target.disabled = false;
+        });
+      },
       'mouseup .btn[data-href]': function(e)
       {
         if (e.button === 2)
@@ -92,10 +107,11 @@ define([
         }
 
         var href = e.currentTarget.dataset.href;
+        var target = e.currentTarget.dataset.target;
 
-        if (e.ctrlKey || e.button === 1)
+        if (e.ctrlKey || e.button === 1 || (target && target !== '_self'))
         {
-          window.open(href);
+          window.open(href, target);
         }
         else
         {
@@ -103,6 +119,14 @@ define([
         }
 
         document.body.click();
+
+        return false;
+      },
+      'click a[data-group]': function(e)
+      {
+        this.toggleGroup(e.currentTarget.dataset.group);
+
+        e.currentTarget.blur();
 
         return false;
       }
@@ -143,9 +167,9 @@ define([
 
     /**
      * @private
-     * @type {string}
+     * @type {?string}
      */
-    this.activeModuleName = '';
+    this.activeModuleName = null;
 
     /**
      * @private
@@ -165,7 +189,11 @@ define([
      */
     this.lastSearchPhrase = '';
 
-    this.activateNavItem(this.getModuleNameFromPath(this.options.currentPath));
+    /**
+     * @private
+     * @type {?string}
+     */
+    this.initialPath = this.options.currentPath;
   };
 
   NavbarView.prototype.beforeRender = function()
@@ -180,29 +208,52 @@ define([
       view: this
     });
 
-    this.selectActiveNavItem();
+    if (this.initialPath !== null)
+    {
+      this.activateNavItem(this.initialPath);
+      this.initialPath = null;
+    }
+    else
+    {
+      this.selectActiveNavItem();
+    }
+
     this.setConnectionStatus(this.socket.isConnected() ? 'online' : 'offline');
     this.hideNotAllowedEntries();
     this.hideEmptyEntries();
+    this.toggleGroups();
 
     this.broker.publish('navbar.rendered', {
       view: this
     });
   };
 
-  NavbarView.prototype.serialize = function()
-  {
-    return {
-      idPrefix: this.idPrefix,
-      user: user
-    };
-  };
-
   /**
-   * @param {string} moduleName
+   * @param {string} path
    */
-  NavbarView.prototype.activateNavItem = function(moduleName)
+  NavbarView.prototype.activateNavItem = function(path)
   {
+    if (!this.navItems)
+    {
+      this.cacheNavItems();
+    }
+
+    var matches = path.substring(1).match(/^([a-zA-Z0-9\/\-_]+)/);
+    var candidates = this.getNavItemKeysFromPath(matches ? matches[1] : '');
+    var moduleName = '';
+
+    for (var i = candidates.length - 1; i >= 0; --i)
+    {
+      var candidate = candidates[i];
+
+      if (this.navItems[candidate])
+      {
+        moduleName = candidate;
+
+        break;
+      }
+    }
+
     if (moduleName === this.activeModuleName)
     {
       return;
@@ -245,7 +296,7 @@ define([
    * @param {HTMLLIElement} liEl
    * @param {boolean} useAnchor
    * @param {boolean} [clientModule]
-   * @returns {string|null}
+   * @returns {string}
    */
   NavbarView.prototype.getModuleNameFromLi = function(liEl, useAnchor, clientModule)
   {
@@ -253,7 +304,7 @@ define([
 
     if (module === undefined && !useAnchor)
     {
-      return null;
+      return '';
     }
 
     if (module)
@@ -265,14 +316,14 @@ define([
 
     if (!aEl)
     {
-      return null;
+      return '';
     }
 
     var href = aEl.getAttribute('href');
 
     if (!href)
     {
-      return null;
+      return '';
     }
 
     return this.getModuleNameFromPath(href);
@@ -297,7 +348,7 @@ define([
 
     var matches = path.match(/^([a-z0-9][a-z0-9\-]*[a-z0-9]*)/i);
 
-    return matches ? matches[1] : null;
+    return matches ? matches[1] : '';
   };
 
   /**
@@ -310,7 +361,7 @@ define([
       return;
     }
 
-    if (this.navItems === null)
+    if (!this.navItems)
     {
       this.cacheNavItems();
     }
@@ -346,44 +397,130 @@ define([
    */
   NavbarView.prototype.cacheNavItems = function()
   {
-    this.navItems = {};
+    var view = this;
 
-    this.$('.nav > li').each(this.cacheNavItem.bind(this));
+    view.navItems = {};
+
+    view.$('.nav > li').each(function()
+    {
+      view.cacheNavItem(this);
+    });
   };
 
   /**
    * @private
-   * @param {number} i
    * @param {Element} navItemEl
    */
-  NavbarView.prototype.cacheNavItem = function(i, navItemEl)
+  NavbarView.prototype.cacheNavItem = function(navItemEl)
   {
-    var $navItem = this.$(navItemEl);
+    var view = this;
+    var $navItem = view.$(navItemEl);
 
-    if ($navItem.hasClass(this.options.activeItemClassName))
+    if ($navItem.hasClass(view.options.activeItemClassName))
     {
-      this.$activeNavItem = $navItem;
+      view.$activeNavItem = $navItem;
     }
 
-    var href = $navItem.find('a').attr('href');
+    var href = $navItem.find('a').first().attr('href');
 
-    if (href && href[0] === '#')
+    if (href && href.charAt(0) === '#')
     {
-      var moduleName = this.getModuleNameFromLi($navItem[0], true, true);
-
-      this.navItems[moduleName] = $navItem;
+      view.getNavItemKeysFromLi($navItem[0]).forEach(function(key)
+      {
+        if (!view.navItems[key])
+        {
+          view.navItems[key] = $navItem;
+        }
+      });
     }
     else if ($navItem.hasClass('dropdown'))
     {
-      var view = this;
-
       $navItem.find('.dropdown-menu > li').each(function()
       {
-        var moduleName = view.getModuleNameFromLi(this, true, true);
-
-        view.navItems[moduleName] = $navItem;
+        view.getNavItemKeysFromLi(this).forEach(function(key)
+        {
+          if (!view.navItems[key])
+          {
+            view.navItems[key] = $navItem;
+          }
+        });
       });
     }
+  };
+
+  /**
+   * @private
+   * @param {Element} liEl
+   * @returns {string[]}
+   */
+  NavbarView.prototype.getNavItemKeysFromLi = function(liEl)
+  {
+    var aEl = liEl.querySelector('a');
+
+    if (!aEl)
+    {
+      return [''];
+    }
+
+    var navPaths = liEl.dataset.navPath;
+
+    if (navPaths)
+    {
+      navPaths = navPaths.split(' ');
+    }
+    else
+    {
+      var href = aEl.getAttribute('href');
+
+      if (!href || (href.charAt(0) !== '/' && href.charAt(0) !== '#'))
+      {
+        return [''];
+      }
+
+      navPaths = [href.substring(1)];
+    }
+
+    var keys = [];
+
+    navPaths.forEach(function(navPath)
+    {
+      var matches = navPath.match(/^([a-zA-Z0-9\/\-_]+)/);
+
+      if (matches)
+      {
+        keys = keys.concat(this.getNavItemKeysFromPath(matches[1]));
+      }
+    }, this);
+
+    if (!keys.length)
+    {
+      keys.push('');
+    }
+
+    return keys;
+  };
+
+  /**
+   * @private
+   * @param {string} path
+   * @returns {string[]}
+   */
+  NavbarView.prototype.getNavItemKeysFromPath = function(path)
+  {
+    var parts = path.split('/');
+    var keys = [];
+
+    parts.forEach(function(part, i)
+    {
+      if (keys[i - 1])
+      {
+        part = keys[i - 1] + '/' + part;
+      }
+
+      keys.push(part);
+    });
+
+    return keys;
   };
 
   /**
@@ -469,6 +606,11 @@ define([
 
     function isEntryVisible($li)
     {
+      if (window.NAVBAR_ITEMS && window.NAVBAR_ITEMS[$li.attr('data-item')] === false)
+      {
+        return false;
+      }
+
       var loggedIn = $li.attr('data-loggedin');
 
       if (typeof loggedIn === 'string')
@@ -483,9 +625,9 @@ define([
 
       var moduleName = navbarView.getModuleNameFromLi($li[0], false);
 
-      if (moduleName !== null
+      if (moduleName !== ''
         && $li.attr('data-no-module') === undefined
-        && !navbarView.options.loadedModules[moduleName])
+        && _.some(moduleName.split(' '), function(n) { return !navbarView.options.loadedModules[n]; }))
       {
         return false;
       }
@@ -572,6 +714,77 @@ define([
           break;
       }
     });
+  };
+
+  NavbarView.prototype.toggleGroups = function()
+  {
+    var view = this;
+    var groups = JSON.parse(localStorage.getItem('WMES_NAVBAR_GROUPS') || '{}');
+    var allowedGroups = {};
+
+    view.$('a[data-group]').each(function()
+    {
+      var parts = this.dataset.group.split('/');
+      var group = parts[0];
+
+      if (!allowedGroups[group])
+      {
+        allowedGroups[group] = [];
+      }
+
+      if (this.dataset.privilege && !user.isAllowedTo.apply(user, this.dataset.privilege.split(' ')))
+      {
+        this.parentNode.removeChild(this);
+
+        return;
+      }
+
+      allowedGroups[group].push(this.dataset.group);
+
+      if (!groups[group])
+      {
+        groups[group] = this.dataset.group;
+      }
+    });
+
+    Object.keys(groups).forEach(function(group)
+    {
+      var allowedGroup = allowedGroups[group];
+
+      if (_.isEmpty(allowedGroup))
+      {
+        return;
+      }
+
+      if (!groups[group] || allowedGroup.indexOf(groups[group]) === -1)
+      {
+        groups[group] = allowedGroup[0];
+      }
+
+      view.toggleGroup(groups[group]);
+    });
+  };
+
+  NavbarView.prototype.toggleGroup = function(newGroup)
+  {
+    var view = this;
+    var parts = newGroup.split('/');
+
+    view.$('a[data-group^="' + parts[0] + '"]').each(function()
+    {
+      this.classList.toggle('active', this.dataset.group === newGroup);
+    });
+
+    view.$('li[data-group^="' + parts[0] + '"]').each(function()
+    {
+      this.classList.toggle('navbar-group-hidden', this.dataset.group !== newGroup);
+    });
+
+    var groups = JSON.parse(localStorage.getItem('WMES_NAVBAR_GROUPS') || '{}');
+
+    groups[parts[0]] = newGroup;
+
+    localStorage.setItem('WMES_NAVBAR_GROUPS', JSON.stringify(groups));
   };
 
   NavbarView.prototype.collapse = function()

@@ -7,6 +7,7 @@
 .navbar-brand {
   padding: 16px;
   font-size: 18px;
+  min-width: 48px;
   height: auto;
 }
 .navbar-default .navbar-brand,
@@ -16,6 +17,9 @@
 }
 .navbar-account-dropdown {
   font-weight: bold;
+}
+.navbar-account-status {
+  vertical-align: top;
 }
 .navbar-status-offline {
   color: #DA4F49;
@@ -55,20 +59,26 @@
   text-shadow: 1px 1px 3px #333;
 }
 .dropdown-menu > .navbar-with-button {
-  position: relative;
+  display: flex;
 }
 .navbar-with-button > .btn {
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 0;
+  padding: 0!important;
   width: 26px;
   height: 26px;
   line-height: 26px;
+  border-width: 0;
+}
+.navbar-with-button > .btn-default {
+  background: transparent;
+}
+.navbar-with-button > .btn:last-child {
   border-right-width: 0;
 }
-.navbar-with-button + .navbar-with-button > .btn {
-  border-top-width: 0;
+.navbar-with-button > a:first-child {
+  flex: 1 1 auto;
+}
+.navbar-with-button > a + .btn {
+  margin-left: auto;
 }
 .navbar-search {
   position: relative;
@@ -96,18 +106,32 @@
   font-weight: bold;
   color: #777;
 }
-.navbar .dropdown-header a {
+.navbar-group-hidden {
+  display: none!important;
+}
+.navbar-group-header {
+  display: inline-flex;
+}
+.navbar-group-header a {
   display: inline-block;
   padding: 0 4px;
   color: #337ab7;
   min-width: 42px;
   text-align: center;
+  font-weight: normal;
 }
-.navbar .dropdown-header a.active {
+.navbar-group-header a:first-child {
+  padding-left: 0;
+}
+.navbar-group-header a.active {
   color: #777;
   font-weight: bold;
   cursor: default;
-  background: #fff;
+  text-decoration: none;
+}
+.navbar .dropdown-message {
+  padding: 0 7px;
+  color: #333;
 }
 @media (min-width: 768px) {
   .navbar {
@@ -132,13 +156,15 @@
   .navbar-default .navbar-nav > .open > a:focus {
     background: linear-gradient(to bottom, #e8e8e8 70%, #e0e0e0);
   }
+  .navbar .dropdown-header a.active {
+    background: #fff;
+  }
 }
 @media (max-width: 767px) {
   .navbar-with-button > .btn {
     width: 52px;
-  }
-  .navbar-with-button + .navbar-with-button > .btn {
-    border-top-width: 1px;
+    height: 30px;
+    line-height: 30px!important;
   }
   .navbar-mor,
   .navbar-form {
