@@ -4,6 +4,8 @@ define([
   'underscore',
   'backbone',
   'h5.rql/index',
+  'h5.rql/serializers/mongoSerializer',
+  'sift',
   './util',
   './PaginationData',
   './Model'
@@ -11,6 +13,8 @@ define([
   _,
   Backbone,
   rql,
+  mongoSerializer,
+  sift,
   util,
   PaginationData,
   Model
@@ -292,6 +296,16 @@ define([
 
       return !name || term.name === name;
     });
+  };
+
+  Collection.prototype.matchesRqlQuery = function(obj)
+  {
+    if (!this.rqlQuery.sift)
+    {
+      this.rqlQuery.sift = sift(mongoSerializer.fromQuery(this.rqlQuery).selector);
+    }
+
+    return this.rqlQuery.sift.test(obj);
   };
 
   return Collection;

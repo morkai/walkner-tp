@@ -24,7 +24,8 @@ exports.paths = {
   'select2': 'vendor/select2/select2',
   'select2-lang': 'vendor/select2-lang',
   'zeroclipboard': 'vendor/zeroclipboard/ZeroClipboard',
-  'utf8': 'vendor/utf8'
+  'utf8': 'vendor/utf8',
+  'sift': 'vendor/sift'
 };
 
 exports.shim = {
@@ -42,6 +43,9 @@ exports.shim = {
   },
   'utf8': {
     exports: 'utf8'
+  },
+  'sift': {
+    exports: 'sift'
   }
 };
 
