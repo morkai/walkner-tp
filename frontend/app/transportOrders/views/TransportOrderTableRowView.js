@@ -10,6 +10,7 @@ define([
   'app/core/View',
   'app/core/views/ListView',
   'app/data/airports',
+  'app/users/User',
   '../util/preparePrice',
   '../util/serializeSymbol',
   'app/transportOrders/templates/tableRow',
@@ -25,6 +26,7 @@ define([
   View,
   ListView,
   airports,
+  User,
   preparePrice,
   serializeSymbol,
   template,
@@ -127,6 +129,7 @@ define([
         row.driver = {_id: ''};
       }
 
+      row.driver.tel = User.resolveMobile(row.driver.mobile);
       row.driver = renderUser({user: row.driver});
 
       if (!row.dispatcher)
@@ -134,6 +137,7 @@ define([
         row.dispatcher = {_id: ''};
       }
 
+      row.dispatcher.tel = User.resolveMobile(row.dispatcher.mobile);
       row.dispatcher = renderUser({user: row.dispatcher});
 
       var userMoment = time.getMoment(row.userDate);
