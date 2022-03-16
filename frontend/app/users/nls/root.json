@@ -1,7 +1,7 @@
 {
   "root": {
     "BREADCRUMB:browse": "Users",
-    "BREADCRUMB:account": "My account",
+    "BREADCRUMB:myAccount": "My account",
     "BREADCRUMB:logIn": "Log in form",
 
     "PAGE_ACTION:editAccount": "Edit account",

@@ -29,7 +29,7 @@ define([
           label: t.bound('users', 'BREADCRUMB:myAccount'),
           href: this.model.genClientUrl()
         },
-        t.bound('users', 'BREADCRUMB:editForm')
+        t.bound('core', 'BREADCRUMB:editForm')
       ];
     }
 

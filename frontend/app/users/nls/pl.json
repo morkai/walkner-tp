@@ -1,7 +1,7 @@
 {
   "BREADCRUMB:browse": "Użytkownicy",
-  "BREADCRUMB:account": "Moje konto",
-  "breadcrumbs:logIn": "Logowanie do systemu",
+  "BREADCRUMB:myAccount": "Moje konto",
+  "BREADCRUMB:logIn": "Logowanie do systemu",
 
   "PAGE_ACTION:editAccount": "Edytuj konto",
 
